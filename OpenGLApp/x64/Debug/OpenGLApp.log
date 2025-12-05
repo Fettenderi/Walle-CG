@@ -1,0 +1,5 @@
+﻿  Main.cpp
+F:\Ofizejo\Scuola\Appunti\ComputerGraphics\OpenGL\OpenGLApp - full examples\OpenGLApp - full examples\OpenGLApp\OpenGLApp\Main.cpp(142,21): error C2664: 'void (GLuint)': impossibile convertire l'argomento 1 da 'unsigned int [2]' a 'GLuint'
+      F:\Ofizejo\Scuola\Appunti\ComputerGraphics\OpenGL\OpenGLApp - full examples\OpenGLApp - full examples\OpenGLApp\OpenGLApp\Main.cpp(142,21):
+      Non vi sono contesti in cui sia possibile eseguire questa conversione
+  
