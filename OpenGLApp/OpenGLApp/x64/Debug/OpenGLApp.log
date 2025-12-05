@@ -1,4 +1,7 @@
-﻿  Main.cpp
-F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(157,33): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+﻿  glad.c
+  Main.cpp
+C:\Users\eleon\source\repos\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(157,33): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+  stb_image.cpp
+  Generazione del codice in corso...
 LINK : warning LNK4098: la libreria predefinita 'MSVCRT' è in conflitto con l'utilizzo di altre librerie; usare /NODEFAULTLIB:libreria
-  OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
+  OpenGLApp.vcxproj -> C:\Users\eleon\source\repos\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
