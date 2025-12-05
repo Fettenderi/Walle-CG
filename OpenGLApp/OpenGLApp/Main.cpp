@@ -78,6 +78,7 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    // Pippo e pluto
 
 
     // build and compile our shader program
