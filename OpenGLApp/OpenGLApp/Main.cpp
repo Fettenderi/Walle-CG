@@ -72,8 +72,6 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    // Pippo e pluto
-
 
     // build and compile our shader program
     // ------------------------------------
@@ -103,6 +101,7 @@ int main()
     loadTexture(&(textures[2]), "awesomeface.png", GL_RGBA);
 
     ourShader.use();
+    ourShader.setInt("mainTexture", 0);
 
     lastElapsed = glfwGetTime();
     elapsed = glfwGetTime();
@@ -142,6 +141,7 @@ int main()
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -219,8 +219,6 @@ void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2
     glBindTexture(GL_TEXTURE_2D, texture);
 
     glBindVertexArray(VAO);
-
-    shader.setInt("mainTexture", 0);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));
