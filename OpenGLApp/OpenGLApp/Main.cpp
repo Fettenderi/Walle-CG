@@ -13,19 +13,16 @@
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 void processInput(GLFWwindow* window);
 void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, float* vertices, size_t verticesSize, unsigned int* indices, size_t indicesSize);
-void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, float* vertices, size_t verticesSize);
+void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation);
 void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding);
     
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
 glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 bool firstMouse = true;
 float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
@@ -53,7 +50,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Example_08", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Walle-Demo", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -63,7 +60,6 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -101,12 +97,12 @@ int main()
     unsigned int VBO, VAO, EBO;
     instantiatePrimitive(&VAO, &VBO, &EBO, vertices, sizeof(vertices), indices, sizeof(indices));
 
-    unsigned int textures[2];
+    unsigned int textures[3];
     loadTexture(&(textures[0]), "container.jpg", GL_RGB);
-    loadTexture(&(textures[1]), "awesomeface.png", GL_RGBA);
+    loadTexture(&(textures[1]), "container-demo.jpg", GL_RGB);
+    loadTexture(&(textures[2]), "awesomeface.png", GL_RGBA);
 
     ourShader.use();
-    ourShader.setInt("mainTexture", 0);
 
     lastElapsed = glfwGetTime();
     elapsed = glfwGetTime();
@@ -130,21 +126,10 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // bind textures on corresponding texture units
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textures[0]);
-
-        // render boxes
-        glBindVertexArray(VAO);
-
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.3f, 0.3f, 0.0f));
-            
-        ourShader.setMat4("model", model);
-
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        loadSprite(ourShader, VAO, textures[0], glm::vec2(0.2f, 0.5f), glm::vec2(1.0f, 1.0f), 0.0f);
+        loadSprite(ourShader, VAO, textures[1], glm::vec2(-0.2f, 0.5f), glm::vec2(0.5f, 0.5f), 90.0f);
+        loadSprite(ourShader, VAO, textures[1], glm::vec2(-0.2f, -0.5f), glm::vec2(0.5f, 0.5f), elapsed * 20.0f);
+        loadSprite(ourShader, VAO, textures[2], glm::vec2(sin(elapsed), -0.5f), glm::vec2(0.5f, 0.5f), elapsed * 10.0f);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -170,81 +155,12 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    double speed = 1.0;
-    glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        velocity = velocity + cameraFront;
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        velocity = velocity - cameraFront;
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        velocity = velocity + glm::normalize(glm::cross(cameraFront, cameraUp));
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        velocity = velocity - glm::normalize(glm::cross(cameraFront, cameraUp));
-
-    velocity = glm::vec3(velocity.x, 0.0f, velocity.z);
-
-
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 3.0;
-
-    if (velocity == glm::vec3(0.0f)) return;
-
-    cameraPos = cameraPos + glm::normalize(velocity) * (float)(deltaTime * speed);
 }
 
 // glfw: whenever the mouse moves, this callback is called
 // -------------------------------------------------------
 void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f; // change this value to your liking
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    fov -= (float)yoffset;
-    if (fov < 1.0f)
-        fov = 1.0f;
-    if (fov > 45.0f)
-        fov = 45.0f;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -276,23 +192,6 @@ void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EB
     glEnableVertexAttribArray(1);
 }
 
-void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, float* vertices, size_t verticesSize) {
-    glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
-
-    glBindVertexArray(*VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-}
-
 void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding) {
     glGenTextures(1, texture);
     glBindTexture(GL_TEXTURE_2D, *texture);
@@ -315,3 +214,20 @@ void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEn
     stbi_image_free(data);
 }
 
+void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glBindVertexArray(VAO);
+
+    shader.setInt("mainTexture", 0);
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, -1.0f));
+    model = glm::scale(model, glm::vec3(scale, 1.0f));
+
+    shader.setMat4("model", model);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
