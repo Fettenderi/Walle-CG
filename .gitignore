@@ -1,6 +1,7 @@
 # Boh
 *.ipch
 OpenGLApp/.vs/
+.vs/
 
 # Prerequisites
 *.d
