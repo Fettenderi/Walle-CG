@@ -8,13 +8,14 @@
 
 #include "shader_s.h"
 #include "camera.h"
+#include "character.h"
 
 #include <iostream>
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, Character &character);
 void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, float* vertices, size_t verticesSize, unsigned int* indices, size_t indicesSize);
 void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation);
 void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding);
@@ -106,6 +107,8 @@ int main()
     lastElapsed = glfwGetTime();
     elapsed = glfwGetTime();
 
+    Character player(glm::vec2(0.0f, 0.0f), 0.0f, "awesomeface.png");
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -118,13 +121,14 @@ int main()
 
         // input
         // -----
-        processInput(window);
+        processInput(window, player);
 
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        loadSprite(ourShader, VAO, player.getTextureID(), player.getPosition(), glm::vec2(1.0f, 1.0f), player.getRotationDeg());
         loadSprite(ourShader, VAO, textures[0], glm::vec2(0.2f, 0.5f), glm::vec2(1.0f, 1.0f), 0.0f);
         loadSprite(ourShader, VAO, textures[1], glm::vec2(-0.2f, 0.5f), glm::vec2(0.5f, 0.5f), 90.0f);
         loadSprite(ourShader, VAO, textures[1], glm::vec2(-0.2f, -0.5f), glm::vec2(0.5f, 0.5f), elapsed * 20.0f);
@@ -151,10 +155,26 @@ int main()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, Character &character)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    
+    const float speed = 0.05f; // velocit? di movimento
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        character.move(0.0f, speed);
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        character.move(0.0f, -speed);
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        character.move(-speed, 0.0f);
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        character.move(speed, 0.0f);
+    
 }
 
 // glfw: whenever the mouse moves, this callback is called
