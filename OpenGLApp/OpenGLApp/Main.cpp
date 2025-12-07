@@ -1,47 +1,90 @@
+#include <iostream>
+#include <list>
+#include <random>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "stb_image.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "shader_s.h"
-#include "camera.h"
+#include "stb_image.h"
+#include "shaders/shader_s.h"
+#include "characters/character.h"
+#include "characters/walle.h"
 
-#include <iostream>
+using namespace std;
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, Walle *walle);
 void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, float* vertices, size_t verticesSize, unsigned int* indices, size_t indicesSize);
-void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, float* vertices, size_t verticesSize);
+void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation);
 void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding);
     
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-bool firstMouse = true;
-float yaw = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
-float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float fov = 45.0f;
-
 double deltaTime;
 double lastElapsed;
 double elapsed;
 
+class Camera {
+    private:
+        glm::vec2 position;
+        float speed;
+        Shader* shader;
+        bool canMove;
+
+    public:
+        Camera() {
+            position = glm::vec2(0.0f, 0.0f);
+            speed = 0.0f;
+            canMove = false;
+        }
+
+        void update(float deltaTime) {
+            if (!canMove) return;
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(position, 0.0f));
+
+            position += glm::vec2(0.0f, -deltaTime * speed);
+
+            shader->setMat4("camera", model);
+        }
+
+        bool isMoving() {
+            return canMove;
+        }
+
+        void setMoving(bool value) {
+            canMove = value;
+        }
+
+        void setShader(Shader *shader) {
+            this->shader = shader;
+
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(position, 0.0f));
+
+            this->shader->setMat4("camera", model);
+
+        }
+
+        void setSpeed(float speed) {
+            this->speed = speed;
+        }
+};
+
+Camera camera;
+list<Character> istantiated;
+
 int main()
 {
     // glfw: initialize and configure
-    // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -52,8 +95,7 @@ int main()
     #endif
 
     // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Example_08", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Walle-Demo", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -63,12 +105,8 @@ int main()
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
-
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // glad: load all OpenGL function pointers
-    // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
@@ -76,199 +114,129 @@ int main()
     }
 
     // configure global opengl state
-    // -----------------------------
     glEnable(GL_DEPTH_TEST);
-    // Pippo e pluto
-
 
     // build and compile our shader program
-    // ------------------------------------
-    Shader ourShader("shader.vs", "shader.fs"); // you can name your shader files however you like
+    Shader ourShader("shaders/shader.vs", "shaders/shader.fs"); // you can name your shader files however you like
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
     float vertices[] = {
            // position        // texture
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left 
     };
-    // world space positions of our cubes
-    glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-    unsigned int VBO, VAO;
-    instantiatePrimitive(&VAO, &VBO, vertices, sizeof(vertices));
 
-    unsigned int textures[2];
-    loadTexture(&(textures[0]), "container.jpg", GL_RGB);
-    loadTexture(&(textures[1]), "awesomeface.png", GL_RGBA);
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
+
+    float delay = 0.0f;
+
+    unsigned int VBO, VAO, EBO;
+    instantiatePrimitive(&VAO, &VBO, &EBO, vertices, sizeof(vertices), indices, sizeof(indices));
 
     ourShader.use();
-    ourShader.setInt("texture1", 0);
-    ourShader.setInt("texture2", 1);
+    ourShader.setInt("mainTexture", 0);
 
     lastElapsed = glfwGetTime();
     elapsed = glfwGetTime();
 
+    camera.setShader(&ourShader);
+    camera.setSpeed(0.1f);
+    camera.setMoving(false);
+
+    Walle walle(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(1.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+    
+    list<Character*> characters;
+
+    characters.push_front(&walle);
+
     // render loop
-    // -----------
     while (!glfwWindowShouldClose(window))
     {
         // deltaTime calculation
-        // -----------------
         elapsed = glfwGetTime();
         deltaTime = elapsed - lastElapsed;
         lastElapsed = elapsed;
 
-        // input
-        // -----
-        processInput(window);
-
         // render
-        // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // bind textures on corresponding texture units
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textures[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, textures[1]);
+        processInput(window, &walle);
 
-        // render boxes
-        glBindVertexArray(VAO);
-        for (unsigned int i = 0; i < 10; i++)
-        {
-            // calculate the model matrix for each object and pass it to shader before drawing
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
+        camera.update((float)deltaTime);
 
-            if (i % 3 == 0)
-                angle = elapsed * 25.0f;
-            
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            ourShader.setMat4("model", model);
+        for (Character *character : characters) {
+            character->processInput(window);
 
-            glDrawArrays(GL_TRIANGLES, 0, 36);
+            character->update((float)deltaTime);
+
+            character->renderSprite();
+        }
+
+
+        if (delay < elapsed) {
+            delay = elapsed + 5.0f;
+            Character ch(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(distf(gen), distf(gen)), glm::vec2(0.4f, 0.4f), 0.0f);
+
+            istantiated.push_back(ch);
+            characters.push_back(&istantiated.back());
         }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
 
     // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
-    // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, Walle* walle)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    double speed = 1.0;
-    glm::vec3 velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        velocity = velocity + cameraFront;
-
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        velocity = velocity - cameraFront;
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        velocity = velocity + glm::normalize(glm::cross(cameraFront, cameraUp));
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        velocity = velocity - glm::normalize(glm::cross(cameraFront, cameraUp));
-
-    velocity = glm::vec3(velocity.x, 0.0f, velocity.z);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        glm::vec2 wallePosition = walle->getPosition();
+        int i = 0;
+        for (Character rubbish : istantiated) {
+            if (glm::distance(rubbish.getPosition(), wallePosition) <= 0.2f) {
+                break;
+            }
+        }
+    }
 
 
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        speed = 3.0;
-
-    if (velocity == glm::vec3(0.0f)) return;
-
-    cameraPos = cameraPos + glm::normalize(velocity) * (float)(deltaTime * speed);
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        camera.setMoving(true);
+    else 
+        camera.setMoving(false);
 }
 
 // glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
 void mouseCallback(GLFWwindow* window, double xposIn, double yposIn)
 {
-    float xpos = static_cast<float>(xposIn);
-    float ypos = static_cast<float>(yposIn);
-
-    if (firstMouse)
-    {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-    lastX = xpos;
-    lastY = ypos;
-
-    float sensitivity = 0.1f; // change this value to your liking
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
-}
-
-// glfw: whenever the mouse scroll wheel scrolls, this callback is called
-// ----------------------------------------------------------------------
-void scrollCallback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    fov -= (float)yoffset;
-    if (fov < 1.0f)
-        fov = 1.0f;
-    if (fov > 45.0f)
-        fov = 45.0f;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    // make sure the viewport matches the new window dimensions; note that width and 
-    // height will be significantly larger than specified on retina displays.
+void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, float* vertices, size_t verticesSize, unsigned int* indices, size_t indicesSize) {
@@ -292,22 +260,20 @@ void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EB
     glEnableVertexAttribArray(1);
 }
 
-void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, float* vertices, size_t verticesSize) {
-    glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
+void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    glBindVertexArray(*VAO);
+    glBindVertexArray(VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, verticesSize, vertices, GL_STATIC_DRAW);
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, -1.0f));
+    model = glm::scale(model, glm::vec3(scale, 1.0f));
 
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // texture coord attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    shader.setMat4("model", model);
 
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding) {
@@ -326,7 +292,8 @@ void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEn
     if (data) {
         glTexImage2D(GL_TEXTURE_2D, 0, colorEncoding, width, height, 0, colorEncoding, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
+    }
+    else {
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
