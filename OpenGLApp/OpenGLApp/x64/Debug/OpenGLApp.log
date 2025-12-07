@@ -1,4 +1,4 @@
 ﻿  Main.cpp
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(134,105): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(135,112): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
-  OpenGLApp.vcxproj -> C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(141,105): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(142,112): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+  OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
