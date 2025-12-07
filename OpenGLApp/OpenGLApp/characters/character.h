@@ -17,6 +17,8 @@ protected:
     unsigned int* m_VAO;
     Shader* m_shader;
 
+    bool m_freed = false;
+
 public:
 
     Character(Shader* spriteShader, unsigned int* VAO, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
@@ -25,6 +27,8 @@ public:
     }
 
     void renderSprite() {
+        if (m_freed) return;
+
         loadSprite(*m_shader, *m_VAO, m_textureID, m_position, m_scale, m_rotation);
     }
 
@@ -33,6 +37,10 @@ public:
     virtual void update(float deltaTime) {}
 
     glm::vec2 getPosition() const { return m_position; }
+
+    void free() {
+        m_freed = true;
+    }
 
 private:
     void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding) {
