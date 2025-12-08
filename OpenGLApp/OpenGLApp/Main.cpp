@@ -13,11 +13,13 @@
 #include "shaders/shader_s.h"
 #include "characters/character.h"
 #include "characters/walle.h"
+#include "characters/mo.h"
 
 using namespace std;
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 
 void processInput(GLFWwindow* window, Walle *walle);
 void instantiatePrimitive(unsigned int* VAO, unsigned int* VBO, unsigned int* EBO, float* vertices, size_t verticesSize, unsigned int* indices, size_t indicesSize);
@@ -153,10 +155,16 @@ int main()
     camera.setMoving(false);
 
     Walle walle(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(1.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+    //la posizione è a caso
+    Mo mo(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(-0.7f, 0.08f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+
+    glfwSetWindowUserPointer(window, &mo);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     
     list<Character*> characters;
 
     characters.push_front(&walle);
+    characters.push_front(&mo);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -297,5 +305,27 @@ void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEn
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
+    {
+        // Mo è nel window pointer
+        Mo* mo = static_cast<Mo*>(glfwGetWindowUserPointer(window));
+        double xpos, ypos;
+        int width, height;
+
+        glfwGetCursorPos(window, &xpos, &ypos);
+        glfwGetWindowSize(window, &width, &height);
+
+        //coordinate x schermata
+        float scX = (float)xpos / (float)width * 2.0f - 1.0f;
+        float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
+
+        //destinazione di Mo
+        mo->setTarget(glm::vec2(scX, scY));
+        //printf("MO target: (%f, %f)\n", scX, scY);
+    }
 }
 
