@@ -17,50 +17,35 @@ class Mo : public Character {
             m_direction = glm::vec2(1.0f, 0.0f);
         }
 
-        void processInput(GLFWwindow* window) {
-            m_velocity = glm::vec2(0.0f, 0.0f);
-
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-                m_velocity += glm::vec2(0.0f, 1.0f);
-
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-                m_velocity -= glm::vec2(0.0f, 1.0f);
-
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-                m_velocity -= glm::vec2(1.0f, 0.0f);
-
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-                m_velocity += glm::vec2(1.0f, 0.0f);
-
-            if (m_velocity == glm::vec2(0.0f, 0.0f)) return;
-
-            m_velocity = glm::normalize(m_velocity);
-            m_direction = m_velocity;
-        }
-        
         void setTarget(glm::vec2 pos) {
-                target = pos;
-                hasTarget = true;
+            target = pos;
+            hasTarget = true;
         }  
 
         void update(float deltaTime) {
 
-            if (hasTarget) {
-                glm::vec2 pos = getPosition();
-                m_direction = target - pos;
+            if (!hasTarget) return;
 
-                float dist = glm::length(m_direction);
+            glm::vec2 pos = getPosition();
+            m_direction = target - pos;
 
-                if (dist < 0.01f) {
-                    hasTarget = false; // arrivato
-                }
-                else {
-                    m_direction = glm::normalize(m_direction);
-                    m_position += m_direction * m_speed * deltaTime;
-                }
+            m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
+            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+
+            float dist = glm::length(m_direction);
+
+            if (dist < 0.01f) {
+                hasTarget = false; // arrivato
             }
-            //m_rotation = glm::degrees(atan2(m_direction.y, m_direction.x));
+            else {
+                m_direction = glm::normalize(m_direction);
+                m_position += m_direction * m_speed * deltaTime;
+
             }
+        }
+
+        void free() {}
+
   
 
     private:

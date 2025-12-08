@@ -6,6 +6,8 @@
 
 #include "character.h"
 
+#include <cmath>
+
 class Walle : public Character {
 
     public:
@@ -39,16 +41,31 @@ class Walle : public Character {
         }
 
         void update(float deltaTime) {
-            m_rotation = glm::degrees(atan2(m_direction.y, m_direction.x));
+            m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
+
+            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
             m_position += m_velocity * m_speed * deltaTime;
+
+            m_position = clamp(glm::vec2(-0.82f, -0.82f), glm::vec2(0.82f, 0.82f), m_position);
         }
+
+        bool collect() {
+            m_collected = (m_collected + 1) % m_max_rubbish;
+            return m_collected == 0;
+        }
+
+        void free() { }
+
 
     private:
         glm::vec2 m_direction;
         glm::vec2 m_velocity;
+
         float m_speed;
 
+        int m_collected = 0;
+        const int m_max_rubbish = 3;
 };
 
 #endif

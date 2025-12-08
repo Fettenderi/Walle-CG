@@ -17,8 +17,6 @@ protected:
     unsigned int* m_VAO;
     Shader* m_shader;
 
-    bool m_freed = false;
-
 public:
 
     Character(Shader* spriteShader, unsigned int* VAO, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
@@ -27,8 +25,6 @@ public:
     }
 
     void renderSprite() {
-        if (m_freed) return;
-
         loadSprite(*m_shader, *m_VAO, m_textureID, m_position, m_scale, m_rotation);
     }
 
@@ -38,8 +34,8 @@ public:
 
     glm::vec2 getPosition() const { return m_position; }
 
-    void free() {
-        m_freed = true;
+    virtual void free() {
+        m_position += glm::vec2(10.0f, 0.0f);
     }
 
 private:
@@ -54,8 +50,8 @@ private:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         // load image, create texture and generate mipmaps
         int width, height, nrChannels;
-        //stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis. 
-        unsigned char* data = stbi_load(textureSource, &width, &height, &nrChannels, 0);
+        stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis. 
+        unsigned char* data = stbi_load(textureSource, &width, &height, &nrChannels, STBI_rgb_alpha);
         if (data) {
             glTexImage2D(GL_TEXTURE_2D, 0, colorEncoding, width, height, 0, colorEncoding, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);

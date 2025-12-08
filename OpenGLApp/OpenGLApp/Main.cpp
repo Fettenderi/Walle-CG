@@ -83,6 +83,9 @@ class Camera {
 
 Camera camera;
 list<Character> istantiated;
+list<Character*> characters;
+Shader * shader;
+unsigned int VAO;
 
 int main()
 {
@@ -115,11 +118,10 @@ int main()
         return -1;
     }
 
-    // configure global opengl state
-    glEnable(GL_DEPTH_TEST);
-
     // build and compile our shader program
     Shader ourShader("shaders/shader.vs", "shaders/shader.fs"); // you can name your shader files however you like
+
+    shader = &ourShader;
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     float vertices[] = {
@@ -141,7 +143,7 @@ int main()
 
     float delay = 0.0f;
 
-    unsigned int VBO, VAO, EBO;
+    unsigned int VBO, EBO;
     instantiatePrimitive(&VAO, &VBO, &EBO, vertices, sizeof(vertices), indices, sizeof(indices));
 
     ourShader.use();
@@ -154,17 +156,18 @@ int main()
     camera.setSpeed(0.1f);
     camera.setMoving(false);
 
-    Walle walle(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(1.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
-    //la posizione è a caso
-    Mo mo(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(-0.7f, 0.08f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+    Walle walle(&ourShader, &VAO, "assets/textures/walle.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+    Mo mo(&ourShader, &VAO, "assets/textures/mo.png", glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
 
     glfwSetWindowUserPointer(window, &mo);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
     
-    list<Character*> characters;
+    characters.push_back(&mo);
+    characters.push_back(&walle);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    characters.push_front(&walle);
-    characters.push_front(&mo);
 
     // render loop
     while (!glfwWindowShouldClose(window))
@@ -175,7 +178,7 @@ int main()
         lastElapsed = elapsed;
 
         // render
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.6f, 0.42f, 0.33f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window, &walle);
@@ -193,10 +196,10 @@ int main()
 
         if (delay < elapsed) {
             delay = elapsed + 5.0f;
-            Character ch(&ourShader, &VAO, "assets/textures/awesomeface.png", glm::vec2(distf(gen), distf(gen)), glm::vec2(0.4f, 0.4f), 0.0f);
+            Character ch(&ourShader, &VAO, "assets/textures/rubbish.png", glm::vec2(distf(gen), distf(gen)), glm::vec2(0.4f, 0.27f), 0.0f);
 
-            istantiated.push_back(ch);
-            characters.push_back(&istantiated.back());
+            istantiated.push_front(ch);
+            characters.push_front(&istantiated.front());
         }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -223,11 +226,21 @@ void processInput(GLFWwindow* window, Walle* walle)
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         glm::vec2 wallePosition = walle->getPosition();
-        int i = 0;
-        for (Character rubbish : istantiated) {
-            if (glm::distance(rubbish.getPosition(), wallePosition) <= 0.2f) {
+        bool collected = false;
+        for (Character *rubbish : characters) {
+            if ((rubbish != walle) && (glm::distance(rubbish->getPosition(), wallePosition) <= 0.2f)) {
+                rubbish->free();
+                collected = true;
                 break;
             }
+        }
+
+        if (collected && walle->collect()) {
+            Character ch(shader, &VAO, "assets/textures/block.png", wallePosition + glm::vec2(0.0f, 0.2f), glm::vec2(0.2f, 0.2f), 0.0f);
+
+            istantiated.push_front(ch);
+            characters.push_front(&istantiated.front());
+
         }
     }
 
