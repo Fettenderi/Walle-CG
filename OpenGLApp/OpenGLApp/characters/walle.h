@@ -1,7 +1,7 @@
 #ifndef WALLE_H
 #define WALLE_H
 
-#include "../shaders/shader_s.h"
+#include "../core/shader.h"
 #include "../utils.h"
 
 #include "character.h"
@@ -12,9 +12,8 @@ class Walle : public Character {
 
     public:
 
-        Walle(Shader * spriteShader, unsigned int* VAO, const char* texturePath,
-            glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, VAO, texturePath, position, scale, rotation), m_speed(speed)
+        Walle(Shader * spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
+            : Character(spriteShader, "assets/textures/walle.png", position, scale, rotation), m_speed(speed)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
         }

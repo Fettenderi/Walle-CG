@@ -4,8 +4,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "../stb_image.h"
 
-#include "shaders/shader_s.h"
+#include "core/shader.h"
+#include "core/shader.h"
 
 class Character {
 protected:
@@ -14,18 +16,17 @@ protected:
     float m_rotation;
     char* m_texture_path;
     unsigned int m_textureID;
-    unsigned int* m_VAO;
     Shader* m_shader;
 
 public:
 
-    Character(Shader* spriteShader, unsigned int* VAO, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
-        : m_position(position), m_scale(scale), m_rotation(rotation), m_VAO(VAO), m_shader(spriteShader) {
+    Character(Shader* spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
+        : m_position(position), m_scale(scale), m_rotation(rotation), m_shader(spriteShader) {
         loadTexture(&m_textureID, texturePath, GL_RGBA);
     }
 
     void renderSprite() {
-        loadSprite(*m_shader, *m_VAO, m_textureID, m_position, m_scale, m_rotation);
+        loadSprite(*m_shader, m_textureID, m_position, m_scale, m_rotation);
     }
 
     virtual void processInput(GLFWwindow* window) {}
@@ -62,11 +63,11 @@ private:
         stbi_image_free(data);
     }
 
-    void loadSprite(Shader shader, unsigned int VAO, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
+    void loadSprite(Shader shader, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glBindVertexArray(VAO);
+        glBindVertexArray(Quad::getVAO());
 
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(position, 0.0f));

@@ -1,3 +1,2 @@
 ﻿  Main.cpp
-C:\Users\eleon\source\repos\Walle-CG\OpenGLApp\OpenGLApp\Main.cpp(195,29): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-  OpenGLApp.vcxproj -> C:\Users\eleon\source\repos\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
+  OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe

@@ -139,20 +139,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="characters\block.h" />
+    <ClInclude Include="characters\camera.h" />
+    <ClInclude Include="characters\character.h" />
+    <ClInclude Include="characters\i_pickable.h" />
+    <ClInclude Include="characters\mo.h" />
+    <ClInclude Include="characters\rubbish.h" />
+    <ClInclude Include="characters\walle.h" />
+    <ClInclude Include="core\quad.h" />
+    <ClInclude Include="core\shader.h" />
+    <ClInclude Include="shader_s.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="utils.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="core\quad.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="shader_s.h" />
-    <ClInclude Include="stb_image.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shader.fs" />
-    <None Include="shader.vs" />
-    <None Include="shader_light.fs" />
-    <None Include="shader_light.vs" />
+    <None Include="core\flat_shader.fs" />
+    <None Include="core\flat_shader.vs" />
+    <None Include="core\lighted_shader.fs" />
+    <None Include="core\lighted_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
