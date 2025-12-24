@@ -110,13 +110,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\glm-master;..\..\glad\include;..\..\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\irrKlang-64bit-1.6.0\include;..\..\freetype-2.13.2\include;..\..\Assimp\include;..\..\glm-master;..\..\glad\include;..\..\glfw-3.3.8.bin.WIN64\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\freetype-2.13.2\lib;..\..\Assimp\lib\x64;..\..\irrKlang-64bit-1.6.0\lib\Winx64-visualStudio;..\..\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;assimp-vc143-mt.lib;freetype.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,8 +148,11 @@
     <ClInclude Include="characters\mo.h" />
     <ClInclude Include="characters\rubbish.h" />
     <ClInclude Include="characters\walle.h" />
+    <ClInclude Include="core\mesh.h" />
+    <ClInclude Include="core\model.h" />
     <ClInclude Include="core\quad.h" />
     <ClInclude Include="core\shader.h" />
+    <ClInclude Include="core\text.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />
@@ -164,6 +168,8 @@
     <None Include="core\flat_shader.vs" />
     <None Include="core\lighted_shader.fs" />
     <None Include="core\lighted_shader.vs" />
+    <None Include="core\text_shader.fs" />
+    <None Include="core\text_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

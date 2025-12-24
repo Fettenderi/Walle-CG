@@ -1,6 +1,8 @@
 #include <iostream>
 #include <list>
 #include <random>
+#include <string>
+#include <format>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -9,6 +11,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <irrKlang.h>
+
+#include "core/text.h"
 #include "core/shader.h"
 #include "core/quad.h"
 
@@ -18,6 +23,7 @@
 #include "characters/rubbish.h"
 #include "characters/block.h"
 #include "characters/camera.h"
+
 
 using namespace std;
 
@@ -37,6 +43,9 @@ Camera camera;
 list<Character> istantiated;
 list<Character*> characters;
 Shader* shader;
+Text* leText;
+
+irrklang::ISoundEngine* soundManager;
 
 int main() {
     // glfw: initialize and configure
@@ -66,17 +75,35 @@ int main() {
         return -1;
     }
 
+    // glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Mesh
     Quad::instantiatePrimitive();
 
-    // build and compile our shader program
+    // Shaders
     Shader flatShader("core/flat_shader.vs", "core/flat_shader.fs");
     Shader lightedShader("core/lighted_shader.vs", "core/lighted_shader.fs");
-
     shader = &flatShader;
 
+    // Text Provider
+    Text text("assets/fonts/Antonio/static/Antonio-Bold.ttf");
+    leText = &text;
+
+    // Random Provider
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
+
+    // IrrKlang
+    soundManager = irrklang::createIrrKlangDevice();
+
+    if (!soundManager)
+        return 0; // error starting up the engine
+    
+    // play some sound stream, looped
+    soundManager -> play2D("assets/audio/getout.ogg", true);
 
     float delay = 0.0f;
 
@@ -97,9 +124,6 @@ int main() {
 
     characters.push_back(&mo);
     characters.push_back(&walle);
-    
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
     // render loop
@@ -117,14 +141,12 @@ int main() {
 
         camera.update((float)deltaTime);
 
+        shader->use();
         for (Character *character : characters) {
             character->processInput(window);
-
             character->update((float)deltaTime);
-
             character->renderSprite();
         }
-
 
         if (delay < elapsed) {
             delay = (float)elapsed + 5.0f;
@@ -134,12 +156,15 @@ int main() {
             characters.push_front(&istantiated.front());
         }
 
+        leText->RenderText(std::format("Collected trash: {}", walle.getCollected()), glm::vec2(0.0f, 0.0f), 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     Quad::freePrimitive();
+    text.free();
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();
@@ -181,7 +206,7 @@ void processInput(GLFWwindow* window, Walle* walle) {
 // glfw: whenever the mouse moves, this callback is called
 void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // Mo è nel window pointer
+        // Mo ï¿½ nel window pointer
         Mo* mo = static_cast<Mo*>(glfwGetWindowUserPointer(window));
         double xpos, ypos;
         int width, height;

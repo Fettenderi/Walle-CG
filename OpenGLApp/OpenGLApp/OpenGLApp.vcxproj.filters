@@ -60,6 +60,15 @@
     <ClInclude Include="characters\i_pickable.h">
       <Filter>File di origine\characters</Filter>
     </ClInclude>
+    <ClInclude Include="core\mesh.h">
+      <Filter>File di origine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\model.h">
+      <Filter>File di origine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\text.h">
+      <Filter>File di origine\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -86,6 +95,12 @@
       <Filter>File di origine\core</Filter>
     </None>
     <None Include="core\lighted_shader.vs">
+      <Filter>File di origine\core</Filter>
+    </None>
+    <None Include="core\text_shader.fs">
+      <Filter>File di origine\core</Filter>
+    </None>
+    <None Include="core\text_shader.vs">
       <Filter>File di origine\core</Filter>
     </None>
   </ItemGroup>

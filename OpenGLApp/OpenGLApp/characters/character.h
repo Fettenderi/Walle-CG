@@ -17,12 +17,14 @@ protected:
     char* m_texture_path;
     unsigned int m_textureID;
     Shader* m_shader;
+    irrklang::ISoundEngine* soundManager;
 
 public:
 
     Character(Shader* spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
         : m_position(position), m_scale(scale), m_rotation(rotation), m_shader(spriteShader) {
         loadTexture(&m_textureID, texturePath, GL_RGBA);
+        soundManager = irrklang::createIrrKlangDevice();
     }
 
     void renderSprite() {

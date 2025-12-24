@@ -50,8 +50,19 @@ class Walle : public Character {
         }
 
         bool collect() {
-            m_collected = (m_collected + 1) % m_max_rubbish;
+            soundManager->play2D("assets/audio/bell.wav", false);
+
+            m_collected++;
+
+            if (m_collected >= m_max_rubbish) {
+                // SPAWN BLOCK
+            }
+
             return m_collected == 0;
+        }
+
+        int getCollected() {
+            return m_collected;
         }
 
         void free() { }
