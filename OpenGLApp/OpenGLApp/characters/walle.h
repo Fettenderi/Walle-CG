@@ -1,7 +1,6 @@
 #ifndef WALLE_H
 #define WALLE_H
 
-#include "../core/shader.h"
 #include "../utils.h"
 
 #include "character.h"
@@ -50,7 +49,7 @@ class Walle : public Character {
         }
 
         bool collect() {
-            soundManager->play2D("assets/audio/bell.wav", false);
+            // soundManager->play2D("assets/audio/bell.wav", false);
 
             m_collected++;
 

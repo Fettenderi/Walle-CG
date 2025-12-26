@@ -6,8 +6,10 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../stb_image.h"
 
-#include "core/shader.h"
-#include "core/shader.h"
+#include "../core/shader.h"
+#include "../core/quad.h"
+
+#include <irrKlang.h>
 
 class Character {
 protected:
@@ -66,6 +68,7 @@ private:
     }
 
     void loadSprite(Shader shader, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
+        shader.use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture);
 

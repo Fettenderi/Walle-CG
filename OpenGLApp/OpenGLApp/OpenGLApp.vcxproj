@@ -164,12 +164,12 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="core\flat_shader.fs" />
-    <None Include="core\flat_shader.vs" />
-    <None Include="core\lighted_shader.fs" />
-    <None Include="core\lighted_shader.vs" />
-    <None Include="core\text_shader.fs" />
-    <None Include="core\text_shader.vs" />
+    <None Include="core\shaders\flat_shader.fs" />
+    <None Include="core\shaders\flat_shader.vs" />
+    <None Include="core\shaders\lighted_shader.fs" />
+    <None Include="core\shaders\lighted_shader.vs" />
+    <None Include="core\shaders\text_shader.fs" />
+    <None Include="core\shaders\text_shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

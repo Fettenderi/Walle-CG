@@ -19,6 +19,9 @@
     <Filter Include="File di origine\characters">
       <UniqueIdentifier>{85821a77-c13a-4330-b0ce-743b2268d168}</UniqueIdentifier>
     </Filter>
+    <Filter Include="File di origine\core\shaders">
+      <UniqueIdentifier>{eed5eab1-59b4-4687-bcae-75ea97b1ac40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader_s.h">
@@ -85,23 +88,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="core\flat_shader.fs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\flat_shader.fs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\flat_shader.vs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\flat_shader.vs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\lighted_shader.fs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\lighted_shader.fs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\lighted_shader.vs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\lighted_shader.vs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\text_shader.fs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\text_shader.fs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\text_shader.vs">
-      <Filter>File di origine\core</Filter>
+    <None Include="core\shaders\text_shader.vs">
+      <Filter>File di origine\core\shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -24,6 +24,7 @@
 #include "characters/block.h"
 #include "characters/camera.h"
 
+#include "utils.h"
 
 using namespace std;
 
@@ -42,7 +43,8 @@ double elapsed;
 Camera camera;
 list<Character> istantiated;
 list<Character*> characters;
-Shader* shader;
+list<Shader*> shaders;
+Shader* commonShader;
 Text* leText;
 
 irrklang::ISoundEngine* soundManager;
@@ -83,9 +85,13 @@ int main() {
     Quad::instantiatePrimitive();
 
     // Shaders
-    Shader flatShader("core/flat_shader.vs", "core/flat_shader.fs");
-    Shader lightedShader("core/lighted_shader.vs", "core/lighted_shader.fs");
-    shader = &flatShader;
+    Shader flatShader("core/shaders/flat_shader.vs", "core/shaders/flat_shader.fs");
+    Shader lightedShader("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
+    
+    shaders.push_back(&flatShader);
+    shaders.push_back(&lightedShader);
+
+    commonShader = &flatShader;
 
     // Text Provider
     Text text("assets/fonts/Antonio/static/Antonio-Bold.ttf");
@@ -103,28 +109,40 @@ int main() {
         return 0; // error starting up the engine
     
     // play some sound stream, looped
-    soundManager -> play2D("assets/audio/getout.ogg", true);
+    // soundManager -> play2D("assets/audio/getout.ogg", true);
 
     float delay = 0.0f;
 
-    shader->use();
-    shader->setInt("mainTexture", 0);
+    for (Shader *shader : shaders) {
+       shader->use();
+       shader->setInt("mainTexture", 0);
+    }
+
+    commonShader->use();
+    commonShader->setInt("mainTexture", 0);
 
     lastElapsed = glfwGetTime();
     elapsed = glfwGetTime();
 
-    camera.setShader(shader);
     camera.setSpeed(0.1f);
     camera.setMoving(false);
 
-    Walle walle(shader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
-    Mo mo(shader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
+    Block lightedBlock(&lightedShader, glm::vec2(0.1f, 0.0f), glm::vec2(10.0f, 10.0f));
+    Walle walle(&lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+    Mo mo(&lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
     
     glfwSetWindowUserPointer(window, &mo);
 
+    characters.push_back(&lightedBlock);
     characters.push_back(&mo);
     characters.push_back(&walle);
 
+    glm::vec3 bgColor = glm::vec3(0.6f, 0.42f, 0.33f);
+    glm::vec2 sunPosition = glm::vec2(1.0f, 0.0f);
+
+    lightedShader.use();
+    lightedShader.setVec3("ambientColor", hex_color("#a1d8e8"));
+    lightedShader.setVec3("lightColor", hex_color("#ffffab"));
 
     // render loop
     while (!glfwWindowShouldClose(window)) {
@@ -134,29 +152,30 @@ int main() {
         lastElapsed = elapsed;
 
         // render
-        glClearColor(0.6f, 0.42f, 0.33f, 1.0f);
+        glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         processInput(window, &walle);
-
+        
         camera.update((float)deltaTime);
+        sunPosition = glm::vec2(cos(elapsed), sin(elapsed));
 
-        shader->use();
+        for (Shader *shader : shaders) {
+            shader->use();
+            shader->setMat4("camera", camera.getViewMatrix());
+        }
+
+        lightedShader.use();
+        lightedShader.setVec3("lightPosition", glm::vec3(sunPosition.x, 0.0f, sunPosition.y));
+        lightedShader.setVec3("viewPosition", camera.getPosition());
+
         for (Character *character : characters) {
-            character->processInput(window);
-            character->update((float)deltaTime);
-            character->renderSprite();
+           character->processInput(window);
+           character->update((float)deltaTime);
+           character->renderSprite();
         }
 
-        if (delay < elapsed) {
-            delay = (float)elapsed + 5.0f;
-            Rubbish rubb(shader, glm::vec2(distf(gen), distf(gen)), glm::vec2(0.4f, 0.27f));
-
-            istantiated.push_front(rubb);
-            characters.push_front(&istantiated.front());
-        }
-
-        leText->RenderText(std::format("Collected trash: {}", walle.getCollected()), glm::vec2(0.0f, 0.0f), 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        leText->RenderText(std::format("Collected trash: {}", walle.getCollected()), glm::vec2(0.0f, 0.0f), 1.0f, "#0a1518");
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
@@ -188,7 +207,7 @@ void processInput(GLFWwindow* window, Walle* walle) {
         }
 
         if (collected && walle->collect()) {
-            Block blk(shader, wallePosition + glm::vec2(0.0f, 0.2f), glm::vec2(0.2f, 0.2f));
+            Block blk(commonShader, wallePosition + glm::vec2(0.0f, 0.2f), glm::vec2(0.2f, 0.2f));
 
             istantiated.push_front(blk);
             characters.push_front(&istantiated.front());

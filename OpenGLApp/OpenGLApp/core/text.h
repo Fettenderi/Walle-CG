@@ -11,6 +11,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
+#include "../utils.h"
 
 #include <string>
 #include <iostream>
@@ -21,7 +22,7 @@
 class Text
 {
     public:
-        Text(std::string font_name) : text_shader("core/text_shader.vs", "core/text_shader.fs") {
+        Text(std::string font_name) : text_shader("core/shaders/text_shader.vs", "core/shaders/text_shader.fs") {
             glGenVertexArrays(1, &VAO);
             glGenBuffers(1, &VBO);
 
@@ -124,10 +125,10 @@ class Text
 
         // render line of text
         // -------------------
-        void RenderText(std::string text, glm::vec2 coordinates, float scale, glm::vec3 color) {
+        void RenderText(std::string text, glm::vec2 coordinates, float scale, std::string color) {
             // activate corresponding render state	
             text_shader.use();
-            text_shader.setVec3("textColor", color);
+            text_shader.setVec3("textColor", hex_color(color));
             glActiveTexture(GL_TEXTURE0);
             glBindVertexArray(VAO);
 

@@ -11,7 +11,6 @@ class Camera {
     private:
         glm::vec2 position;
         float speed;
-        Shader* shader;
         bool canMove;
 
     public:
@@ -24,30 +23,23 @@ class Camera {
         void update(float deltaTime) {
             if (!canMove) return;
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(position, 0.0f));
-
             position += glm::vec2(0.0f, -deltaTime * speed);
-
-            shader->setMat4("camera", model);
         }
 
         bool isMoving() {
             return canMove;
         }
 
-        void setMoving(bool value) {
-            canMove = value;
+        glm::vec3 getPosition() {
+            return glm::vec3(position, 1.0f);
         }
 
-        void setShader(Shader* shader) {
-            this->shader = shader;
+        glm::mat4 getViewMatrix() {
+            return glm::translate(glm::mat4(1.0f), glm::vec3(position, 0.0f));
+        }
 
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, glm::vec3(position, 0.0f));
-
-            this->shader->setMat4("camera", model);
-
+        void setMoving(bool value) {
+            canMove = value;
         }
 
         void setSpeed(float speed) {
