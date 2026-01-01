@@ -16,6 +16,7 @@
 #include "core/text.h"
 #include "core/shader.h"
 #include "core/quad.h"
+#include "core/timer.h"
 
 #include "characters/character.h"
 #include "characters/walle.h"
@@ -144,12 +145,23 @@ int main() {
     lightedShader.setVec3("ambientColor", hex_color("#a1d8e8"));
     lightedShader.setVec3("lightColor", hex_color("#ffffab"));
 
+    glm::vec2 randomVec = glm::vec2(-0.5f, 0.5f);
+    //test timer
+    Timer testTimer(6.0f, [&mo, randomVec]() {
+        mo.setTarget(randomVec);
+        },
+        false);
+
     // render loop
     while (!glfwWindowShouldClose(window)) {
         // deltaTime calculation
         elapsed = glfwGetTime();
         deltaTime = elapsed - lastElapsed;
         lastElapsed = elapsed;
+        //printf("current delta time: %f\n", deltaTime);
+
+        testTimer.updateTimer(deltaTime);
+
 
         // render
         glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f);
