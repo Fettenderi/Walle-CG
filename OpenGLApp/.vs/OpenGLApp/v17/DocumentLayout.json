@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\rubbish.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\character.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\pool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:OpenGLApp\\core\\pool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,19 +34,58 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "character.h",
-              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\character.h",
-              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\character.h",
-              "ViewState": "AgIAAA4AAAAAAAAAAAApwBoAAABdAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "Main.cpp",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
+              "RelativeDocumentMoniker": "OpenGLApp\\Main.cpp",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
+              "RelativeToolTip": "OpenGLApp\\Main.cpp",
+              "ViewState": "AgIAALUAAAAAAAAAAAAQwL8AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-01-03T15:57:18.985Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "rubbish.h",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\characters\\rubbish.h",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h",
+              "RelativeToolTip": "OpenGLApp\\characters\\rubbish.h",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAAABAAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-01-01T22:50:36.114Z",
+              "WhenOpened": "2026-01-03T16:20:13.865Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "mo.h",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\characters\\mo.h",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
+              "RelativeToolTip": "OpenGLApp\\characters\\mo.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-01-03T17:36:38.671Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "timer.h",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\core\\timer.h",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
+              "RelativeToolTip": "OpenGLApp\\core\\timer.h",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAYAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-01-01T21:21:37.894Z",
               "EditorCaption": ""
             },
             {
@@ -47,41 +94,28 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "mo.h",
-              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\mo.h",
-              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\mo.h",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "pool.h",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\pool.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\core\\pool.h",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\pool.h",
+              "RelativeToolTip": "OpenGLApp\\core\\pool.h",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAACAAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-01-01T22:37:19.212Z",
+              "WhenOpened": "2026-01-02T22:19:49.798Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "timer.h",
-              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\core\\timer.h",
-              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
-              "RelativeToolTip": "OpenGLApp\\core\\timer.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAuAAAAAAAAAA==",
+              "DocumentIndex": 4,
+              "Title": "character.h",
+              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\characters\\character.h",
+              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
+              "RelativeToolTip": "OpenGLApp\\characters\\character.h",
+              "ViewState": "AgIAACoAAAAAAAAAAAAgwC4AAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-01-01T21:21:37.894Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Main.cpp",
-              "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
-              "RelativeDocumentMoniker": "OpenGLApp\\Main.cpp",
-              "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
-              "RelativeToolTip": "OpenGLApp\\Main.cpp",
-              "ViewState": "AgIAAI0AAAAAAAAAAAAQwJkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-12-28T22:55:39.531Z",
+              "WhenOpened": "2026-01-01T22:50:36.114Z",
               "EditorCaption": ""
             }
           ]

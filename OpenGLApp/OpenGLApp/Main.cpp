@@ -17,6 +17,7 @@
 #include "core/shader.h"
 #include "core/quad.h"
 #include "core/timer.h"
+#include "core/pool.h"
 
 #include "characters/character.h"
 #include "characters/walle.h"
@@ -128,6 +129,31 @@ int main() {
     camera.setSpeed(0.1f);
     camera.setMoving(false);
 
+
+    //test pool
+    ObjectPool<Rubbish> rubbishPool(3, &lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.5f, 0.4f));
+
+    Rubbish* testRubbish = rubbishPool.getInstance();
+
+    characters.push_back(testRubbish);
+    int timeri = 0;
+
+    Timer popTimer(4.0f, [&testRubbish, &timeri]() {
+        if (timeri == 0) {
+            characters.remove(testRubbish);
+            timeri = 1;
+        }
+        else {
+            characters.push_back(testRubbish);
+            timeri = 0;
+        
+        }
+        }, true);
+    
+
+
+
+
     Block lightedBlock(&lightedShader, glm::vec2(0.1f, 0.0f), glm::vec2(10.0f, 10.0f));
     Walle walle(&lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
     Mo mo(&lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
@@ -152,6 +178,8 @@ int main() {
         },
         false);
 
+    
+
     // render loop
     while (!glfwWindowShouldClose(window)) {
         // deltaTime calculation
@@ -161,7 +189,7 @@ int main() {
         //printf("current delta time: %f\n", deltaTime);
 
         testTimer.updateTimer(deltaTime);
-
+        popTimer.updateTimer(deltaTime);
 
         // render
         glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f);
