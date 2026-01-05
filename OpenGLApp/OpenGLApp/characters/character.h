@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include <memory>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -16,20 +18,24 @@ protected:
     glm::vec2 m_position;
     glm::vec2 m_scale;
     float m_rotation;
+    bool m_is_visible = true;
+
     char* m_texture_path;
     unsigned int m_textureID;
-    Shader* m_shader;
+    std::shared_ptr<Shader> m_shader;
     irrklang::ISoundEngine* soundManager;
+
 
 public:
 
-    Character(Shader* spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
+    Character(std::shared_ptr<Shader> spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale, const float rotation)
         : m_position(position), m_scale(scale), m_rotation(rotation), m_shader(spriteShader) {
         loadTexture(&m_textureID, texturePath, GL_RGBA);
         soundManager = irrklang::createIrrKlangDevice();
     }
 
     void renderSprite() {
+        if (!m_is_visible) return;
         loadSprite(*m_shader, m_textureID, m_position, m_scale, m_rotation);
     }
 
@@ -40,7 +46,15 @@ public:
     glm::vec2 getPosition() const { return m_position; }
 
     virtual void free() {
-        m_position += glm::vec2(10.0f, 0.0f);
+        
+    }
+
+    void hide() {
+        m_is_visible = false;
+    }
+
+    void show() {
+        m_is_visible = true;
     }
 
 private:

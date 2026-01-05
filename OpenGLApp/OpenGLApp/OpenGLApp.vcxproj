@@ -142,9 +142,10 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="characters\block.h" />
-    <ClInclude Include="characters\camera.h" />
+    <ClInclude Include="core\camera.h" />
     <ClInclude Include="characters\character.h" />
-    <ClInclude Include="characters\i_pickable.h" />
+    <ClInclude Include="characters\eve.h" />
+    <ClInclude Include="core\light.h" />
     <ClInclude Include="characters\mo.h" />
     <ClInclude Include="characters\rubbish.h" />
     <ClInclude Include="characters\walle.h" />
@@ -153,6 +154,8 @@
     <ClInclude Include="core\quad.h" />
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\text.h" />
+    <ClInclude Include="globals\scene_manager.h" />
+    <ClInclude Include="scenes\game_scene.h" />
     <ClInclude Include="shader_s.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />

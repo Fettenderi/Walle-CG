@@ -6,23 +6,32 @@
 
 #include "character.h"
 
+#include <queue>
+
 class Mo : public Character {
 
     public:
 
-        Mo(Shader * spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
+        Mo(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
             : Character(spriteShader, "assets/textures/mo.png", position, scale, rotation), m_speed(speed)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
+            block_release_target = glm::vec2(-1.0f, -0.7f);
+            camera = SceneManager::getInstance().camera;
         }
 
         void setTarget(glm::vec2 pos) {
+            if (hasBlock) {
+                buffered_target = pos;
+                hasBufferedTarget = true;
+                return;
+            }
+
             target = pos;
             hasTarget = true;
         }  
 
         void update(float deltaTime) {
-
             if (!hasTarget) return;
 
             glm::vec2 pos = getPosition();
@@ -33,13 +42,29 @@ class Mo : public Character {
 
             float dist = glm::length(m_direction);
 
-            if (dist < 0.01f) {
-                hasTarget = false; // arrivato
+            if (dist < m_reached_distance) {
+                hasTarget = false;
+
+                if (hasBlock) {
+                    releaseBlock();
+                } else {
+                    tryPickingBlock();
+                }
+
+                if (hasBufferedTarget) {
+                    target = buffered_target;
+                    hasTarget = true;
+                    hasBufferedTarget = false;
+                }
             }
             else {
                 m_direction = glm::normalize(m_direction);
                 m_position += m_direction * m_speed * deltaTime;
 
+                if (hasBlock) {
+                    pickedBlock->setPosition(m_position + m_direction * 0.2f);
+                    pickedBlock->setRotation(m_rotation);
+                }
             }
         }
 
@@ -51,9 +76,71 @@ class Mo : public Character {
         glm::vec2 m_direction;
         glm::vec2 m_velocity;
         glm::vec2 target;
+        glm::vec2 buffered_target;
+
         float m_speed;
         bool hasTarget = false;
+        bool hasBufferedTarget = false;
+        bool hasBlock = false;
+        float m_reached_distance = 0.1f;
+        float m_collection_distance = 0.2f;
 
+        glm::vec2 block_release_target;
+        std::shared_ptr<Block> pickedBlock;
+        std::shared_ptr<Camera> camera;
+        std::queue<std::shared_ptr<Block>> placedBlocks;
+
+        void tryPickingBlock() {
+            for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
+                if (std::shared_ptr<Block> block = dynamic_pointer_cast<Block>(object)) {
+                    if (block->isPickable && glm::distance(block->getPosition(), m_position) <= m_collection_distance) {
+                        pickedBlock = block;
+                        pickedBlock->isPickable = false;
+
+                        hasBlock = true;
+
+                        target = getBlockReleasePosition();
+                        hasTarget = true;
+
+                        break;
+                    }
+                }
+            }
+        }
+
+        void releaseBlock() {
+            pickedBlock->setRotation(0.0f);
+            pickedBlock->setPosition(block_release_target);
+
+            placedBlocks.push(pickedBlock);
+
+            pickedBlock = nullptr;
+            hasBlock = false;
+        }
+
+        glm::vec2 getBlockReleasePosition() {
+            block_release_target.x += 0.2f;
+
+            if (block_release_target.x >= 0.9f) {
+                block_release_target.x = -0.8f;
+
+                block_release_target.y += 0.2f;
+
+                if (placedBlocks.size() >= 17) {
+                   for (int i = 0; i < 9; i++) {
+                       std::shared_ptr<Block> freedBlock = placedBlocks.front();
+                       placedBlocks.pop();
+                       freedBlock->setPosition(glm::vec2(2.0f, 2.0f));
+                       freedBlock->hide();
+                       SceneManager::getInstance().blockPool->returnToPool(freedBlock);
+                   }
+                }
+
+            }
+            camera->setTarget(camera->getY() - 0.033f);
+
+            return block_release_target;
+        }
 };
 
 #endif

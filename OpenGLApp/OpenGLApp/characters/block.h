@@ -3,21 +3,26 @@
 
 #include "../core/shader.h"
 #include "../utils.h"
-#include "i_pickable.h"
 
 #include "character.h"
 
-class Block : public Character, public IPickable {
+class Block : public Character {
 
     public:
+        bool isPickable = true;
 
-        Block(Shader * spriteShader, glm::vec2 position, glm::vec2 scale)
+        Block(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale)
             : Character(spriteShader, "assets/textures/block.png", position, scale, 0.0f)
         {
+            m_is_visible = false;
         }
 
-        virtual bool canBePicked(Character* picker) {
-            return dynamic_cast<Mo*>(picker) != nullptr;
+        void setPosition(glm::vec2 position) {
+            m_position = position;
+        }
+
+        void setRotation(float rotation) {
+            m_rotation = rotation;
         }
 
         void free() {}

@@ -16,7 +16,7 @@ public:
     //durata del timer, nome funzione da chiamare alla fine del timer, bool che se =true fa ripartire il timer appena finisce
     Timer (float duration, std::function<void()> callbackFunction, bool repeatable)
         : duration(duration), elapsed(0.0f), repeatable(repeatable), finished(false), callbackFunction(callbackFunction), paused(false) {
-        printf("timer di %f secondi iniziato\n", duration);
+        //printf("timer di %f secondi iniziato\n", duration);
     }
     
 
@@ -24,6 +24,7 @@ public:
     //per modificare durata, il fatto che si ripeta o meno oppure la funzione di callback
     void changeDuration(float newDuration) {
         duration = newDuration;
+        // printf("nuova durata %f\n", newDuration);
     }
 
     void changeRepeatable(bool newRepeatable) {
@@ -42,6 +43,7 @@ public:
     }
     void resume() {
         paused = false;
+        // printf("timer ripartito\n");
     }
 
 
@@ -67,9 +69,10 @@ public:
             
 
         elapsed += deltaTime;
+        // printf("timer va ancora %f\n", elapsed);
         if (elapsed >= duration) {
             finished = true;
-            printf("timer di %f secondi terminato\n", duration);
+            // printf("timer di %f secondi terminato\n", duration);
             if (callbackFunction)
                 callbackFunction();
         }

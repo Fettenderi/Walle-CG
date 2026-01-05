@@ -45,7 +45,7 @@
     <ClInclude Include="characters\block.h">
       <Filter>File di origine\characters</Filter>
     </ClInclude>
-    <ClInclude Include="characters\camera.h">
+    <ClInclude Include="core\camera.h">
       <Filter>File di origine\characters</Filter>
     </ClInclude>
     <ClInclude Include="characters\character.h">
@@ -60,9 +60,6 @@
     <ClInclude Include="characters\walle.h">
       <Filter>File di origine\characters</Filter>
     </ClInclude>
-    <ClInclude Include="characters\i_pickable.h">
-      <Filter>File di origine\characters</Filter>
-    </ClInclude>
     <ClInclude Include="core\mesh.h">
       <Filter>File di origine\core</Filter>
     </ClInclude>
@@ -71,6 +68,18 @@
     </ClInclude>
     <ClInclude Include="core\text.h">
       <Filter>File di origine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="globals\scene_manager.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="characters\eve.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="core\light.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\game_scene.h">
+      <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

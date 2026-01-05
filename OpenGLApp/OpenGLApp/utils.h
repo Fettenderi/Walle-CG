@@ -4,13 +4,26 @@
 #include <cmath>
 #include <glm/vec3.hpp>
 #include <string>
+#include <random>
+
+static std::random_device rd;
+static std::mt19937 gen(rd());
+static std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
+
+static float remap(float x, float in_min, float in_max, float out_min, float out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 static float lerp(float a, float b, float t) {
 	return a + t * (b - a);
 }
 
 static float explerp(float a, float b, float t) {
-	return a + (1.0f - exp(-t)) * (b - a);
+    return a + (1.0f - exp(-t)) * (b - a);
+}
+
+static glm::vec2 explerpVec2(glm::vec2 a, glm::vec2 b, float t) {
+    return glm::vec2(explerp(a.x, b.x, t), explerp(a.y, b.y, t));
 }
 
 static float sign(float value) {
@@ -44,4 +57,13 @@ static glm::vec3 hex_color(const std::string& hex) {
 
     return glm::vec3(r, g, b) / 255.0f;
 }
+
+static float getNextRandom() {
+    return distf(gen);
+}
+
+static float getNextRandomRange(float min, float max) {
+    return remap(getNextRandom(), -1.0f, 1.0f, min, max);
+}
+
 #endif

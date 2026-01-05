@@ -3,24 +3,23 @@
 
 #include "../core/shader.h"
 #include "../utils.h"
-#include "i_pickable.h"
 
 #include "character.h"
 
-class Rubbish : public Character, public IPickable {
+class Rubbish : public Character {
 
     public:
+        bool isPickable = false;
 
-        Rubbish(Shader * spriteShader, glm::vec2 position, glm::vec2 scale)
+        Rubbish(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale)
             : Character(spriteShader, "assets/textures/rubbish.png", position, scale, 0.0f)
         {
+            m_is_visible = false;
         }
 
-        virtual bool canBePicked(Character* picker) {
-            return dynamic_cast<Walle*>(picker) != nullptr;
+        void setPosition(glm::vec2 position) {
+            m_position = position;
         }
-
-        void free() {}
 
 };
 
