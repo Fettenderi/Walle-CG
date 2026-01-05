@@ -2,6 +2,7 @@
 #define MO_H
 
 #include "../core/shader.h"
+
 #include "../utils.h"
 
 #include "character.h"
@@ -12,8 +13,8 @@ class Mo : public Character {
 
     public:
 
-        Mo(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", position, scale, rotation), m_speed(speed)
+        Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
+            : Character(spriteShader, "assets/textures/mo.png", position, scale, rotation), m_speed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.7f);
@@ -88,6 +89,7 @@ class Mo : public Character {
         glm::vec2 block_release_target;
         std::shared_ptr<Block> pickedBlock;
         std::shared_ptr<Camera> camera;
+        std::shared_ptr<ObjectPool<Block>> blockPool;
         std::queue<std::shared_ptr<Block>> placedBlocks;
 
         void tryPickingBlock() {
@@ -132,7 +134,7 @@ class Mo : public Character {
                        placedBlocks.pop();
                        freedBlock->setPosition(glm::vec2(2.0f, 2.0f));
                        freedBlock->hide();
-                       SceneManager::getInstance().blockPool->returnToPool(freedBlock);
+                       blockPool->returnToPool(freedBlock);
                    }
                 }
 

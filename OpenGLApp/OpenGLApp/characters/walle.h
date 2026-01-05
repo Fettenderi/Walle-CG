@@ -8,6 +8,7 @@
 #include "block.h"
 
 #include "../globals/scene_manager.h"
+
 #include "../core/light.h"
 
 #include <cmath>
@@ -15,8 +16,8 @@
 class Walle : public Character {
 
     public:
-        Walle(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/walle.png", position, scale, rotation), m_speed(speed)
+        Walle(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
+            : Character(spriteShader, "assets/textures/walle.png", position, scale, rotation), m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             camera = SceneManager::getInstance().camera;
@@ -51,7 +52,7 @@ class Walle : public Character {
                             rubbish->hide();
                             rubbish->setPosition(glm::vec2(2.0f, 2.0f));
 
-                            SceneManager::getInstance().rubbishPool->returnToPool(rubbish);
+                            rubbishPool->returnToPool(rubbish);
                             SceneManager::getInstance().removeObject(rubbish);
 
                             collect();
@@ -93,7 +94,7 @@ class Walle : public Character {
 
             if (m_collected < m_max_rubbish) return;
 
-            std::shared_ptr<Block> block = SceneManager::getInstance().blockPool->getInstance();
+            std::shared_ptr<Block> block = blockPool->getInstance();
 
             block->show();
             block->isPickable = true;
@@ -127,6 +128,8 @@ class Walle : public Character {
 
         std::shared_ptr<Camera> camera;
         std::shared_ptr<Light> light;
+        std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
+        std::shared_ptr<ObjectPool<Block>> blockPool;
         float light_target_strength;
 };
 

@@ -7,6 +7,7 @@
 #include "../characters/rubbish.h"
 #include "../characters/block.h"
 
+#include "../core/scene.h"
 #include "../core/camera.h"
 #include "../core/light.h"
 #include "../core/pool.h"
@@ -35,8 +36,10 @@ class SceneManager {
 			objects.remove(obj);
 		}
 
-		std::unique_ptr<ObjectPool<Rubbish>> rubbishPool;
-		std::unique_ptr<ObjectPool<Block>> blockPool;
+		std::shared_ptr<Scene> currentScene;
+
+		//std::unique_ptr<ObjectPool<Rubbish>> rubbishPool;
+		//std::unique_ptr<ObjectPool<Block>> blockPool;
 
 		std::shared_ptr<Camera> camera;
 

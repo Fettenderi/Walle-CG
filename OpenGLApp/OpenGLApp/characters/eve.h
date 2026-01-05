@@ -17,10 +17,11 @@ class Eve : public Character {
 
     public:
 
-        Eve(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float speed)
-            : Character(spriteShader, "assets/textures/eve.png", position, scale, 0.0f), m_speed(speed)
+        Eve(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float speed)
+            : Character(spriteShader, "assets/textures/eve.png", position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
+
             cooldownTimer = std::make_unique<Timer>(getNextRandomRange(0.5f, 0.6f), [this] { //4 6
                     tryGettingRubbish();
                 } , false);
@@ -81,13 +82,14 @@ class Eve : public Character {
 
         std::shared_ptr<Rubbish> pickedRubbish;
         std::unique_ptr<Timer> cooldownTimer;
+        std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
 
         void tryGettingRubbish() {
             setTarget(glm::vec2(getNextRandom(), getNextRandom()) * 0.8f - SceneManager::getInstance().camera->getPosition2D());
         }
 
         void setTarget(glm::vec2 pos) {
-            pickedRubbish = SceneManager::getInstance().rubbishPool->getInstance();
+            pickedRubbish = rubbishPool->getInstance();
 
             if (pickedRubbish == nullptr) return;
 
