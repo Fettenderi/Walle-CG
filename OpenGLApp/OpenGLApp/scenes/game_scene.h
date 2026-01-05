@@ -79,16 +79,16 @@ class GameScene : public Scene {
 			blockPool = std::make_shared<ObjectPool<Block>>(23, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
-			std::shared_ptr<Block> lightedBlock = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(10.0f, 10.0f));
-			lightedBlock->isPickable = false;
-			lightedBlock->show();
+			std::shared_ptr<Block> background = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 2.0f), glm::vec2(10.0f, 10.0f));
+			background->isPickable = false;
+			background->show();
 
 			// characters
 			eve = std::make_shared<Eve>(rubbishPool, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
 			walle = std::make_shared<Walle>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
 			mo = make_shared<Mo>(blockPool, lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
 
-			SceneManager::getInstance().addObject(lightedBlock);
+			SceneManager::getInstance().addObject(background);
 			SceneManager::getInstance().addObject(mo);
 			SceneManager::getInstance().addObject(walle);
 			SceneManager::getInstance().addObject(eve);

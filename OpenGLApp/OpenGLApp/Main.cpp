@@ -107,10 +107,13 @@ int main() {
             // Scene update
             float delta = currentScene->update();
 
+            SceneManager::getInstance().ySortObjects();
+
             // characters update
             for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                 object->processInput(window);
                 object->update(delta);
+                //object->collide(delta);
                 object->renderSprite();
             }
 

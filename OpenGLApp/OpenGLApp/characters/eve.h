@@ -18,7 +18,7 @@ class Eve : public Character {
     public:
 
         Eve(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float speed)
-            : Character(spriteShader, "assets/textures/eve.png", position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
+            : Character(spriteShader, "assets/textures/eve.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
 
@@ -65,10 +65,6 @@ class Eve : public Character {
                     pickedRubbish->setPosition(m_position + m_direction * 0.2f);
             }
         }
-
-        void free() {}
-
-  
 
     private:
         glm::vec2 m_prev_position;

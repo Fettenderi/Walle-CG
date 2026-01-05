@@ -145,6 +145,7 @@
     <ClInclude Include="core\camera.h" />
     <ClInclude Include="characters\character.h" />
     <ClInclude Include="characters\eve.h" />
+    <ClInclude Include="core\collision_shape.h" />
     <ClInclude Include="core\light.h" />
     <ClInclude Include="characters\mo.h" />
     <ClInclude Include="characters\rubbish.h" />

@@ -14,7 +14,7 @@ class Mo : public Character {
     public:
 
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", position, scale, rotation), m_speed(speed), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, rotation), m_speed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.7f);
@@ -68,10 +68,6 @@ class Mo : public Character {
                 }
             }
         }
-
-        void free() {}
-
-  
 
     private:
         glm::vec2 m_direction;

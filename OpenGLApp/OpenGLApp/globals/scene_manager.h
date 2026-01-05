@@ -28,6 +28,12 @@ class SceneManager {
 			return instance;
 		}
 
+		void ySortObjects() {
+			objects.sort([](const std::shared_ptr<Character>& a, const std::shared_ptr<Character>& b) {
+					return a->getY() > b->getY();
+				});
+		}
+
 		void addObject(std::shared_ptr<Character> newObj) {
 			objects.push_back(newObj);
 		}

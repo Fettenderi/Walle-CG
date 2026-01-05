@@ -17,7 +17,8 @@ class Walle : public Character {
 
     public:
         Walle(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/walle.png", position, scale, rotation), m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/walle.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, rotation),
+            m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             camera = SceneManager::getInstance().camera;
@@ -112,9 +113,6 @@ class Walle : public Character {
         void setFlashlight(bool state) {
             light_target_strength = state ? 0.75f : 0.0f;
         }
-
-        void free() { }
-
 
     private:
         glm::vec2 m_direction;
