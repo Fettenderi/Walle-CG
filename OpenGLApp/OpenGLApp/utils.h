@@ -66,4 +66,16 @@ static float getNextRandomRange(float min, float max) {
     return remap(getNextRandom(), -1.0f, 1.0f, min, max);
 }
 
+static glm::vec2 getRandomPosition(glm::vec2 camPosition, float pileHeight) {
+    return glm::vec2(getNextRandom() * 0.8f + camPosition.x, getNextRandomRange(camPosition.y - pileHeight, 1.0f));
+}
+
+static glm::vec2 getRandomVector() {
+    return glm::vec2(getNextRandom(), getNextRandom());
+}
+
+static glm::vec2 clampInCamera(glm::vec2 vec, glm::vec2 camPosition, float pileHeight) {
+    return glm::vec2(clamp(-1.0f, 1.0f, vec.x), clamp(pileHeight, camPosition.y + 0.5f, vec.y));
+}
+
 #endif

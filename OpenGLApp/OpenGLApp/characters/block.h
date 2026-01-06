@@ -12,7 +12,7 @@ class Block : public Character {
         bool isPickable = true;
 
         Block(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale)
-            : Character(spriteShader, "assets/textures/block.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, 0.0f)
+            : Character(spriteShader, "assets/textures/block.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f)
         {
             m_is_visible = false;
         }
@@ -24,6 +24,20 @@ class Block : public Character {
         void setRotation(float rotation) {
             m_rotation = rotation;
         }
+
+        void getBlownTo(glm::vec2 pos, bool fromRight) {
+            m_position = glm::vec2(fromRight ? 2.0f : -2.0f, pos.y);
+        }
+
+        virtual void update(float deltaTime) {
+            if (!hasTarget) return;
+
+            m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
+        }
+
+    private:
+        glm::vec2 target;
+        bool hasTarget = false;
 };
 
 #endif

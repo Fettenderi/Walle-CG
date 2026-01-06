@@ -3,6 +3,8 @@
 
 #include "../core/shader.h"
 
+#include "../globals/stats_manager.h"
+
 #include "../utils.h"
 
 #include "character.h"
@@ -14,10 +16,11 @@ class Mo : public Character {
     public:
 
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, rotation), m_speed(speed), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, false), position, scale, rotation), m_speed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.7f);
+            StatsManager::getInstance().maxBlockProgress = block_release_target.y;
             camera = SceneManager::getInstance().camera;
         }
 
@@ -79,8 +82,8 @@ class Mo : public Character {
         bool hasTarget = false;
         bool hasBufferedTarget = false;
         bool hasBlock = false;
-        float m_reached_distance = 0.1f;
-        float m_collection_distance = 0.2f;
+        float m_reached_distance = 0.2f;
+        float m_collection_distance = 0.3f;
 
         glm::vec2 block_release_target;
         std::shared_ptr<Block> pickedBlock;
@@ -112,6 +115,8 @@ class Mo : public Character {
 
             placedBlocks.push(pickedBlock);
 
+            StatsManager::getInstance().collectedBlocks++;
+
             pickedBlock = nullptr;
             hasBlock = false;
         }
@@ -133,6 +138,8 @@ class Mo : public Character {
                        blockPool->returnToPool(freedBlock);
                    }
                 }
+
+                StatsManager::getInstance().maxBlockProgress = block_release_target.y;
 
             }
             camera->setTarget(camera->getY() - 0.033f);

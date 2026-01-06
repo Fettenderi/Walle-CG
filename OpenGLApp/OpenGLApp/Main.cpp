@@ -12,6 +12,7 @@
 #include <irrKlang.h>
 
 #include "globals/scene_manager.h"
+#include "globals/stats_manager.h"
 
 #include "core/text.h"
 #include "core/shader.h"
@@ -108,13 +109,18 @@ int main() {
             float delta = currentScene->update();
 
             SceneManager::getInstance().ySortObjects();
+            std::vector<std::shared_ptr<Character>> objectsInVec = SceneManager::getInstance().getObjects();
 
             // characters update
             for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                 object->processInput(window);
                 object->update(delta);
-                //object->collide(delta);
+                object->collide(objectsInVec);
                 object->renderSprite();
+            }
+
+            for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
+                object->resetCollisionState();
             }
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

@@ -2,17 +2,23 @@
 #define CHARACTER_H
 
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../stb_image.h"
 
+#include "../globals/scene_manager.h"
+
 #include "../core/collision_shape.h"
 #include "../core/shader.h"
 #include "../core/quad.h"
 
 #include <irrKlang.h>
+
+static unsigned long assignedIds;
 
 class Character {
     protected:
@@ -21,12 +27,59 @@ class Character {
         float m_rotation;
         bool m_is_visible = true;
 
-        char* m_texture_path;
+        unsigned long id;
         unsigned int m_textureID;
         std::shared_ptr<Shader> m_shader;
         irrklang::ISoundEngine* soundManager;
 
         CollisionShape m_collider;
+        bool solved = false;
+
+
+        void resolve(std::vector<std::shared_ptr<Character>> objects, int starting) {
+            if (!m_is_visible || solved) return;
+
+            for (int i = starting; i < objects.size(); i++) {
+                if (intersects(objects[i])) {
+
+                    kick(*objects[i].get());
+                    objects[i]->kick(*this);
+
+                    solved = true;
+
+                    if (i < objects.size() - 1) {
+                        objects[i]->resolve(objects, i + 1);
+                    }
+                }
+            }
+
+            solved = true;
+        }
+
+        void kick(Character other) {
+            if (m_collider.isStatic) return;
+
+            glm::vec2 center = m_position + m_collider.offset;
+            glm::vec2 otherCenter = other.m_position + other.m_collider.offset;
+
+            glm::vec2 vector = glm::normalize(otherCenter - center);
+            float magnitude = m_collider.radius + other.m_collider.radius - glm::distance(center, otherCenter);
+
+            m_position -= vector * magnitude;
+        }
+
+        bool intersects(std::shared_ptr<Character> other) {
+            if (!other->m_is_visible) return false;
+            if (other.get() == this) return false;
+            if (m_collider.isStatic && other->m_collider.isStatic) return false;
+
+            glm::vec2 center = m_position + m_collider.offset;
+            glm::vec2 otherCenter = other->m_position + other->m_collider.offset;
+
+            float dist = glm::distance(center, otherCenter);
+
+            return dist <= m_collider.radius + other->m_collider.radius;
+        }
 
     public:
 
@@ -34,6 +87,7 @@ class Character {
             : m_position(position), m_scale(scale), m_rotation(rotation), m_shader(spriteShader), m_collider(collider) {
             loadTexture(&m_textureID, texturePath, GL_RGBA);
             soundManager = irrklang::createIrrKlangDevice();
+            id = assignedIds++;
         }
 
         void renderSprite() {
@@ -44,6 +98,14 @@ class Character {
         virtual void processInput(GLFWwindow* window) {}
 
         virtual void update(float deltaTime) {}
+
+        void collide(std::vector<std::shared_ptr<Character>> objects) {
+            resolve(objects, 0);
+        }
+
+        void resetCollisionState() {
+            solved = false;
+        }
 
         glm::vec2 getPosition() const {
             return m_position;
@@ -60,6 +122,11 @@ class Character {
         void show() {
             m_is_visible = true;
         }
+
+        bool operator==(const Character& other) {
+            return id == other.id;
+        }
+
 
     private:
         void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding) {

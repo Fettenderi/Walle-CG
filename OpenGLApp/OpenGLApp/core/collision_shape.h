@@ -7,8 +7,9 @@ class CollisionShape {
     public:
         glm::vec2 offset;
         float radius;
+        bool isStatic;
 
-        CollisionShape(glm::vec2 offset, float radius) : offset(offset), radius(radius) {}
+        CollisionShape(glm::vec2 offset, float radius, bool isStatic) : offset(offset), radius(radius), isStatic(isStatic) {}
 };
 #endif
 

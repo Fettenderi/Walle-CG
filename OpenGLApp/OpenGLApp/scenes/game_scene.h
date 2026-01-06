@@ -29,6 +29,7 @@
 #include "../characters/character.h"
 #include "../characters/walle.h"
 #include "../characters/eve.h"
+#include "../characters/wind.h"
 #include "../characters/rubbish.h"
 #include "../characters/block.h"
 
@@ -41,6 +42,7 @@ class GameScene : public Scene {
 		std::shared_ptr<Shader> lightedShader;
 		std::shared_ptr<Light> sun;
 
+		std::shared_ptr<Wind> wind;
 		std::shared_ptr<Mo> mo;
 		std::shared_ptr<Eve> eve;
 		std::shared_ptr<Walle> walle;
@@ -75,8 +77,8 @@ class GameScene : public Scene {
 			lightedShader = std::make_shared<Shader>("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
 
 			// pools initialization
-			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(5, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
-			blockPool = std::make_shared<ObjectPool<Block>>(23, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
+			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
+			blockPool = std::make_shared<ObjectPool<Block>>(50, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
 			std::shared_ptr<Block> background = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 2.0f), glm::vec2(10.0f, 10.0f));
@@ -87,8 +89,10 @@ class GameScene : public Scene {
 			eve = std::make_shared<Eve>(rubbishPool, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
 			walle = std::make_shared<Walle>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
 			mo = make_shared<Mo>(blockPool, lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
+			wind = make_shared<Wind>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, -0.6f));
 
 			SceneManager::getInstance().addObject(background);
+			SceneManager::getInstance().addObject(wind);
 			SceneManager::getInstance().addObject(mo);
 			SceneManager::getInstance().addObject(walle);
 			SceneManager::getInstance().addObject(eve);
@@ -123,6 +127,10 @@ class GameScene : public Scene {
 			sun->position = glm::vec3(sin(elapsed * 0.1f), 0.0f, cos(elapsed * 0.1f));
 
 			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
+
+			if (StatsManager::getInstance().collectedBlocks > 20) {
+				wind->strength = fmax((float)StatsManager::getInstance().collectedBlocks - 20.0f, 0.0f);
+			}
 
 			// shader update
 			//for (std::shared_ptr<Shader> shader : shaders) {

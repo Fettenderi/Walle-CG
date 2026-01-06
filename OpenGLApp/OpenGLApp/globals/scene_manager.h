@@ -32,6 +32,7 @@ class SceneManager {
 			objects.sort([](const std::shared_ptr<Character>& a, const std::shared_ptr<Character>& b) {
 					return a->getY() > b->getY();
 				});
+			inVecCalculated = false;
 		}
 
 		void addObject(std::shared_ptr<Character> newObj) {
@@ -42,10 +43,16 @@ class SceneManager {
 			objects.remove(obj);
 		}
 
-		std::shared_ptr<Scene> currentScene;
+		std::vector<std::shared_ptr<Character>> getObjects() {
+			if (!inVecCalculated) {
+				objectsInVec = std::vector<std::shared_ptr<Character>>(objects.begin(), objects.end());
+				inVecCalculated = true;
+			}
 
-		//std::unique_ptr<ObjectPool<Rubbish>> rubbishPool;
-		//std::unique_ptr<ObjectPool<Block>> blockPool;
+			return objectsInVec;
+		}
+
+		std::shared_ptr<Scene> currentScene;
 
 		std::shared_ptr<Camera> camera;
 
@@ -59,6 +66,8 @@ class SceneManager {
 		SceneManager& operator=(const SceneManager&) = delete;
 
 		std::list<std::shared_ptr<Character>> objects;
+		std::vector<std::shared_ptr<Character>> objectsInVec;
+		bool inVecCalculated = false;
 };
 
 #endif

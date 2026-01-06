@@ -35,6 +35,10 @@ public:
 		return instance;
 	}
 
+	int getSize() {
+		return (int)pool.size();
+	}
+
 	void returnToPool(std::shared_ptr<T> instance) {
 		pool.emplace_back(instance);
 	}

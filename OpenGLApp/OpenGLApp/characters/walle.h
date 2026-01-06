@@ -17,7 +17,7 @@ class Walle : public Character {
 
     public:
         Walle(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/walle.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f), position, scale, rotation),
+            : Character(spriteShader, "assets/textures/walle.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
             m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
@@ -122,7 +122,7 @@ class Walle : public Character {
         float m_collection_distance = 0.2f;
 
         int m_collected = 0;
-        const int m_max_rubbish = 1;
+        const int m_max_rubbish = 3;
 
         std::shared_ptr<Camera> camera;
         std::shared_ptr<Light> light;
