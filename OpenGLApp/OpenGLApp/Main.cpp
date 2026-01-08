@@ -27,8 +27,10 @@
 #include "characters/eve.h"
 #include "characters/rubbish.h"
 #include "characters/block.h"
+#include "characters/image.h"
 
 #include "scenes/game_scene.h"
+#include "scenes/main_menu_scene.h"
 
 #include "utils.h"
 
@@ -94,10 +96,10 @@ int main() {
         //}
 
         // Scene initialization
-        currentScene = std::make_shared<GameScene>();
+        currentScene = std::make_shared<MainMenuScene>();
         SceneManager::getInstance().currentScene = currentScene;
 
-        currentScene->init();
+        SceneManager::getInstance().currentScene->init();
 
         // render loop
         while (!glfwWindowShouldClose(window)) {
@@ -105,7 +107,7 @@ int main() {
             processInput(window);
 
             // Scene update
-            float delta = currentScene->update();
+            float delta = SceneManager::getInstance().currentScene->update();
 
             SceneManager::getInstance().ySortObjects();
 
@@ -122,7 +124,7 @@ int main() {
             glfwPollEvents();
         }
 
-        currentScene->end();
+        SceneManager::getInstance().currentScene->end();
 
         Quad::freePrimitive();
 
@@ -139,7 +141,7 @@ int main() {
 
     // glfw: whenever the mouse moves, this callback is called
     void mouseCallback(GLFWwindow * window, int button, int action, int mods) {
-        currentScene->mouseCallback(window, button, action, mods);
+        SceneManager::getInstance().currentScene->mouseCallback(window, button, action, mods);
     }
 
     // glfw: whenever the window size changed (by OS or user resize) this callback function executes

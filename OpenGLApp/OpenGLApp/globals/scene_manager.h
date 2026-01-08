@@ -42,6 +42,21 @@ class SceneManager {
 			objects.remove(obj);
 		}
 
+		void removeAllObjects() {
+			objects.clear();
+		}
+
+		void changeScene(std::shared_ptr<Scene> newScene) {
+			if (currentScene) {
+				currentScene->end();
+			}
+			
+			currentScene = newScene;
+			currentScene->init();
+			
+			
+		}
+
 		std::shared_ptr<Scene> currentScene;
 
 		//std::unique_ptr<ObjectPool<Rubbish>> rubbishPool;

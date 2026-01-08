@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <cmath>
+#include <vector>
 
 #include "../utils.h"
 
@@ -19,6 +20,11 @@ class Camera {
 
         bool canMove;
         bool hasTarget = false;
+
+        //for 3d
+        glm::vec3 position3d = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     public:
         Camera() {
@@ -73,6 +79,13 @@ class Camera {
         void setTarget(float y) {
             targetY = y;
             hasTarget = true;
+        }
+
+
+        // returns the view matrix calculated using Euler Angles and the LookAt Matrix
+        glm::mat4 getViewMatrix3d()
+        {
+            return glm::lookAt(position3d, position3d + front, up);
         }
 }; 
 

@@ -84,6 +84,12 @@
     <ClInclude Include="core\collision_shape.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\main_menu_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="characters\image.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
