@@ -6,12 +6,19 @@
 #include <string>
 #include <random>
 
+#define BLOCK_COLUMNS 9
+#define JUNK_TO_BLOCK 10
+
 static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
 
 static float remap(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+static float mod(float num, float m) {
+    return (int)round(num) % (int)round(m);
 }
 
 static float lerp(float a, float b, float t) {
@@ -41,6 +48,11 @@ static glm::vec2 clamp(glm::vec2 min, glm::vec2 max, glm::vec2 value) {
 	return glm::vec2(clamp(min.x, max.x, value.x), clamp(min.y, max.y, value.y));
 }
 
+static float smoothstep(float start, float end, float value) {
+    value = clamp(0.0f, 1.0f, (value - start) / (end - start));
+    return value * value * (3.0f - 2.0f * value);
+}
+
 static glm::vec3 hex_color(const std::string& hex) {
     std::string s = hex;
     if (s[0] == '#') {
@@ -66,8 +78,16 @@ static float getNextRandomRange(float min, float max) {
     return remap(getNextRandom(), -1.0f, 1.0f, min, max);
 }
 
+static int getNextRandomIntRange(int min, int max) {
+    static std::uniform_int_distribution<int> disti(min, max);
+    return clamp(min, max, disti(gen));
+}
+
 static glm::vec2 getRandomPosition(glm::vec2 camPosition, float pileHeight) {
-    return glm::vec2(getNextRandom() * 0.8f + camPosition.x, getNextRandomRange(camPosition.y - pileHeight, 1.0f));
+    return glm::vec2(
+        getNextRandom() * 0.8f - camPosition.x,
+        remap(getNextRandom() * 0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y)
+    );
 }
 
 static glm::vec2 getRandomVector() {

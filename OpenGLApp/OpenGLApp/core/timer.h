@@ -46,6 +46,10 @@ public:
         // printf("timer ripartito\n");
     }
 
+    float getElapsed() {
+        return elapsed;
+    }
+
 
     //faccio ricominciare il timer
     void reset() {

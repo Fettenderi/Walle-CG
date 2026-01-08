@@ -65,7 +65,7 @@ class Character {
             glm::vec2 vector = glm::normalize(otherCenter - center);
             float magnitude = m_collider.radius + other.m_collider.radius - glm::distance(center, otherCenter);
 
-            m_position -= vector * magnitude;
+            m_position -= vector * magnitude * 0.5f;
         }
 
         bool intersects(std::shared_ptr<Character> other) {

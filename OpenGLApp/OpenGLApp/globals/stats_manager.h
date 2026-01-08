@@ -14,7 +14,7 @@ class StatsManager {
 		int collectedBlocks = 0;
 		int highScore = 0;
 
-		float maxBlockProgress;
+		float maxBlockProgress = -1.0f;
 	private:
 		StatsManager() = default;
 

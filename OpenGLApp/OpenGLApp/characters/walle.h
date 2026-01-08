@@ -10,6 +10,7 @@
 #include "../globals/scene_manager.h"
 
 #include "../core/light.h"
+#include "../core/timer.h"
 
 #include <cmath>
 
@@ -29,9 +30,19 @@ class Walle : public Character {
             spriteShader->use();
             spriteShader->setVec3("lightColor", light->getColor());
             spriteShader->setFloat("lightStrength", light->strength);
+            
+            processingTimer = std::make_unique<Timer>(2.0f, [this] {
+                expellBlock();
+                }, false);
+
+            maxScale = scale;
+
+            processingTimer->pause();
         }
 
         void processInput(GLFWwindow* window) {
+            if (processing) return;
+
             m_velocity = glm::vec2(0.0f, 0.0f);
 
             if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -52,11 +63,11 @@ class Walle : public Character {
                         if (rubbish->isPickable && glm::distance(rubbish->getPosition(), m_position) <= m_collection_distance) {
                             rubbish->hide();
                             rubbish->setPosition(glm::vec2(2.0f, 2.0f));
+                            
+                            collect(rubbish->trashAmount);
 
                             rubbishPool->returnToPool(rubbish);
                             SceneManager::getInstance().removeObject(rubbish);
-
-                            collect();
                             break;
                         }
                     }
@@ -70,11 +81,20 @@ class Walle : public Character {
         }
 
         void update(float deltaTime) {
+            processingTimer->updateTimer(deltaTime);
+
+            if (processing) {
+                m_scale.x = abs(sin(processingTimer->getElapsed() * 5.0f)) * 0.15 + maxScale.x * 0.8f;
+                m_scale.y = (abs(cos(processingTimer->getElapsed() * 6.0f)) * 0.15 + maxScale.y * 0.8f) * sign(m_direction.x);
+
+                return;
+            }
+
             m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
 
             m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
-            m_position += m_velocity * m_speed * deltaTime;
+            m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
 
             m_position = clamp(glm::vec2(-0.82f, -0.82f) - camera->getPosition2D(), glm::vec2(0.82f, 0.82f) - camera->getPosition2D(), m_position);
 
@@ -88,20 +108,16 @@ class Walle : public Character {
             m_shader->setFloat("lightStrength", light->strength);
         }
 
-        void collect() {
+        void collect(int trash) {
             // soundManager->play2D("assets/audio/bell.wav", false);
 
-            m_collected++;
+            m_collected += trash;
 
             if (m_collected < m_max_rubbish) return;
 
-            std::shared_ptr<Block> block = blockPool->getInstance();
-
-            block->show();
-            block->isPickable = true;
-            block->setPosition(m_position + m_direction * 0.2f);
-
-            SceneManager::getInstance().addObject(block);
+            processing = true;
+            processingTimer->resume();
+            processingTimer->reset();
 
             m_collected = 0;
         }
@@ -114,21 +130,39 @@ class Walle : public Character {
             light_target_strength = state ? 0.75f : 0.0f;
         }
 
+        void expellBlock() {
+            processing = false;
+            m_scale = maxScale;
+
+            std::shared_ptr<Block> block = blockPool->getInstance();
+
+            block->show();
+            block->isPickable = true;
+            block->setPosition(m_position + m_direction * 0.2f);
+
+            SceneManager::getInstance().addObject(block);
+        }
+
     private:
         glm::vec2 m_direction;
         glm::vec2 m_velocity;
+
+        glm::vec2 maxScale;
 
         float m_speed;
         float m_collection_distance = 0.2f;
 
         int m_collected = 0;
-        const int m_max_rubbish = 3;
+        const int m_max_rubbish = JUNK_TO_BLOCK;
 
         std::shared_ptr<Camera> camera;
         std::shared_ptr<Light> light;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
         float light_target_strength;
+
+        std::unique_ptr<Timer> processingTimer;
+        bool processing = false;
 };
 
 #endif

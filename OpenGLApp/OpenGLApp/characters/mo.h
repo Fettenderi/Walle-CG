@@ -16,12 +16,13 @@ class Mo : public Character {
     public:
 
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, false), position, scale, rotation), m_speed(speed), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, false), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.7f);
             StatsManager::getInstance().maxBlockProgress = block_release_target.y;
             camera = SceneManager::getInstance().camera;
+            m_speed = maxSpeed;
         }
 
         void setTarget(glm::vec2 pos) {
@@ -36,40 +37,42 @@ class Mo : public Character {
         }  
 
         void update(float deltaTime) {
-            if (!hasTarget) return;
+           if (!hasTarget) return;
 
-            glm::vec2 pos = getPosition();
-            m_direction = target - pos;
+           glm::vec2 pos = getPosition();
+           m_direction = target - pos;
 
-            m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
-            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+           m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
+           m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
-            float dist = glm::length(m_direction);
+           float dist = glm::length(m_direction);
 
-            if (dist < m_reached_distance) {
-                hasTarget = false;
+           if (dist < m_reached_distance) {
+               hasTarget = false;
 
-                if (hasBlock) {
-                    releaseBlock();
-                } else {
-                    tryPickingBlock();
-                }
+               if (hasBlock) {
+                   releaseBlock();
+               }
+               else {
+                   tryPickingBlock();
+               }
 
-                if (hasBufferedTarget) {
-                    target = buffered_target;
-                    hasTarget = true;
-                    hasBufferedTarget = false;
-                }
-            }
-            else {
-                m_direction = glm::normalize(m_direction);
-                m_position += m_direction * m_speed * deltaTime;
+               if (hasBufferedTarget) {
+                   target = buffered_target;
+                   hasTarget = true;
+                   hasBufferedTarget = false;
+               }
+           }
+           else {
+               m_direction = glm::normalize(m_direction);
 
-                if (hasBlock) {
-                    pickedBlock->setPosition(m_position + m_direction * 0.2f);
-                    pickedBlock->setRotation(m_rotation);
-                }
-            }
+               m_position += m_direction * m_speed * deltaTime;
+
+               if (hasBlock) {
+                   pickedBlock->setPosition(m_position + m_direction * 0.2f);
+                   pickedBlock->setRotation(m_rotation);
+               }
+           }
         }
 
     private:
@@ -79,6 +82,7 @@ class Mo : public Character {
         glm::vec2 buffered_target;
 
         float m_speed;
+        float maxSpeed;
         bool hasTarget = false;
         bool hasBufferedTarget = false;
         bool hasBlock = false;
@@ -102,6 +106,7 @@ class Mo : public Character {
 
                         target = getBlockReleasePosition();
                         hasTarget = true;
+                        m_speed = maxSpeed * 0.6f;
 
                         break;
                     }
@@ -119,6 +124,7 @@ class Mo : public Character {
 
             pickedBlock = nullptr;
             hasBlock = false;
+            m_speed = maxSpeed;
         }
 
         glm::vec2 getBlockReleasePosition() {
@@ -129,8 +135,10 @@ class Mo : public Character {
 
                 block_release_target.y += 0.2f;
 
-                if (placedBlocks.size() >= 17) {
-                   for (int i = 0; i < 9; i++) {
+                StatsManager::getInstance().maxBlockProgress = fmax(StatsManager::getInstance().maxBlockProgress, block_release_target.y);
+
+                if (placedBlocks.size() >= 5 * BLOCK_COLUMNS - 1) {
+                   for (int i = 0; i < BLOCK_COLUMNS; i++) {
                        std::shared_ptr<Block> freedBlock = placedBlocks.front();
                        placedBlocks.pop();
                        freedBlock->setPosition(glm::vec2(2.0f, 2.0f));
@@ -138,11 +146,9 @@ class Mo : public Character {
                        blockPool->returnToPool(freedBlock);
                    }
                 }
-
-                StatsManager::getInstance().maxBlockProgress = block_release_target.y;
-
             }
-            camera->setTarget(camera->getY() - 0.033f);
+
+            camera->moveTarget(- 0.18f / 9.0f);
 
             return block_release_target;
         }

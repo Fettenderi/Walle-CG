@@ -42,6 +42,7 @@ class GameScene : public Scene {
 		std::shared_ptr<Shader> lightedShader;
 		std::shared_ptr<Light> sun;
 
+		std::shared_ptr<Block> background;
 		std::shared_ptr<Wind> wind;
 		std::shared_ptr<Mo> mo;
 		std::shared_ptr<Eve> eve;
@@ -54,9 +55,11 @@ class GameScene : public Scene {
 		std::shared_ptr<ObjectPool<Block>> blockPool;
 
 		glm::vec3 bgColor = glm::vec3(0.6f, 0.42f, 0.33f);
+
+		bool lmbPressed = false;
 	public:
 
-		GameScene() = default;
+		GameScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
 		virtual void init() {
 			// Text Provider
@@ -77,11 +80,11 @@ class GameScene : public Scene {
 			lightedShader = std::make_shared<Shader>("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
 
 			// pools initialization
-			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
-			blockPool = std::make_shared<ObjectPool<Block>>(50, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
+			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(10, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
+			blockPool = std::make_shared<ObjectPool<Block>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
-			std::shared_ptr<Block> background = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 2.0f), glm::vec2(10.0f, 10.0f));
+			background = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 2.0f), glm::vec2(10.0f, 10.0f));
 			background->isPickable = false;
 			background->show();
 
@@ -115,40 +118,29 @@ class GameScene : public Scene {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			// deltaTime calculation
+			//elapsed = glfwGetTime() * 1.75f;
 			elapsed = glfwGetTime();
 			deltaTime = elapsed - lastElapsed;
 			lastElapsed = elapsed;
 
-			// gui update
-			guiText->RenderText(std::format("Collected trash: {}", walle->getCollected()), glm::vec2(0.0f, 0.0f), 1.0f, "#0a1518");
-
 			// global update
 			camera->update((float)deltaTime);
+			background->setPosition(glm::vec2(0.0f, 2.0f) - camera->getPosition2D());
 			sun->position = glm::vec3(sin(elapsed * 0.1f), 0.0f, cos(elapsed * 0.1f));
 
 			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
-
-			if (StatsManager::getInstance().collectedBlocks > 20) {
-				wind->strength = fmax((float)StatsManager::getInstance().collectedBlocks - 20.0f, 0.0f);
+			wind->updateStrength((float)StatsManager::getInstance().collectedBlocks);
+			if (StatsManager::getInstance().collectedBlocks / BLOCK_COLUMNS > 3) {
+				camera->setTarget(explerp(camera->getTargetY(), 0.0f, deltaTime * 0.05f));
 			}
-
-			// shader update
-			//for (std::shared_ptr<Shader> shader : shaders) {
-			//    shader->use();
-			//    shader->setMat4("camera", camera->getViewMatrix());
-			//}
 
 			lightedShader->use();
 			lightedShader->setMat4("camera", camera->getViewMatrix());
 			lightedShader->setVec3("sunPosition", sun->position);
 			lightedShader->setVec3("viewPosition", camera->getPosition());
 
-			return (float)deltaTime;
-		}
-
-
-		virtual void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
-			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			// mo movement
+			if (lmbPressed) {
 				double xpos, ypos;
 				int width, height;
 
@@ -161,7 +153,32 @@ class GameScene : public Scene {
 
 				//destinazione di Mo
 				mo->setTarget(glm::vec2(scX, scY) - camera->getPosition2D());
-				//printf("MO target: (%f, %f)\n", scX, scY);
+			}
+
+			return (float)deltaTime;
+		}
+
+		virtual void guiUpdate() {
+			int width, height;
+			glfwGetWindowSize(window, &width, &height);
+			
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor(elapsed / 60.0), mod(elapsed, 60.0)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Strength: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 90.0f), 0.7f, "#0a1518");
+
+			glm::vec2 camPosition = SceneManager::getInstance().camera->getPosition2D();
+			float pileHeight = StatsManager::getInstance().maxBlockProgress;
+			
+			glm::vec2 min = glm::vec2(-0.8f + camPosition.x, remap(-0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
+			glm::vec2 max = glm::vec2(0.8f + camPosition.x, remap(0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
+			guiText->RenderText(std::format("Min: ({:.2f}, {:.2f}), Max: ({:.2f}, {:.2f})", min.x, min.y, max.x, max.y), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
+
+		}
+
+
+		virtual void mouseCallback(GLFWwindow* passedWindow, int button, int action, int mods) {
+			if (button == GLFW_MOUSE_BUTTON_LEFT) {
+				lmbPressed = action == GLFW_PRESS;
 			}
 		}
 

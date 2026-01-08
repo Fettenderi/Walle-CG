@@ -23,13 +23,25 @@ class Rubbish : public Character {
 
         void getBlownTo(glm::vec2 pos, bool fromRight) {
             m_position = glm::vec2(fromRight ? 2.0f : -2.0f, pos.y);
+            hasTarget = true;
+            target = pos;
         }
 
         virtual void update(float deltaTime) {
             if (!hasTarget) return;
 
-            m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
+            float dist = glm::length(target - m_position);
+
+            if (dist < 0.1) {
+                hasTarget = false;
+                isPickable = true;
+            }
+            else {
+                m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
+            }
         }
+
+        int trashAmount;
 
 
     private:

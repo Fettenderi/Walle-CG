@@ -23,7 +23,7 @@ class Eve : public Character {
         {
             m_direction = glm::vec2(1.0f, 0.0f);
 
-            cooldownTimer = std::make_unique<Timer>(getNextRandomRange(3.0f, 9.0f), [this] {
+            cooldownTimer = std::make_unique<Timer>(getNextRandomRange(1.0f, 3.0f), [this] {
                     tryGettingRubbish();
                 } , false);
         }
@@ -46,10 +46,10 @@ class Eve : public Character {
                     hasTarget = false;
 
                     if (getNextRandom() > 0.7f) {
-                        cooldownTimer->changeDuration(getNextRandomRange(0.7f, 2.0f));
+                        cooldownTimer->changeDuration(getNextRandomRange(2.0f, 4.0f));
                     }
                     else {
-                        cooldownTimer->changeDuration(getNextRandomRange(3.0f, 9.0f));
+                        cooldownTimer->changeDuration(getNextRandomRange(0.7f, 2.0f));
                     }
 
                     cooldownTimer->resume();
@@ -104,6 +104,7 @@ class Eve : public Character {
 
             pickedRubbish->show();
             pickedRubbish->isPickable = false;
+            pickedRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
 
             SceneManager::getInstance().addObject(pickedRubbish);
 

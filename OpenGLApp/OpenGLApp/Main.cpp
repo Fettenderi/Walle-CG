@@ -30,6 +30,7 @@
 #include "characters/block.h"
 
 #include "scenes/game_scene.h"
+#include "scenes/test_scene.h"
 
 #include "utils.h"
 
@@ -95,7 +96,7 @@ int main() {
         //}
 
         // Scene initialization
-        currentScene = std::make_shared<GameScene>();
+        currentScene = std::make_shared<GameScene>(window);
         SceneManager::getInstance().currentScene = currentScene;
 
         currentScene->init();
@@ -122,6 +123,8 @@ int main() {
             for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                 object->resetCollisionState();
             }
+
+            currentScene->guiUpdate();
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             glfwSwapBuffers(window);

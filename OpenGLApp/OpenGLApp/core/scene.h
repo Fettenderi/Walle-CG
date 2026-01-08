@@ -3,7 +3,7 @@
 
 class Scene {
     public:
-        Scene() = default;
+        Scene(GLFWwindow* windowRef) : window(windowRef) {};
 
         virtual void init() {
             lastElapsed = glfwGetTime();
@@ -19,6 +19,10 @@ class Scene {
             return (float)deltaTime;
         }
 
+        virtual void guiUpdate() {
+        
+        }
+
         virtual void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
 
         }
@@ -31,6 +35,8 @@ class Scene {
         double deltaTime;
         double lastElapsed;
         double elapsed;
+  
+        GLFWwindow* window;
 };
 
 #endif

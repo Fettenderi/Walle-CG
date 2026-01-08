@@ -24,6 +24,7 @@ class Camera {
         Camera() {
             position = glm::vec2(0.0f, 0.0f);
             speed = 0.0f;
+            targetY = 0.0f;
             canMove = false;
         }
 
@@ -58,6 +59,10 @@ class Camera {
             return position.y;
         }
 
+        float getTargetY() {
+            return targetY;
+        }
+
         glm::mat4 getViewMatrix() {
             return glm::translate(glm::mat4(1.0f), glm::vec3(position, 0.0f));
         }
@@ -72,6 +77,11 @@ class Camera {
 
         void setTarget(float y) {
             targetY = y;
+            hasTarget = true;
+        }
+
+        void moveTarget(float offset) {
+            targetY += offset;
             hasTarget = true;
         }
 }; 
