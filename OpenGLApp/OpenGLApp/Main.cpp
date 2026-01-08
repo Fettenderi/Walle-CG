@@ -28,9 +28,11 @@
 #include "characters/eve.h"
 #include "characters/rubbish.h"
 #include "characters/block.h"
+#include "characters/image.h"
 
 #include "scenes/game_scene.h"
 #include "scenes/test_scene.h"
+#include "scenes/main_menu_scene.h"
 
 #include "utils.h"
 
@@ -90,16 +92,11 @@ int main() {
         // play some sound stream, looped
         // soundManager -> play2D("assets/audio/getout.ogg", true);
 
-        //for (std::shared_ptr<Shader> shader : shaders) {
-        //    shader->use();
-        //    shader->setInt("mainTexture", 0);
-        //}
-
         // Scene initialization
-        currentScene = std::make_shared<GameScene>(window);
+        currentScene = std::make_shared<MainMenuScene>(window);
         SceneManager::getInstance().currentScene = currentScene;
 
-        currentScene->init();
+        SceneManager::getInstance().currentScene->init();
 
         // render loop
         while (!glfwWindowShouldClose(window)) {
@@ -107,7 +104,7 @@ int main() {
             processInput(window);
 
             // Scene update
-            float delta = currentScene->update();
+            float delta = SceneManager::getInstance().currentScene->update();
 
             SceneManager::getInstance().ySortObjects();
             std::vector<std::shared_ptr<Character>> objectsInVec = SceneManager::getInstance().getObjects();
@@ -131,7 +128,7 @@ int main() {
             glfwPollEvents();
         }
 
-        currentScene->end();
+        SceneManager::getInstance().currentScene->end();
 
         Quad::freePrimitive();
 
@@ -148,7 +145,7 @@ int main() {
 
     // glfw: whenever the mouse moves, this callback is called
     void mouseCallback(GLFWwindow * window, int button, int action, int mods) {
-        currentScene->mouseCallback(window, button, action, mods);
+        SceneManager::getInstance().currentScene->mouseCallback(window, button, action, mods);
     }
 
     // glfw: whenever the window size changed (by OS or user resize) this callback function executes

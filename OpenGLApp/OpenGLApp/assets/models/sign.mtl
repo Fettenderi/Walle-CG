@@ -1,0 +1,22 @@
+# Blender 4.5.3 LTS MTL File: 'signs.blend'
+# www.blender.org
+
+newmtl metal
+Ns 490.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.242899 0.242899 0.242899
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+
+newmtl no-smoke
+Ns 490.000000
+Ka 0.731818 0.731818 0.731818
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 3
+map_Kd no-smoking.png
+map_d no-smoking.png

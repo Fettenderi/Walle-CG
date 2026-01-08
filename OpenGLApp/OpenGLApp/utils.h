@@ -18,10 +18,10 @@ static float remap(float x, float in_min, float in_max, float out_min, float out
 }
 
 static float mod(float num, float m) {
-    return (int)round(num) % (int)round(m);
+    return ((int)round(num)) % ((int)round(m));
 }
 
-static float lerp(float a, float b, float t) {
+static float flerp(float a, float b, float t) {
 	return a + t * (b - a);
 }
 

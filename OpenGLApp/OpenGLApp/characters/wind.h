@@ -73,8 +73,8 @@ class Wind : public Character {
             int blockAmt = getNextRandomIntRange(1, rubbishAmt - 1);
             rubbishAmt = rubbishAmt - blockAmt;
 
-            rubbishAmt = clamp(0.0f, rubbishPool->getSize(), rubbishAmt);
-            blockAmt = clamp(0.0f, blockPool->getSize(), blockAmt);
+            rubbishAmt = (int)clamp(0.0f, rubbishPool->getSize(), rubbishAmt);
+            blockAmt = (int)clamp(0.0f, blockPool->getSize(), blockAmt);
 
             if (rubbishAmt == 0 && blockAmt == 0) return;
 
@@ -84,7 +84,7 @@ class Wind : public Character {
                std::shared_ptr<Rubbish> rub = rubbishPool->getInstance();
                rub->show();
                rub->isPickable = false;
-               rub->trashAmount = getNextRandomIntRange(1, (int)round(lerp((float)JUNK_TO_BLOCK / 5.0f, (float)JUNK_TO_BLOCK / 2.0f, strength)));
+               rub->trashAmount = getNextRandomIntRange(1, (int)round(flerp((float)JUNK_TO_BLOCK / 5.0f, (float)JUNK_TO_BLOCK / 2.0f, strength)));
                rub->getBlownTo(clampInCamera(pos + getRandomVector() * 0.3f, SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress), pos.x < 0.0f);
                blownRubbish.push_back(rub);
                SceneManager::getInstance().addObject(rub);
@@ -100,8 +100,8 @@ class Wind : public Character {
             }
 
             // cooldownTimer->changeDuration(1.0f);
-            float min = fmax(lerp(33.0f, 5.0f, strength), 1.0f);
-            float max = fmax(lerp(50.0f, 30.0f, strength), 1.0f);
+            float min = fmax(flerp(33.0f, 5.0f, strength), 1.0f);
+            float max = fmax(flerp(50.0f, 30.0f, strength), 1.0f);
             //printf("%f, %f\n", min, max);
             cooldownTimer->changeDuration(getNextRandomRange(min, max));
             cooldownTimer->resume();

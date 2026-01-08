@@ -52,6 +52,19 @@ class SceneManager {
 			return objectsInVec;
 		}
 
+		void removeAllObjects() {
+			objects.clear();
+		}
+
+		void changeScene(std::shared_ptr<Scene> newScene) {
+			if (currentScene) {
+				currentScene->end();
+			}
+			
+			currentScene = newScene;
+			currentScene->init();
+		}
+
 		std::shared_ptr<Scene> currentScene;
 
 		std::shared_ptr<Camera> camera;

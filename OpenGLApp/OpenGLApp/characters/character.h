@@ -111,6 +111,10 @@ class Character {
             return m_position;
         }
 
+        glm::vec2 getScale() const {
+            return m_scale;
+        }
+
         float getY() {
             return m_position.y;
         }

@@ -42,7 +42,7 @@ class GameScene : public Scene {
 		std::shared_ptr<Shader> lightedShader;
 		std::shared_ptr<Light> sun;
 
-		std::shared_ptr<Block> background;
+		std::shared_ptr<Image> background;
 		std::shared_ptr<Wind> wind;
 		std::shared_ptr<Mo> mo;
 		std::shared_ptr<Eve> eve;
@@ -84,9 +84,7 @@ class GameScene : public Scene {
 			blockPool = std::make_shared<ObjectPool<Block>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
-			background = std::make_shared<Block>(lightedShader, glm::vec2(0.0f, 2.0f), glm::vec2(10.0f, 10.0f));
-			background->isPickable = false;
-			background->show();
+			background = std::make_shared<Image>(lightedShader, "assets/textures/block.png", glm::vec2(0.0f, 0.0f), glm::vec2(10.0f, 10.0f));
 
 			// characters
 			eve = std::make_shared<Eve>(rubbishPool, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
@@ -94,7 +92,6 @@ class GameScene : public Scene {
 			mo = make_shared<Mo>(blockPool, lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
 			wind = make_shared<Wind>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, -0.6f));
 
-			SceneManager::getInstance().addObject(background);
 			SceneManager::getInstance().addObject(wind);
 			SceneManager::getInstance().addObject(mo);
 			SceneManager::getInstance().addObject(walle);
@@ -126,12 +123,13 @@ class GameScene : public Scene {
 			// global update
 			camera->update((float)deltaTime);
 			background->setPosition(glm::vec2(0.0f, 2.0f) - camera->getPosition2D());
+			background->renderSprite();
 			sun->position = glm::vec3(sin(elapsed * 0.1f), 0.0f, cos(elapsed * 0.1f));
 
 			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
 			wind->updateStrength((float)StatsManager::getInstance().collectedBlocks);
 			if (StatsManager::getInstance().collectedBlocks / BLOCK_COLUMNS > 3) {
-				camera->setTarget(explerp(camera->getTargetY(), 0.0f, deltaTime * 0.05f));
+				camera->setTarget(explerp(camera->getTargetY(), 0.0f, (float)deltaTime * 0.05f));
 			}
 
 			lightedShader->use();
@@ -162,7 +160,7 @@ class GameScene : public Scene {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor(elapsed / 60.0), mod(elapsed, 60.0)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)elapsed / 60.0f), mod((float)elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
 			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
 			guiText->RenderText(std::format("Strength: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 90.0f), 0.7f, "#0a1518");
 

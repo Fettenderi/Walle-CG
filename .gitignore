@@ -56,3 +56,5 @@ Mkfile.old
 dkms.conf
 /OpenGLApp/.vs
 /OpenGLApp/OpenGLApp/x64
+*.tlog
+*.tlog

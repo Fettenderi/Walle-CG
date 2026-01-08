@@ -117,7 +117,7 @@ public:
 			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
 
 			if (StatsManager::getInstance().collectedBlocks / BLOCK_COLUMNS > 3) {
-				camera->setTarget(explerp(camera->getTargetY(), 0.0f, deltaTime * 0.05f));
+				camera->setTarget(explerp(camera->getTargetY(), 0.0f, (float)deltaTime * 0.05f));
 			}
 
 			lightedShader->use();

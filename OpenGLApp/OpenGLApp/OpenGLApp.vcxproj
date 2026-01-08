@@ -140,8 +140,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
     <ClInclude Include="characters\block.h" />
+    <ClInclude Include="characters\image.h" />
     <ClInclude Include="characters\wind.h" />
     <ClInclude Include="core\camera.h" />
     <ClInclude Include="characters\character.h" />
@@ -153,14 +153,17 @@
     <ClInclude Include="characters\walle.h" />
     <ClInclude Include="core\mesh.h" />
     <ClInclude Include="core\model.h" />
+    <ClInclude Include="core\pool.h" />
     <ClInclude Include="core\quad.h" />
+    <ClInclude Include="core\scene.h" />
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\text.h" />
+    <ClInclude Include="core\timer.h" />
     <ClInclude Include="globals\scene_manager.h" />
     <ClInclude Include="globals\stats_manager.h" />
     <ClInclude Include="scenes\game_scene.h" />
+    <ClInclude Include="scenes\main_menu_scene.h" />
     <ClInclude Include="scenes\test_scene.h" />
-    <ClInclude Include="shader_s.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -171,12 +174,35 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\audio\getout.ogg" />
     <None Include="core\shaders\flat_shader.fs" />
     <None Include="core\shaders\flat_shader.vs" />
     <None Include="core\shaders\lighted_shader.fs" />
     <None Include="core\shaders\lighted_shader.vs" />
+    <None Include="core\shaders\model_shader.fs" />
+    <None Include="core\shaders\model_shader.vs" />
     <None Include="core\shaders\text_shader.fs" />
     <None Include="core\shaders\text_shader.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\models\mela\mela.png" />
+    <Image Include="assets\models\no-smoking.png" />
+    <Image Include="assets\models\walle_placeholder.png" />
+    <Image Include="assets\textures\block.png" />
+    <Image Include="assets\textures\eve.png" />
+    <Image Include="assets\textures\instructions_mo.png" />
+    <Image Include="assets\textures\instructions_walle.png" />
+    <Image Include="assets\textures\mo.png" />
+    <Image Include="assets\textures\play_button.png" />
+    <Image Include="assets\textures\rubbish.png" />
+    <Image Include="assets\textures\walle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audio\bell.wav" />
+    <Media Include="assets\audio\ophelia.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
