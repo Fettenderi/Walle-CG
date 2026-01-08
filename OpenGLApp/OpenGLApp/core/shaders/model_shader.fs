@@ -50,8 +50,8 @@ void main() {
 	vec3 specular = specularStrength * (lightStrength * specLight * lightColor + sunStrength * specSun * sunColor);
 	//vec3 specular = specularStrength * specSun * sunColor;
 
-	vec4 objectColor = texture(diffuseTexture, UV);
+	vec4 objectColor = texture(diffuseTexture, vec2(UV.x, 1.0 - UV.y));
 	vec3 result = max((ambient + diffuse + specular) * objectColor.rgb, 0.0);
-	// FragColor = vec4(lightDir.zzz, objectColor.a);
 	FragColor = vec4(result, objectColor.a);
+	// FragColor = vec4(norm * 0.5 + 0.5, 1.0);
 }

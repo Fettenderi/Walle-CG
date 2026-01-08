@@ -64,8 +64,8 @@ class MainMenuScene : public Scene {
 
 		virtual void init() {
 			// time initialization
-			lastElapsed = glfwGetTime();
-			elapsed = glfwGetTime();
+			lastElapsed = glfwGetTime() - offset;
+			elapsed = glfwGetTime() - offset;
 
 			// camera
 			SceneManager::getInstance().camera = std::make_shared<Camera>();
@@ -82,7 +82,8 @@ class MainMenuScene : public Scene {
 			startButton = std::make_shared<Image>(lightedShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f), glm::vec2(0.4f, 0.2f));
 
 			//3d models
-			rotatingModel = std::make_shared<Model>("assets/models/mela/mela.obj");
+			rotatingModel = std::make_shared<Model>("assets/models/walle_placeholder.obj");
+			//rotatingModel = std::make_shared<Model>("assets/models/mela/mela.obj");
 			logo = std::make_shared<Model>("assets/models/logo.obj");
 			
 			SceneManager::getInstance().addObject(walleGuide);
@@ -106,6 +107,9 @@ class MainMenuScene : public Scene {
 			modelShader->setVec3("ambientColor", hex_color("#a1d8e8"));
 			modelShader->setVec3("sunColor", sun->getColor());
 			modelShader->setFloat("sunStrength", sun->strength);
+
+			glEnable(GL_DEPTH_TEST);
+
 		}
 
 		virtual float update() {
@@ -113,8 +117,11 @@ class MainMenuScene : public Scene {
 			glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_BACK);
+
 			// deltaTime calculation
-			elapsed = glfwGetTime();
+			elapsed = glfwGetTime() - offset;
 			deltaTime = elapsed - lastElapsed;
 			lastElapsed = elapsed;
 
@@ -124,13 +131,14 @@ class MainMenuScene : public Scene {
 			// rendering the loaded models
 			glm::mat4 rotatingModelMat = glm::mat4(1.0f);
 			rotatingModelMat = glm::translate(rotatingModelMat, glm::vec3(0.0f, 0.0f, -2.0f));
-			rotatingModelMat = glm::scale(rotatingModelMat, glm::vec3(0.10f, 0.15f, 0.15f));
-			rotatingModelMat = glm::rotate(rotatingModelMat, glm::radians((float)elapsed * 10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			rotatingModelMat = glm::scale(rotatingModelMat, glm::vec3(0.15f, 0.15f, 0.15f));
+			//rotatingModelMat = glm::scale(rotatingModelMat, glm::vec3(0.3f, 0.3f, 0.3f));
+			rotatingModelMat = glm::rotate(rotatingModelMat, glm::radians((float)elapsed * 10.0f + 90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			rotatingModelMat = glm::rotate(rotatingModelMat, glm::radians(-12.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			
 			glm::mat4 logoModelMat = glm::mat4(1.0f);
-			logoModelMat = glm::translate(logoModelMat, glm::vec3(0.0f, 0.4f, -1.7f));
-			logoModelMat = glm::scale(logoModelMat, glm::vec3(0.15f, 0.2f, 0.2f));
+			logoModelMat = glm::translate(logoModelMat, glm::vec3(0.0f, 0.45f, -1.7f));
+			logoModelMat = glm::scale(logoModelMat, glm::vec3(0.2f, 0.2f, 0.2f));
 			logoModelMat = glm::rotate(logoModelMat, glm::radians((float)sin(elapsed * 2.0f) * 5.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 			logoModelMat = glm::rotate(logoModelMat, glm::radians((float)cos(elapsed * 2.0f) * 5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			
@@ -155,6 +163,8 @@ class MainMenuScene : public Scene {
 			modelShader->setMat4("model", logoModelMat);
 			logo->Draw(*modelShader);
 			
+			glDisable(GL_CULL_FACE);
+
 			// button update
 			buttonUpdate();
 
@@ -164,7 +174,6 @@ class MainMenuScene : public Scene {
 		virtual void guiUpdate() {
 		
 		}
-
 
 		virtual void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {

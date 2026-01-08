@@ -3,11 +3,11 @@
 
 class Scene {
     public:
-        Scene(GLFWwindow* windowRef) : window(windowRef) {};
+        Scene(GLFWwindow* windowRef) : window(windowRef), offset(glfwGetTime()) {};
 
         virtual void init() {
-            lastElapsed = glfwGetTime();
-            elapsed = glfwGetTime();
+            lastElapsed = glfwGetTime() - offset;
+            elapsed = glfwGetTime() - offset;
         }
 
         virtual float update() {
@@ -35,6 +35,7 @@ class Scene {
         double deltaTime;
         double lastElapsed;
         double elapsed;
+        double offset;
   
         GLFWwindow* window;
 };

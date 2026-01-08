@@ -41,8 +41,15 @@ void mouseCallback(GLFWwindow * window, int button, int action, int mods);
 
 void processInput(GLFWwindow * window);
 
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+#define HD
+
+#ifdef HD
+    const unsigned int SCR_WIDTH = 1120;
+    const unsigned int SCR_HEIGHT = 840;
+#else
+    const unsigned int SCR_WIDTH = 800;
+    const unsigned int SCR_HEIGHT = 600;
+#endif
 
 std::shared_ptr<Scene> currentScene;
 

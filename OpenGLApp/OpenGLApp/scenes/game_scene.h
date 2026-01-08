@@ -66,8 +66,8 @@ class GameScene : public Scene {
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
 
 			// time initialization
-			lastElapsed = glfwGetTime();
-			elapsed = glfwGetTime();
+			lastElapsed = glfwGetTime() - offset;
+			elapsed = glfwGetTime() - offset;
 
 			// camera
 			SceneManager::getInstance().camera = std::make_shared<Camera>();
@@ -104,9 +104,15 @@ class GameScene : public Scene {
 			lightedShader->use();
 			lightedShader->setInt("mainTexture", 0);
 
+			lightedShader->setMat4("camera", camera->getViewMatrix());
+			lightedShader->setVec3("viewPosition", camera->getPosition());
+
 			lightedShader->setVec3("ambientColor", hex_color("#a1d8e8"));
+
 			lightedShader->setVec3("sunColor", sun->getColor());
 			lightedShader->setFloat("sunStrength", sun->strength);
+			lightedShader->setVec3("sunPosition", sun->position);
+
 		}
 
 		virtual float update() {
@@ -116,7 +122,7 @@ class GameScene : public Scene {
 
 			// deltaTime calculation
 			//elapsed = glfwGetTime() * 1.75f;
-			elapsed = glfwGetTime();
+			elapsed = glfwGetTime() - offset;
 			deltaTime = elapsed - lastElapsed;
 			lastElapsed = elapsed;
 
