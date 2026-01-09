@@ -25,6 +25,8 @@ class Wind : public Character {
             m_is_visible = false;
             strengthFactor = 1.0f / sqrt((float)BLOCK_COLUMNS * 5.0f);
 
+            player = SceneManager::getInstance().soundManager;
+
             cooldownTimer = std::make_unique<Timer>(getNextRandomRange(15.0f, 33.0f), [this] {
                     tryGettingRubbish();
                 } , false);
@@ -61,6 +63,8 @@ class Wind : public Character {
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
 
+        irrklang::ISoundEngine* player;
+
         void tryGettingRubbish() {
             setTarget(getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress) * 0.7f);
         }
@@ -68,7 +72,7 @@ class Wind : public Character {
         void setTarget(glm::vec2 pos) {
             //printf("(%f, %f)\n", pos.x, pos.y);
 
-            int rubbishAmt = getNextRandomIntRange(6, 20);
+            int rubbishAmt = getNextRandomIntRange(5, clamp(7.0f, 30.0f, flerp(7.0f, 25.0f, strength)));
             __nop();
             int blockAmt = getNextRandomIntRange(1, rubbishAmt - 1);
             rubbishAmt = rubbishAmt - blockAmt;
@@ -98,6 +102,8 @@ class Wind : public Character {
                blownBlocks.push_back(blk);
                SceneManager::getInstance().addObject(blk);
             }
+
+            player->play3D("assets/audio/wind_gust.wav", irrklang::vec3df(pos.x, pos.y, 0.0f), false);
 
             // cooldownTimer->changeDuration(1.0f);
             float min = fmax(flerp(33.0f, 5.0f, strength), 1.0f);

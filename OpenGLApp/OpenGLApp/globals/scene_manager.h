@@ -3,6 +3,8 @@
 
 #include <list>
 
+#include <irrKlang.h>
+
 #include "../characters/character.h"
 #include "../characters/rubbish.h"
 #include "../characters/block.h"
@@ -72,8 +74,16 @@ class SceneManager {
 		std::shared_ptr<Light> sun;
 		std::shared_ptr<Light> flashlight;
 
+		irrklang::ISoundEngine* soundManager;
+		irrklang::ISound* inBetweenSound;
+
 	private:
-		SceneManager() = default;
+		SceneManager() {
+			// IrrKlang
+			soundManager = irrklang::createIrrKlangDevice();
+
+			assert(soundManager, "Unable to start sound manager");
+		};
 
 		SceneManager(const SceneManager&) = delete;
 		SceneManager& operator=(const SceneManager&) = delete;

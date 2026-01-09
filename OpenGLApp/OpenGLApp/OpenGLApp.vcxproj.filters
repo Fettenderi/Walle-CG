@@ -24,13 +24,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader_s.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
@@ -93,6 +87,21 @@
     <ClInclude Include="scenes\test_scene.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="characters\image.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="core\pool.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="core\scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="core\timer.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\main_menu_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -127,5 +136,95 @@
     <None Include="core\shaders\text_shader.vs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
+    <None Include="core\shaders\model_shader.fs" />
+    <None Include="core\shaders\model_shader.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\models\mela\mela.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\models\walle_placeholder.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\block.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\eve.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\instructions_mo.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\instructions_walle.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\mo.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\play_button.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\rubbish.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\walle.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\bg_placeholder.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\audio\walle_moving.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\eve_moving.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\junk_picked_up.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\pin_image.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\unpin_image.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\ui_click.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_compacting.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_disconfort.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_random.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_sad.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_whistle.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\walle_yeah.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\mo_release.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\mo_pickup.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\wind_gust.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\boot_up.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
   </ItemGroup>
 </Project>

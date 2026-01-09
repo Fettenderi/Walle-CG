@@ -23,6 +23,9 @@ class Eve : public Character {
         {
             m_direction = glm::vec2(1.0f, 0.0f);
 
+            player = SceneManager::getInstance().soundManager;
+            movingSound = nullptr;
+
             cooldownTimer = std::make_unique<Timer>(getNextRandomRange(1.0f, 3.0f), [this] {
                     tryGettingRubbish();
                 } , false);
@@ -55,6 +58,12 @@ class Eve : public Character {
                     cooldownTimer->resume();
                     cooldownTimer->reset();
 
+                    if (movingSound != nullptr) {
+                        movingSound->stop();
+                        movingSound->drop();
+                        movingSound = nullptr;
+                    }
+
                     return;
                 }
                 
@@ -65,6 +74,13 @@ class Eve : public Character {
                 pickedRubbish = nullptr;
             }
             else {
+                if (movingSound == nullptr) {
+                    movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+                }
+                else {
+                    movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+                }
+
                 m_direction = glm::normalize(m_direction);
                 m_position += m_direction * m_speed * deltaTime;
 
@@ -86,6 +102,8 @@ class Eve : public Character {
         std::shared_ptr<Rubbish> pickedRubbish;
         std::unique_ptr<Timer> cooldownTimer;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
+        irrklang::ISoundEngine* player;
+        irrklang::ISound* movingSound;
 
         void tryGettingRubbish() {
             setTarget(getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress));

@@ -27,6 +27,9 @@ class Walle : public Character {
             light = std::make_shared<Light>(glm::vec3(0.0f), 0.0f, "#8efcf5");
             SceneManager::getInstance().flashlight = light;
 
+            player = SceneManager::getInstance().soundManager;
+            movingSound = nullptr;
+
             spriteShader->use();
             spriteShader->setVec3("lightColor", light->getColor());
             spriteShader->setFloat("lightStrength", light->strength);
@@ -74,7 +77,23 @@ class Walle : public Character {
                 }
             }
 
-            if (m_velocity == glm::vec2(0.0f, 0.0f)) return;
+            if (m_velocity == glm::vec2(0.0f, 0.0f)) {
+                if (movingSound != nullptr) {
+                    movingSound->stop();
+                    movingSound->drop();
+                    movingSound = nullptr;
+                }
+                return;
+            }
+
+            if (movingSound == nullptr) {
+                movingSound = player->play3D("assets/audio/walle_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+            }
+            else {
+                movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+            }
+
+            player->setListenerPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f), irrklang::vec3df(m_direction.x, m_direction.y, 0.0f));
 
             m_velocity = glm::normalize(m_velocity);
             m_direction = m_velocity;
@@ -109,11 +128,19 @@ class Walle : public Character {
         }
 
         void collect(int trash) {
-            // soundManager->play2D("assets/audio/bell.wav", false);
+            if (movingSound != nullptr) {
+                movingSound->stop();
+                movingSound->drop();
+                movingSound = nullptr;
+            }
 
             m_collected += trash;
 
-            if (m_collected < m_max_rubbish) return;
+            if (m_collected < m_max_rubbish) {
+                player->play3D("assets/audio/junk_picked_up.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
+                return;
+            }
+            player->play3D("assets/audio/walle_compacting.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
 
             processing = true;
             processingTimer->resume();
@@ -163,6 +190,10 @@ class Walle : public Character {
 
         std::unique_ptr<Timer> processingTimer;
         bool processing = false;
+
+        irrklang::ISoundEngine* player;
+        irrklang::ISound* movingSound;
+
 };
 
 #endif

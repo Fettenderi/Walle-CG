@@ -174,7 +174,6 @@
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\audio\getout.ogg" />
     <None Include="core\shaders\flat_shader.fs" />
     <None Include="core\shaders\flat_shader.vs" />
     <None Include="core\shaders\lighted_shader.fs" />
@@ -186,8 +185,8 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\models\mela\mela.png" />
-    <Image Include="assets\models\no-smoking.png" />
     <Image Include="assets\models\walle_placeholder.png" />
+    <Image Include="assets\textures\bg_placeholder.png" />
     <Image Include="assets\textures\block.png" />
     <Image Include="assets\textures\eve.png" />
     <Image Include="assets\textures\instructions_mo.png" />
@@ -198,11 +197,25 @@
     <Image Include="assets\textures\walle.png" />
   </ItemGroup>
   <ItemGroup>
-    <Media Include="assets\audio\bell.wav" />
-    <Media Include="assets\audio\ophelia.mp3" />
+    <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
+    <Media Include="assets\audio\boot_up.wav" />
+    <Media Include="assets\audio\eve_moving.wav" />
+    <Media Include="assets\audio\junk_picked_up.wav" />
+    <Media Include="assets\audio\mo_pickup.wav" />
+    <Media Include="assets\audio\mo_release.wav" />
+    <Media Include="assets\audio\pin_image.wav" />
+    <Media Include="assets\audio\ui_click.wav" />
+    <Media Include="assets\audio\unpin_image.wav" />
+    <Media Include="assets\audio\walle_compacting.wav" />
+    <Media Include="assets\audio\walle_disconfort.wav" />
+    <Media Include="assets\audio\walle_moving.wav" />
+    <Media Include="assets\audio\walle_random.wav" />
+    <Media Include="assets\audio\walle_sad.wav" />
+    <Media Include="assets\audio\walle_whistle.wav" />
+    <Media Include="assets\audio\walle_yeah.wav" />
+    <Media Include="assets\audio\wind_gust.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -9,8 +9,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <irrKlang.h>
-
 #include "globals/scene_manager.h"
 #include "globals/stats_manager.h"
 
@@ -41,7 +39,7 @@ void mouseCallback(GLFWwindow * window, int button, int action, int mods);
 
 void processInput(GLFWwindow * window);
 
-#define HD
+#define HDNT
 
 #ifdef HD
     const unsigned int SCR_WIDTH = 1120;
@@ -50,10 +48,6 @@ void processInput(GLFWwindow * window);
     const unsigned int SCR_WIDTH = 800;
     const unsigned int SCR_HEIGHT = 600;
 #endif
-
-std::shared_ptr<Scene> currentScene;
-
-irrklang::ISoundEngine* soundManager;
 
 int main() {
         // glfw: initialize and configure
@@ -67,7 +61,7 @@ int main() {
 #endif
 
         // glfw window creation
-        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Walle-Demo", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Wall-E: Clean Up Service", NULL, NULL);
         if (window == NULL) {
             std::cout << "Failed to create GLFW window" << std::endl;
             glfwTerminate();
@@ -83,25 +77,14 @@ int main() {
             return -1;
         }
 
-        // glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Mesh
         Quad::instantiatePrimitive();
 
-        // IrrKlang
-        soundManager = irrklang::createIrrKlangDevice();
-
-        if (!soundManager)
-            return 0; // error starting up the engine
-
-        // play some sound stream, looped
-        // soundManager -> play2D("assets/audio/getout.ogg", true);
-
         // Scene initialization
-        currentScene = std::make_shared<MainMenuScene>(window);
-        SceneManager::getInstance().currentScene = currentScene;
+        SceneManager::getInstance().currentScene = std::make_shared<MainMenuScene>(window);
 
         SceneManager::getInstance().currentScene->init();
 
@@ -128,7 +111,7 @@ int main() {
                 object->resetCollisionState();
             }
 
-            currentScene->guiUpdate();
+            SceneManager::getInstance().currentScene->guiUpdate();
 
             // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
             glfwSwapBuffers(window);

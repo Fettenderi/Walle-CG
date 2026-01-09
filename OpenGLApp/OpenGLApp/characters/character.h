@@ -69,6 +69,7 @@ class Character {
         }
 
         bool intersects(std::shared_ptr<Character> other) {
+            if (!other->m_collider.isActive) return false;
             if (!other->m_is_visible) return false;
             if (other.get() == this) return false;
             if (m_collider.isStatic && other->m_collider.isStatic) return false;
@@ -100,6 +101,8 @@ class Character {
         virtual void update(float deltaTime) {}
 
         void collide(std::vector<std::shared_ptr<Character>> objects) {
+            if (!m_collider.isActive) return;
+
             resolve(objects, 0);
         }
 

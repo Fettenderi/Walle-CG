@@ -9,6 +9,10 @@ out vec4 FragColor;
 // texture samplers
 uniform sampler2D diffuseTexture;
 
+uniform float ambientStrength = 0.3;
+uniform float specularStrength = 0.2;
+uniform int specularPower = 32;
+
 uniform vec3 ambientColor;
 
 uniform vec3 lightColor;
@@ -23,7 +27,6 @@ uniform vec3 viewPosition;
 
 void main() {
 	// ambience
-	float ambientStrength = 0.3;
 	vec3 ambient = ambientStrength * ambientColor;
 	
 	// diffuse
@@ -38,14 +41,13 @@ void main() {
 	vec3 diffuse = lightStrength * diffLight * lightColor + sunStrength * diffSun * sunColor;
 
 	// specular
-	float specularStrength = 0.2;
 	vec3 viewDir = normalize(viewPosition - FragPos);
 
 	vec3 reflectLightDir = reflect(-lightDir, norm);
 	vec3 reflectSunDir = reflect(-sunDir, norm);
 
-	float specLight = pow(max(dot(viewDir, reflectLightDir), 0.0f), 32);
-	float specSun = pow(max(dot(viewDir, reflectSunDir), 0.0f), 32);
+	float specLight = pow(max(dot(viewDir, reflectLightDir), 0.0f), specularPower);
+	float specSun = pow(max(dot(viewDir, reflectSunDir), 0.0f), specularPower);
 
 	vec3 specular = specularStrength * (lightStrength * specLight * lightColor + sunStrength * specSun * sunColor);
 	//vec3 specular = specularStrength * specSun * sunColor;

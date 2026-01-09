@@ -62,6 +62,8 @@ class GameScene : public Scene {
 		GameScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
 		virtual void init() {
+			glDisable(GL_DEPTH_TEST);
+
 			// Text Provider
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
 
@@ -84,7 +86,7 @@ class GameScene : public Scene {
 			blockPool = std::make_shared<ObjectPool<Block>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
-			background = std::make_shared<Image>(lightedShader, "assets/textures/block.png", glm::vec2(0.0f, 0.0f), glm::vec2(10.0f, 10.0f));
+			background = std::make_shared<Image>(lightedShader, "assets/textures/bg_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
 
 			// characters
 			eve = std::make_shared<Eve>(rubbishPool, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
@@ -128,8 +130,9 @@ class GameScene : public Scene {
 
 			// global update
 			camera->update((float)deltaTime);
-			background->setPosition(glm::vec2(0.0f, 2.0f) - camera->getPosition2D());
+			background->setPosition(glm::vec2(0.0f, 0.0f) - camera->getPosition2D());
 			background->renderSprite();
+
 			sun->position = glm::vec3(sin(elapsed * 0.1f), 0.0f, cos(elapsed * 0.1f));
 
 			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
@@ -166,17 +169,16 @@ class GameScene : public Scene {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)elapsed / 60.0f), mod((float)elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
-			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
-			guiText->RenderText(std::format("Strength: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 90.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor(elapsed / 60.0f), mod(elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Wind: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
 
-			glm::vec2 camPosition = SceneManager::getInstance().camera->getPosition2D();
-			float pileHeight = StatsManager::getInstance().maxBlockProgress;
-			
-			glm::vec2 min = glm::vec2(-0.8f + camPosition.x, remap(-0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
-			glm::vec2 max = glm::vec2(0.8f + camPosition.x, remap(0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
-			guiText->RenderText(std::format("Min: ({:.2f}, {:.2f}), Max: ({:.2f}, {:.2f})", min.x, min.y, max.x, max.y), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
-
+			//glm::vec2 camPosition = SceneManager::getInstance().camera->getPosition2D();
+			//float pileHeight = StatsManager::getInstance().maxBlockProgress;
+			//
+			//glm::vec2 min = glm::vec2(-0.8f + camPosition.x, remap(-0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
+			//glm::vec2 max = glm::vec2(0.8f + camPosition.x, remap(0.8f, -1.0f, 1.0f, fmax(-1.0f - camPosition.y, pileHeight), 1.0f - camPosition.y));
+			//guiText->RenderText(std::format("Min: ({:.2f}, {:.2f}), Max: ({:.2f}, {:.2f})", min.x, min.y, max.x, max.y), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
 		}
 
 

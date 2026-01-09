@@ -23,6 +23,8 @@ class Mo : public Character {
             StatsManager::getInstance().maxBlockProgress = block_release_target.y;
             camera = SceneManager::getInstance().camera;
             m_speed = maxSpeed;
+            player = SceneManager::getInstance().soundManager;
+            movingSound = nullptr;
         }
 
         void setTarget(glm::vec2 pos) {
@@ -50,6 +52,12 @@ class Mo : public Character {
            if (dist < m_reached_distance) {
                hasTarget = false;
 
+               if (movingSound != nullptr) {
+                   movingSound->stop();
+                   movingSound->drop();
+                   movingSound = nullptr;
+               }
+
                if (hasBlock) {
                    releaseBlock();
                }
@@ -64,6 +72,13 @@ class Mo : public Character {
                }
            }
            else {
+               if (movingSound == nullptr) {
+                   movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+               }
+               else {
+                   movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+               }
+
                m_direction = glm::normalize(m_direction);
 
                m_position += m_direction * m_speed * deltaTime;
@@ -95,6 +110,9 @@ class Mo : public Character {
         std::shared_ptr<ObjectPool<Block>> blockPool;
         std::queue<std::shared_ptr<Block>> placedBlocks;
 
+        irrklang::ISoundEngine* player;
+        irrklang::ISound* movingSound;
+
         void tryPickingBlock() {
             for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                 if (std::shared_ptr<Block> block = dynamic_pointer_cast<Block>(object)) {
@@ -117,6 +135,7 @@ class Mo : public Character {
         void releaseBlock() {
             pickedBlock->setRotation(0.0f);
             pickedBlock->setPosition(block_release_target);
+            player->play3D("assets/audio/mo_release.wav", irrklang::vec3df(block_release_target.x, block_release_target.y, 0.0f), false);
 
             placedBlocks.push(pickedBlock);
 
@@ -147,6 +166,8 @@ class Mo : public Character {
                    }
                 }
             }
+
+            player->play3D("assets/audio/mo_pickup.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
 
             camera->moveTarget(- 0.18f / 9.0f);
 
