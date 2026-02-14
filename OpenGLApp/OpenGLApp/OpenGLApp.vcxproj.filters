@@ -136,8 +136,8 @@
     <None Include="core\shaders\text_shader.vs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\shaders\model_shader.fs" />
-    <None Include="core\shaders\model_shader.vs" />
+    <None Include="core\shaders\PBR_shader.fs" />
+    <None Include="core\shaders\PBR_shader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\models\mela\mela.png">

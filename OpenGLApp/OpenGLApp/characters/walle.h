@@ -31,8 +31,7 @@ class Walle : public Character {
             movingSound = nullptr;
 
             spriteShader->use();
-            spriteShader->setVec3("lightColor", light->getColor());
-            spriteShader->setFloat("lightStrength", light->strength);
+            spriteShader->setVec3("lights[1].color", light->getColor() * light->strength);
             
             processingTimer = std::make_unique<Timer>(2.0f, [this] {
                 expellBlock();
@@ -123,8 +122,8 @@ class Walle : public Character {
             light->strength = explerp(light->strength, light_target_strength, deltaTime * 3.0f);
 
             m_shader->use();
-            m_shader->setVec3("lightPosition", light->position);
-            m_shader->setFloat("lightStrength", light->strength);
+            m_shader->setVec3("lights[1].position", light->position);
+            m_shader->setVec3("lights[1].color", light->getColor() * light->strength);
         }
 
         void collect(int trash) {

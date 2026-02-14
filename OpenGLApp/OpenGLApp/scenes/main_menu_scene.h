@@ -44,8 +44,9 @@
 class MainMenuScene : public Scene {
 	private:
 		std::shared_ptr<Shader> lightedShader;
-		std::shared_ptr<Shader> modelShader;
-		std::shared_ptr<Light> sun;
+		std::shared_ptr<Shader> PBRShader;
+		std::shared_ptr<Light> sun1;
+		std::shared_ptr<Light> sun2;
 
 		std::shared_ptr<Image> mouseDetector;
 
@@ -56,7 +57,7 @@ class MainMenuScene : public Scene {
 
 		std::shared_ptr<Camera> camera;
 
-		std::shared_ptr<Model> rotatingModel;
+		std::shared_ptr<Model> walle;
 		std::shared_ptr<Model> logo;
 
 		glm::vec3 bgColor = hex_color("#000000");
@@ -65,6 +66,7 @@ class MainMenuScene : public Scene {
 
 		std::shared_ptr<Image> grabbedImage;
 		bool hasGrabbedImage = false;
+		bool isFirstFrame = true;
 
 		irrklang::ISoundEngine* player;
 
@@ -75,6 +77,8 @@ class MainMenuScene : public Scene {
 
 		float modelOffset = 0.0f;
 		float logoOffset = 0.0f;
+
+		float debug = 0.0f;
 	public:
 #ifdef INSTANT_BOOT
 		bool bootedUp = false;
@@ -102,10 +106,11 @@ class MainMenuScene : public Scene {
 			// camera
 			SceneManager::getInstance().camera = std::make_shared<Camera>();
 			camera = SceneManager::getInstance().camera;
+			camera->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
 			// shader
 			lightedShader = std::make_shared<Shader>("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
-			modelShader = std::make_shared<Shader>("core/shaders/model_shader.vs", "core/shaders/model_shader.fs");
+			PBRShader = std::make_shared<Shader>("core/shaders/PBR_shader.vs", "core/shaders/PBR_shader.fs");
 
 			// characters
 			mouseDetector = std::make_shared<Image>(lightedShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.227f), glm::vec2(1.134f, 1.258f));
@@ -116,37 +121,30 @@ class MainMenuScene : public Scene {
 			startButton = std::make_shared<Image>(lightedShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f), glm::vec2(0.4f, 0.2f));
 			
 			//3d models
-			rotatingModel = std::make_shared<Model>("assets/models/walle_placeholder.obj");
-			logo = std::make_shared<Model>("assets/models/logo.obj");
+			walle = std::make_shared<Model>("assets/models/walle/walle.gltf");
+			logo = std::make_shared<Model>("assets/models/logo/logo.obj");
 			
 			SceneManager::getInstance().addObject(walleGuide);
 			SceneManager::getInstance().addObject(moGuide);
 			SceneManager::getInstance().addObject(startButton);
 
 			// lights setup
-			sun = std::make_shared<Light>(glm::vec3(getNextRandomRange(-4.0f, 4.0f), getNextRandomRange(0.0f, 5.0f), getNextRandomRange(3.0f, 10.0f)), 0.7f, "#ffffff");
-			SceneManager::getInstance().sun = sun;
+			//sun = std::make_shared<Light>(glm::vec3(getNextRandomRange(-1.0f, 1.0f), getNextRandomRange(-0.8f, 1.0f), getNextRandomRange(-0.3f, 0.3f)), 0.7f, "#ffffff");
+			sun1 = std::make_shared<Light>(glm::vec3(-0.81f, -0.29f, 1.97f), 0.7f, "#ffffff");
+			sun2 = std::make_shared<Light>(glm::vec3(-0.28f, 0.82f, 0.0f), 2.5f, "#ffffff");
+			SceneManager::getInstance().sun = sun1;
 
 			lightedShader->use();
 			lightedShader->setInt("mainTexture", 0);
 
-			lightedShader->setVec3("ambientColor", hex_color("#a1d8e8"));
-			lightedShader->setVec3("sunColor", sun->getColor());
-			lightedShader->setFloat("sunStrength", sun->strength);
+			lightedShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+			lightedShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
 
-			modelShader->use();
-			modelShader->setInt("diffuseTexture", 0);
+			PBRShader->use();
 
-			modelShader->setFloat("specularStrength", getNextRandomRange(0.0f, 0.7f));
-			modelShader->setInt("specularPower", getNextRandomIntRange(1, 50));
-
-			//modelShader->setFloat("ambientStrength", 0.5f);
-			//modelShader->setFloat("specularStrength", 1.0f);
-			//modelShader->setInt("specularPower", 50);
-
-			modelShader->setVec3("ambientColor", hex_color("#a1d8e8"));
-			modelShader->setVec3("sunColor", sun->getColor());
-			modelShader->setFloat("sunStrength", sun->strength);
+			PBRShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+			PBRShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
+			PBRShader->setVec3("lights[1].color", sun2->getColor() * sun2->strength);
 		}
 
 		virtual float update() {
@@ -171,24 +169,25 @@ class MainMenuScene : public Scene {
 
 			// menu juice
 			handleMouseModelInteraction();
-			moveSunPosition();
+			moveSun1Position();
+			//moveSun2Position();
 			placementUpdate();
 			buttonUpdate();
 
 			// view/projection transformations
-			glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
+			int width, height;
+			glfwGetWindowSize(window, &width, &height);
+			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 			
 			// rendering the loaded models
-			glm::mat4 rotatingModelMat = glm::mat4(1.0f);
-			rotatingModelMat = glm::translate(rotatingModelMat, glm::vec3(0.0f, 0.0f, -2.0f));
-			rotatingModelMat = glm::scale(rotatingModelMat, glm::vec3(0.15f, 0.15f, 0.15f));
-			//rotatingModelMat = glm::scale(rotatingModelMat, glm::vec3(0.3f, 0.3f, 0.3f));
-			rotatingModelMat = glm::rotate(rotatingModelMat, glm::radians((float)elapsed * 10.0f + 90.0f) + modelOffset, glm::vec3(0.0f, 1.0f, 0.0f));
-			rotatingModelMat = glm::rotate(rotatingModelMat, glm::radians(-12.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+			glm::mat4 walleModelMat = glm::mat4(1.0f);
+			walleModelMat = glm::translate(walleModelMat, glm::vec3(0.0f, -0.13f, -0.85f));
+			walleModelMat = glm::scale(walleModelMat, glm::vec3(0.072f));
+			walleModelMat = glm::rotate(walleModelMat, glm::radians((float)elapsed * 10.0f) + modelOffset, glm::vec3(0.0f, 1.0f, 0.0f));
 			
 			glm::mat4 logoModelMat = glm::mat4(1.0f);
-			logoModelMat = glm::translate(logoModelMat, glm::vec3(0.0f, 0.45f, -1.7f));
-			logoModelMat = glm::scale(logoModelMat, glm::vec3(0.2f, 0.2f, 0.2f));
+			logoModelMat = glm::translate(logoModelMat, glm::vec3(0.0f, 0.19f, -0.72f));
+			logoModelMat = glm::scale(logoModelMat, glm::vec3(0.085f));
 			logoModelMat = glm::rotate(logoModelMat, glm::radians((float)sin(elapsed * 2.0f) * 5.0f) + logoOffset, glm::vec3(0.0f, 0.0f, 1.0f));
 			logoModelMat = glm::rotate(logoModelMat, glm::radians((float)cos(elapsed * 2.0f) * 5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			
@@ -199,20 +198,21 @@ class MainMenuScene : public Scene {
 			// models update
 			lightedShader->use();
 			lightedShader->setMat4("camera", camera->getViewMatrix());
-			lightedShader->setVec3("sunPosition", sun->position);
+			lightedShader->setVec3("lights[0].position", sun1->position);
 			lightedShader->setVec3("viewPosition", camera->getPosition());
 
-			modelShader->use();
-			modelShader->setMat4("camera", camera->getViewMatrix());
-			modelShader->setMat4("projection", projection);
-			modelShader->setVec3("sunPosition", sun->position);
-			modelShader->setVec3("viewPosition", camera->getPosition());
+			PBRShader->use();
+			PBRShader->setMat4("camera", camera->getViewMatrix());
+			PBRShader->setMat4("projection", perspectiveProjection);
+			PBRShader->setVec3("lights[0].position", sun1->position);
+			PBRShader->setVec3("lights[1].position", sun2->position);
+			PBRShader->setVec3("viewPosition", camera->getPosition());
 
-			modelShader->setMat4("model", rotatingModelMat);
-			rotatingModel->Draw(*modelShader);
+			PBRShader->setMat4("model", walleModelMat);
+			walle->Draw(*PBRShader);
 
-			modelShader->setMat4("model", logoModelMat);
-			logo->Draw(*modelShader);
+			PBRShader->setMat4("model", logoModelMat);
+			logo->Draw(*PBRShader);
 			glDisable(GL_DEPTH_TEST);
 
 			return (float)deltaTime;
@@ -261,7 +261,7 @@ class MainMenuScene : public Scene {
 			}
 		}
 
-		void moveSunPosition() {
+		void moveSun1Position() {
 			glm::vec3 m_velocity = glm::vec3(0.0f);
 
 			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -287,11 +287,70 @@ class MainMenuScene : public Scene {
 
 
 			m_velocity = glm::normalize(m_velocity);
-			
-			sun->position += m_velocity * (float)deltaTime * 2.0f;
 
-			printf("(%f, %f, %f)\n", sun->position.x, sun->position.y, sun->position.z);
+			sun1->position += m_velocity * (float)deltaTime * 2.0f;
+			printf("sun1: (%f, %f, %f)\n", sun1->position.x, sun1->position.y, sun1->position.z);
+		}
 
+		void moveSun2Position() {
+			glm::vec3 m_velocity = glm::vec3(0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+				m_velocity -= glm::vec3(0.0f, 0.0f, 1.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+				m_velocity += glm::vec3(0.0f, 0.0f, 1.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+				m_velocity -= glm::vec3(1.0f, 0.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+				m_velocity += glm::vec3(1.0f, 0.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+				m_velocity += glm::vec3(0.0f, 1.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+				m_velocity -= glm::vec3(0.0f, 1.0f, 0.0f);
+
+
+			if (m_velocity == glm::vec3(0.0f)) return;
+
+
+			m_velocity = glm::normalize(m_velocity);
+
+			sun2->position += m_velocity * (float)deltaTime * 2.0f;
+			printf("sun2: (%f, %f, %f)\n", sun2->position.x, sun2->position.y, sun2->position.z);
+		}
+
+
+		void moveCameraPosition() {
+			glm::vec3 m_velocity = glm::vec3(0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+				m_velocity -= glm::vec3(0.0f, 0.0f, 1.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+				m_velocity += glm::vec3(0.0f, 0.0f, 1.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+				m_velocity -= glm::vec3(1.0f, 0.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+				m_velocity += glm::vec3(1.0f, 0.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+				m_velocity += glm::vec3(0.0f, 1.0f, 0.0f);
+
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+				m_velocity -= glm::vec3(0.0f, 1.0f, 0.0f);
+
+			if (m_velocity == glm::vec3(0.0f)) return;
+
+			m_velocity = glm::normalize(m_velocity);
+
+			camera->setPosition(camera->getPosition() + m_velocity * (float)deltaTime * 2.0f);
+			printf("(%f, %f, %f)\n", camera->getPosition().x, camera->getPosition().y, camera->getPosition().z);
 		}
 
 		void buttonUpdate() {
@@ -346,6 +405,12 @@ class MainMenuScene : public Scene {
 
 			glm::vec2 dist = currentMousePos - previousMousePos;
 
+			if (isFirstFrame) {
+				isFirstFrame = false;
+				previousMousePos = currentMousePos;
+				return;
+			}
+
 			if (mouseDetector->isMouseOver(glm::vec2(scX, scY)) &&
 				((abs(dist.x) > 0.005f) || (abs(dist.y) > 0.005f))) {
 				spinVelocity.x += dist.x * 10.0f * deltaTime;
@@ -356,10 +421,15 @@ class MainMenuScene : public Scene {
 				spinVelocity.y = explerp(spinVelocity.y, 0.0f, deltaTime * 1.5f);
 			}
 
-			modelOffset += spinVelocity.x * 1000.0f * deltaTime;
+
+			modelOffset += spinVelocity.x * 50.0f * deltaTime;
 			logoOffset += spinVelocity.y * 50.0f * deltaTime;
 
 			previousMousePos = currentMousePos;
+		}
+
+		virtual void windowResizedCallback(GLFWwindow* window, int width, int height) {
+
 		}
 
 		virtual void end() {

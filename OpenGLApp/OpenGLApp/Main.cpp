@@ -141,4 +141,5 @@ int main() {
     // glfw: whenever the window size changed (by OS or user resize) this callback function executes
     void framebufferSizeCallback(GLFWwindow * window, int width, int height) {
         glViewport(0, 0, width, height);
+        SceneManager::getInstance().currentScene->windowResizedCallback(window, width, height);
     }

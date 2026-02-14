@@ -22,7 +22,7 @@ class Camera {
         bool hasTarget = false;
 
         //for 3d
-        glm::vec3 position3d = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 position3d = glm::vec3(0.0f, 0.0f, 1.0f);
         glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -44,6 +44,7 @@ class Camera {
             }
             else {
                 position.y = explerp(position.y, targetY, deltaTime * speed);
+                position3d.y = position.y;
             }
 
             //position += glm::vec2(0.0f, -deltaTime * speed);
@@ -54,7 +55,11 @@ class Camera {
         }
 
         glm::vec3 getPosition() {
-            return glm::vec3(position, 1.0f);
+            return position3d;
+        }
+
+        void setPosition(glm::vec3 newPosition) {
+            position3d = newPosition;
         }
 
         glm::vec2 getPosition2D() {
@@ -70,7 +75,8 @@ class Camera {
         }
 
         glm::mat4 getViewMatrix() {
-            return glm::translate(glm::mat4(1.0f), glm::vec3(position, 0.0f));
+            //return glm::translate(glm::mat4(1.0f), position3d);
+            return glm::lookAt(position3d, position3d + front, up);
         }
 
         void setMoving(bool value) {
@@ -92,8 +98,7 @@ class Camera {
         }
 
         // returns the view matrix calculated using Euler Angles and the LookAt Matrix
-        glm::mat4 getViewMatrix3d()
-        {
+        glm::mat4 getViewMatrix3d() {
             return glm::lookAt(position3d, position3d + front, up);
         }
 }; 

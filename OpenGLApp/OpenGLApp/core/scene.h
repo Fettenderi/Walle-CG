@@ -27,6 +27,10 @@ class Scene {
 
         }
 
+        virtual void windowResizedCallback(GLFWwindow* window, int width, int height) {
+        
+        }
+
         virtual void end() {
 
         }

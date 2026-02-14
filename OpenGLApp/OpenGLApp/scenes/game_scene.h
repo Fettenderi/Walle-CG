@@ -109,12 +109,10 @@ class GameScene : public Scene {
 			lightedShader->setMat4("camera", camera->getViewMatrix());
 			lightedShader->setVec3("viewPosition", camera->getPosition());
 
-			lightedShader->setVec3("ambientColor", hex_color("#a1d8e8"));
+			lightedShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
 
-			lightedShader->setVec3("sunColor", sun->getColor());
-			lightedShader->setFloat("sunStrength", sun->strength);
-			lightedShader->setVec3("sunPosition", sun->position);
-
+			lightedShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
+			lightedShader->setVec3("lights[0].position", sun->position);
 		}
 
 		virtual float update() {
@@ -143,7 +141,7 @@ class GameScene : public Scene {
 
 			lightedShader->use();
 			lightedShader->setMat4("camera", camera->getViewMatrix());
-			lightedShader->setVec3("sunPosition", sun->position);
+			lightedShader->setVec3("lights[0].position", sun->position);
 			lightedShader->setVec3("viewPosition", camera->getPosition());
 
 			// mo movement

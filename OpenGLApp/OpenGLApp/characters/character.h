@@ -159,7 +159,7 @@ class Character {
             stbi_image_free(data);
         }
 
-        void loadSprite(Shader shader, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation) {
+        void loadSprite(Shader shader, unsigned int texture, glm::vec2 position, glm::vec2 scale, float rotation, bool offset = false) {
             shader.use();
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, texture);

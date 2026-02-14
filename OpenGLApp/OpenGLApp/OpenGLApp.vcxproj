@@ -178,8 +178,8 @@
     <None Include="core\shaders\flat_shader.vs" />
     <None Include="core\shaders\lighted_shader.fs" />
     <None Include="core\shaders\lighted_shader.vs" />
-    <None Include="core\shaders\model_shader.fs" />
-    <None Include="core\shaders\model_shader.vs" />
+    <None Include="core\shaders\PBR_shader.fs" />
+    <None Include="core\shaders\PBR_shader.vs" />
     <None Include="core\shaders\text_shader.fs" />
     <None Include="core\shaders\text_shader.vs" />
   </ItemGroup>
