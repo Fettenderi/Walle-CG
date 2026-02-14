@@ -429,7 +429,7 @@ class MainMenuScene : public Scene {
 		}
 
 		virtual void windowResizedCallback(GLFWwindow* window, int width, int height) {
-
+			isFirstFrame = true;
 		}
 
 		virtual void end() {
