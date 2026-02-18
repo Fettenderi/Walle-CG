@@ -43,7 +43,7 @@
 
 class MainMenuScene : public Scene {
 	private:
-		std::shared_ptr<Shader> lightedShader;
+		std::shared_ptr<Shader> spriteShader;
 		std::shared_ptr<Shader> PBRShader;
 		std::shared_ptr<Light> sun1;
 		std::shared_ptr<Light> sun2;
@@ -109,16 +109,16 @@ class MainMenuScene : public Scene {
 			camera->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
 			// shader
-			lightedShader = std::make_shared<Shader>("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
+			spriteShader = std::make_shared<Shader>("core/shaders/sprite_shader.vs", "core/shaders/menu_sprite_shader.fs");
 			PBRShader = std::make_shared<Shader>("core/shaders/PBR_shader.vs", "core/shaders/PBR_shader.fs");
 
 			// characters
-			mouseDetector = std::make_shared<Image>(lightedShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.227f), glm::vec2(1.134f, 1.258f));
+			mouseDetector = std::make_shared<Image>(spriteShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.227f), glm::vec2(1.134f, 1.258f));
 
-			background = std::make_shared<Image>(lightedShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
-			walleGuide = std::make_shared<Image>(lightedShader, "assets/textures/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
-			moGuide = std::make_shared<Image>(lightedShader, "assets/textures/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
-			startButton = std::make_shared<Image>(lightedShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f), glm::vec2(0.4f, 0.2f));
+			background = std::make_shared<Image>(spriteShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
+			walleGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
+			moGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
+			startButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f), glm::vec2(0.4f, 0.2f));
 			
 			//3d models
 			walle = std::make_shared<Model>("assets/models/walle/walle.gltf");
@@ -134,11 +134,11 @@ class MainMenuScene : public Scene {
 			sun2 = std::make_shared<Light>(glm::vec3(-0.28f, 0.82f, 0.0f), 2.5f, "#ffffff");
 			SceneManager::getInstance().sun = sun1;
 
-			lightedShader->use();
-			lightedShader->setInt("mainTexture", 0);
+			spriteShader->use();
+			spriteShader->setInt("mainTexture", 0);
 
-			lightedShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
-			lightedShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
+			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+			spriteShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
 
 			PBRShader->use();
 
@@ -196,10 +196,10 @@ class MainMenuScene : public Scene {
 			glEnable(GL_DEPTH_TEST);
 
 			// models update
-			lightedShader->use();
-			lightedShader->setMat4("camera", camera->getViewMatrix());
-			lightedShader->setVec3("lights[0].position", sun1->position);
-			lightedShader->setVec3("viewPosition", camera->getPosition());
+			spriteShader->use();
+			spriteShader->setMat4("camera", camera->getViewMatrix());
+			spriteShader->setVec3("lights[0].position", sun1->position);
+			spriteShader->setVec3("viewPosition", camera->getPosition());
 
 			PBRShader->use();
 			PBRShader->setMat4("camera", camera->getViewMatrix());

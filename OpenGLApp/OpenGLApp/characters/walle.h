@@ -18,7 +18,7 @@ class Walle : public Character {
 
     public:
         Walle(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/walle.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
+            : Character(spriteShader, "assets/textures/walle-test.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
             m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
@@ -29,6 +29,8 @@ class Walle : public Character {
 
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
+
+            m_h_tiles = 3;
 
             spriteShader->use();
             spriteShader->setVec3("lights[1].color", light->getColor() * light->strength);
@@ -104,7 +106,6 @@ class Walle : public Character {
             if (processing) {
                 m_scale.x = abs(sin(processingTimer->getElapsed() * 5.0f)) * 0.15 + maxScale.x * 0.8f;
                 m_scale.y = (abs(cos(processingTimer->getElapsed() * 6.0f)) * 0.15 + maxScale.y * 0.8f) * sign(m_direction.x);
-
                 return;
             }
 
@@ -115,7 +116,6 @@ class Walle : public Character {
             m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
 
             m_position = clamp(glm::vec2(-0.82f, -0.82f) - camera->getPosition2D(), glm::vec2(0.82f, 0.82f) - camera->getPosition2D(), m_position);
-
 
             glm::vec2 lightPosition = m_position + m_direction * 0.2f;
             light->position = glm::vec3(lightPosition.x, lightPosition.y, 0.2f);
@@ -139,6 +139,7 @@ class Walle : public Character {
                 player->play3D("assets/audio/junk_picked_up.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
                 return;
             }
+
             player->play3D("assets/audio/walle_compacting.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
 
             processing = true;

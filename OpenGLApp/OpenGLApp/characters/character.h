@@ -35,6 +35,7 @@ class Character {
         CollisionShape m_collider;
         bool solved = false;
 
+        int m_h_tiles = 1;
 
         void resolve(std::vector<std::shared_ptr<Character>> objects, int starting) {
             if (!m_is_visible || solved) return;
@@ -172,6 +173,7 @@ class Character {
             model = glm::scale(model, glm::vec3(scale, 1.0f));
 
             shader.setMat4("model", model);
+            shader.setInt("hTiles", m_h_tiles);
 
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }

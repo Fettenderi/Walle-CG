@@ -37,9 +37,11 @@
 
 #include "../core/scene.h"
 
+#define PI 3.14159265358979323846
+
 class GameScene : public Scene {
 	private:
-		std::shared_ptr<Shader> lightedShader;
+		std::shared_ptr<Shader> spriteShader;
 		std::shared_ptr<Light> sun;
 
 		std::shared_ptr<Image> background;
@@ -56,7 +58,45 @@ class GameScene : public Scene {
 
 		glm::vec3 bgColor = glm::vec3(0.6f, 0.42f, 0.33f);
 
+		float debug;
+
+		float currentDayNightFrequency = 0.0f;
+		float dayNightPhase = 0.0f;
+
 		bool lmbPressed = false;
+
+		void handleDayNightCycle() {
+			float totalTime = 30.0f;
+			float nightPercentage = 0.3f;
+			float newDayNightFrequency;
+
+			float time = elapsed / totalTime - floor(elapsed / totalTime);
+
+			if (time <= (1.0f - nightPercentage)) {
+				// day
+				newDayNightFrequency = PI / (totalTime * (1.0f - nightPercentage));
+				walle->setFlashlight(false);
+			} else {
+				// night
+				newDayNightFrequency = PI / (totalTime * nightPercentage);
+				walle->setFlashlight(true);
+			}
+
+			// When changing frequency you need to add a phase in order to allign 
+			// to the next valid y value of the new trig function
+			if (currentDayNightFrequency != newDayNightFrequency) {
+				dayNightPhase = (currentDayNightFrequency - newDayNightFrequency) * elapsed + dayNightPhase;
+				currentDayNightFrequency = newDayNightFrequency;
+			}
+
+			debug = time;
+
+			sun->position = glm::vec3(7.0f * glm::vec4(-cos(elapsed * newDayNightFrequency + dayNightPhase), 0.0f, sin(elapsed * newDayNightFrequency + dayNightPhase), 1.0f) *
+				glm::rotate(glm::mat4(1.0f), glm::radians(11.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+			
+			
+		}
+
 	public:
 
 		GameScene(GLFWwindow* windowRef) : Scene(windowRef) {};
@@ -79,20 +119,20 @@ class GameScene : public Scene {
 			camera->setMoving(false);
 
 			// shader
-			lightedShader = std::make_shared<Shader>("core/shaders/lighted_shader.vs", "core/shaders/lighted_shader.fs");
+			spriteShader = std::make_shared<Shader>("core/shaders/sprite_shader.vs", "core/shaders/ingame_sprite_shader.fs");
 
 			// pools initialization
-			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(10, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
-			blockPool = std::make_shared<ObjectPool<Block>>(30, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
+			rubbishPool = std::make_shared<ObjectPool<Rubbish>>(10, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.4f, 0.32f));
+			blockPool = std::make_shared<ObjectPool<Block>>(30, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.25f, 0.25f));
 
 			// background
-			background = std::make_shared<Image>(lightedShader, "assets/textures/bg_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
+			background = std::make_shared<Image>(spriteShader, "assets/textures/bg_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
 
 			// characters
-			eve = std::make_shared<Eve>(rubbishPool, lightedShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
-			walle = std::make_shared<Walle>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
-			mo = make_shared<Mo>(blockPool, lightedShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
-			wind = make_shared<Wind>(rubbishPool, blockPool, lightedShader, glm::vec2(0.0f, -0.6f));
+			eve = std::make_shared<Eve>(rubbishPool, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
+			walle = std::make_shared<Walle>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
+			mo = make_shared<Mo>(blockPool, spriteShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
+			wind = make_shared<Wind>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, -0.6f));
 
 			SceneManager::getInstance().addObject(wind);
 			SceneManager::getInstance().addObject(mo);
@@ -100,19 +140,19 @@ class GameScene : public Scene {
 			SceneManager::getInstance().addObject(eve);
 
 			// lights setup
-			sun = std::make_shared<Light>(glm::vec3(1.0f, 0.0f, 0.0f), 1.0f, "#ffffab");
+			sun = std::make_shared<Light>(glm::vec3(1.0f, 0.0f, 0.0f), 80.0f, "#ffffab");
 			SceneManager::getInstance().sun = sun;
 
-			lightedShader->use();
-			lightedShader->setInt("mainTexture", 0);
+			spriteShader->use();
+			spriteShader->setInt("mainTexture", 0);
 
-			lightedShader->setMat4("camera", camera->getViewMatrix());
-			lightedShader->setVec3("viewPosition", camera->getPosition());
+			spriteShader->setMat4("camera", camera->getViewMatrix());
+			spriteShader->setVec3("viewPosition", camera->getPosition());
 
-			lightedShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
 
-			lightedShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
-			lightedShader->setVec3("lights[0].position", sun->position);
+			spriteShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
+			spriteShader->setVec3("lights[0].position", sun->position);
 		}
 
 		virtual float update() {
@@ -131,18 +171,18 @@ class GameScene : public Scene {
 			background->setPosition(glm::vec2(0.0f, 0.0f) - camera->getPosition2D());
 			background->renderSprite();
 
-			sun->position = glm::vec3(sin(elapsed * 0.1f), 0.0f, cos(elapsed * 0.1f));
+			handleDayNightCycle();
 
-			walle->setFlashlight(cos(elapsed * 0.1f) <= 0.0f);
 			wind->updateStrength((float)StatsManager::getInstance().collectedBlocks);
 			if (StatsManager::getInstance().collectedBlocks / BLOCK_COLUMNS > 3) {
 				camera->setTarget(explerp(camera->getTargetY(), 0.0f, (float)deltaTime * 0.05f));
 			}
 
-			lightedShader->use();
-			lightedShader->setMat4("camera", camera->getViewMatrix());
-			lightedShader->setVec3("lights[0].position", sun->position);
-			lightedShader->setVec3("viewPosition", camera->getPosition());
+			spriteShader->use();
+			spriteShader->setMat4("camera", camera->getViewMatrix());
+			spriteShader->setVec3("lights[0].position", sun->position);
+			spriteShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
+			spriteShader->setVec3("viewPosition", camera->getPosition());
 
 			// mo movement
 			if (lmbPressed) {
@@ -170,6 +210,7 @@ class GameScene : public Scene {
 			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor(elapsed / 60.0f), mod(elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
 			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, height - 40.0f), 0.7f, "#0a1518");
 			guiText->RenderText(std::format("Wind: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Debug: {:.2f}", debug), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
 
 			//glm::vec2 camPosition = SceneManager::getInstance().camera->getPosition2D();
 			//float pileHeight = StatsManager::getInstance().maxBlockProgress;

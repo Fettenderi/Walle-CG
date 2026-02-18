@@ -118,16 +118,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="core\shaders\flat_shader.fs">
+    <None Include="core\shaders\GUI_shader.fs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\shaders\flat_shader.vs">
+    <None Include="core\shaders\GUI_shader.vs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\shaders\lighted_shader.fs">
+    <None Include="core\shaders\menu_sprite_shader.fs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
-    <None Include="core\shaders\lighted_shader.vs">
+    <None Include="core\shaders\sprite_shader.vs">
       <Filter>File di origine\core\shaders</Filter>
     </None>
     <None Include="core\shaders\text_shader.fs">
@@ -138,6 +138,7 @@
     </None>
     <None Include="core\shaders\PBR_shader.fs" />
     <None Include="core\shaders\PBR_shader.vs" />
+    <None Include="core\shaders\ingame_sprite_shader.fs" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\models\mela\mela.png">
