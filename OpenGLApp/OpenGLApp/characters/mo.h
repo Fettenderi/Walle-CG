@@ -27,6 +27,27 @@ class Mo : public Character {
             movingSound = nullptr;
         }
 
+        virtual ~Mo() {
+            while (!placedBlocks.empty()) {
+                placedBlocks.front().reset();
+                placedBlocks.pop();
+            }
+
+            pickedBlock.reset();
+            camera.reset();
+            blockPool.reset();
+
+            if (player != nullptr) {
+                player = nullptr;
+            }
+
+            if (movingSound != nullptr) {
+                movingSound->stop();
+                movingSound->drop();
+                movingSound = nullptr;
+            }
+        }
+
         void setTarget(glm::vec2 pos) {
             if (hasBlock) {
                 buffered_target = pos;
@@ -169,7 +190,7 @@ class Mo : public Character {
 
             player->play3D("assets/audio/mo_pickup.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
 
-            camera->moveTarget(- 0.18f / 9.0f);
+            camera->moveTarget(0.18f / 9.0f);
 
             return block_release_target;
         }

@@ -17,7 +17,6 @@
 #include <irrKlang.h>
 
 #include "../globals/scene_manager.h"
-#include "../scenes/game_scene.h"
 
 #include "../core/text.h"
 #include "../core/shader.h"
@@ -68,7 +67,7 @@ class MainMenuScene : public Scene {
 		bool hasGrabbedImage = false;
 		bool isFirstFrame = true;
 
-		irrklang::ISoundEngine* player;
+		irrklang::ISoundEngine* soundPlayer;
 
 		std::unique_ptr<Timer> bootupTimer;
 
@@ -95,10 +94,10 @@ class MainMenuScene : public Scene {
 			elapsed = glfwGetTime() - offset;
 
 			// sfx player
-			player = SceneManager::getInstance().soundManager;
+			soundPlayer = SceneManager::getInstance().soundManager;
 
 			//bootup
-			player->play2D("assets/audio/boot_up.wav", false);
+			soundPlayer->play2D("assets/audio/boot_up.wav", false);
 			bootupTimer = make_unique<Timer>(2.0f, [this]() {
 				bootedUp = true;
 				}, false);
@@ -136,12 +135,20 @@ class MainMenuScene : public Scene {
 
 			spriteShader->use();
 			spriteShader->setInt("mainTexture", 0);
-
+			spriteShader->setMat4("camera", camera->getViewMatrix());
+			spriteShader->setVec3("viewPosition", camera->getPosition());
 			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
 			spriteShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
 
-			PBRShader->use();
+			// view/projection transformations
+			int width, height;
+			glfwGetWindowSize(window, &width, &height);
+			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 
+			PBRShader->use();
+			PBRShader->setMat4("camera", camera->getViewMatrix());
+			PBRShader->setMat4("projection", perspectiveProjection);
+			PBRShader->setVec3("viewPosition", camera->getPosition());
 			PBRShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
 			PBRShader->setVec3("lights[0].color", sun1->getColor() * sun1->strength);
 			PBRShader->setVec3("lights[1].color", sun2->getColor() * sun2->strength);
@@ -173,11 +180,6 @@ class MainMenuScene : public Scene {
 			//moveSun2Position();
 			placementUpdate();
 			buttonUpdate();
-
-			// view/projection transformations
-			int width, height;
-			glfwGetWindowSize(window, &width, &height);
-			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 			
 			// rendering the loaded models
 			glm::mat4 walleModelMat = glm::mat4(1.0f);
@@ -197,16 +199,11 @@ class MainMenuScene : public Scene {
 
 			// models update
 			spriteShader->use();
-			spriteShader->setMat4("camera", camera->getViewMatrix());
 			spriteShader->setVec3("lights[0].position", sun1->position);
-			spriteShader->setVec3("viewPosition", camera->getPosition());
 
 			PBRShader->use();
-			PBRShader->setMat4("camera", camera->getViewMatrix());
-			PBRShader->setMat4("projection", perspectiveProjection);
 			PBRShader->setVec3("lights[0].position", sun1->position);
 			PBRShader->setVec3("lights[1].position", sun2->position);
-			PBRShader->setVec3("viewPosition", camera->getPosition());
 
 			PBRShader->setMat4("model", walleModelMat);
 			walle->Draw(*PBRShader);
@@ -238,25 +235,25 @@ class MainMenuScene : public Scene {
 					grabbedImage->setPosition(glm::vec2(scX, scY));
 					grabbedImage = nullptr;
 					printf("(%f, %f)", scX, scY);
-					player->play2D("assets/audio/pin_image.wav", false);
+					soundPlayer->play2D("assets/audio/pin_image.wav", false);
 					return;
 				}
 
 				if (walleGuide->isMouseOver(glm::vec2(scX, scY))) {
 					hasGrabbedImage = true;
 					grabbedImage = walleGuide;
-					player->play2D("assets/audio/unpin_image.wav", false);
+					soundPlayer->play2D("assets/audio/unpin_image.wav", false);
 				}
 
 				if (moGuide->isMouseOver(glm::vec2(scX, scY))) {
 					hasGrabbedImage = true;
 					grabbedImage = moGuide;
-					player->play2D("assets/audio/unpin_image.wav", false);
+					soundPlayer->play2D("assets/audio/unpin_image.wav", false);
 				}
 
 				if (startButton->isMouseOver(glm::vec2(scX, scY))) {
-					player->play2D("assets/audio/ui_click.wav", false);
-					SceneManager::getInstance().changeScene(std::make_shared<GameScene>(window));
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+					SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
 				}
 			}
 		}
@@ -364,15 +361,15 @@ class MainMenuScene : public Scene {
 			float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
 
 			if (startButton->isMouseOver(glm::vec2(scX, scY))) {
-				elapsedOver += deltaTime;
-				startButton->setScale(explerp(startButton->getScale(), sin(elapsedOver) * 0.05f + 0.95f, deltaTime * 3.0f));
-				startButton->setRotation(explerp(startButton->getRotation(), sin(elapsedOver * 2.0f) * 3.0f, deltaTime * 3.0f));
+				elapsedOver += (float)deltaTime;
+				startButton->setScale(explerp(startButton->getScale(), sin(elapsedOver) * 0.05f + 0.95f, (float)deltaTime * 3.0f));
+				startButton->setRotation(explerp(startButton->getRotation(), sin(elapsedOver * 2.0f) * 3.0f, (float)deltaTime * 3.0f));
 			}
 			else {
-				startButton->setScale(explerp(startButton->getScale(), 1.0f, deltaTime * 1.0f));
-				startButton->setRotation(explerp(startButton->getRotation(), 0.0f, deltaTime * 1.0f));
+				startButton->setScale(explerp(startButton->getScale(), 1.0f, (float)deltaTime * 1.0f));
+				startButton->setRotation(explerp(startButton->getRotation(), 0.0f, (float)deltaTime * 1.0f));
 
-				elapsedOver = explerp(elapsedOver, 0.0f, deltaTime * 1.0f);
+				elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * 1.0f);
 			}
 		}
 
@@ -413,26 +410,51 @@ class MainMenuScene : public Scene {
 
 			if (mouseDetector->isMouseOver(glm::vec2(scX, scY)) &&
 				((abs(dist.x) > 0.005f) || (abs(dist.y) > 0.005f))) {
-				spinVelocity.x += dist.x * 10.0f * deltaTime;
-				spinVelocity.y += dist.y * 10.0f * deltaTime * sign(currentMousePos.x);
+				spinVelocity.x += dist.x * 10.0f * (float)deltaTime;
+				spinVelocity.y += dist.y * 10.0f * (float)deltaTime * sign(currentMousePos.x);
 			}
 			else {
-				spinVelocity.x = explerp(spinVelocity.x, 0.0f, deltaTime * 1.5f);
-				spinVelocity.y = explerp(spinVelocity.y, 0.0f, deltaTime * 1.5f);
+				spinVelocity.x = explerp(spinVelocity.x, 0.0f, (float)deltaTime * 1.5f);
+				spinVelocity.y = explerp(spinVelocity.y, 0.0f, (float)deltaTime * 1.5f);
 			}
 
 
-			modelOffset += spinVelocity.x * 50.0f * deltaTime;
-			logoOffset += spinVelocity.y * 50.0f * deltaTime;
+			modelOffset += spinVelocity.x * 50.0f * (float)deltaTime;
+			logoOffset += spinVelocity.y * 50.0f * (float)deltaTime;
 
 			previousMousePos = currentMousePos;
 		}
 
 		virtual void windowResizedCallback(GLFWwindow* window, int width, int height) {
+			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+			PBRShader->use();
+			PBRShader->setMat4("projection", perspectiveProjection);
+
 			isFirstFrame = true;
 		}
 
 		virtual void end() {
+			spriteShader.reset();
+			PBRShader.reset();
+			sun1.reset();
+			sun2.reset();
+
+			mouseDetector.reset();
+
+			background.reset();
+			walleGuide.reset();
+			moGuide.reset();
+			startButton.reset();
+
+			camera.reset();
+
+			walle.reset();
+			logo.reset();
+
+			grabbedImage.reset();
+			bootupTimer.release();
+
 			SceneManager::getInstance().removeAllObjects();
 		}
 };

@@ -7,6 +7,7 @@
 #include "rubbish.h"
 #include "block.h"
 
+#include "../globals/stats_manager.h"
 #include "../globals/scene_manager.h"
 
 #include "../core/light.h"
@@ -30,6 +31,7 @@ class Walle : public Character {
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
 
+            collectionRange = 0.13f;
             m_h_tiles = 3;
 
             spriteShader->use();
@@ -43,6 +45,26 @@ class Walle : public Character {
 
             processingTimer->pause();
         }
+
+        virtual ~Walle() {
+            camera.reset();
+            light.reset();
+            rubbishPool.reset();
+            blockPool.reset();
+
+            processingTimer.release();
+
+            if (player != nullptr) {
+                player = nullptr;
+            }
+
+            if (movingSound != nullptr) {
+                movingSound->stop();
+                movingSound->drop();
+                movingSound = nullptr;
+            }
+        }
+
 
         void processInput(GLFWwindow* window) {
             if (processing) return;
@@ -62,11 +84,13 @@ class Walle : public Character {
                 m_velocity += glm::vec2(1.0f, 0.0f);
 
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+                int picked = 0;
                 for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                     if (std::shared_ptr<Rubbish> rubbish = dynamic_pointer_cast<Rubbish>(object)) {
-                        if (rubbish->isPickable && glm::distance(rubbish->getPosition(), m_position) <= m_collection_distance) {
+                        if (rubbish->isPickable && glm::distance(rubbish->getPosition(), m_position + m_direction * collectionRange) <= collectionRange) {
                             rubbish->hide();
                             rubbish->setPosition(glm::vec2(2.0f, 2.0f));
+                            picked++;
                             
                             collect(rubbish->trashAmount);
 
@@ -76,6 +100,8 @@ class Walle : public Character {
                         }
                     }
                 }
+
+                StatsManager::getInstance().currentRubbish -= picked;
             }
 
             if (m_velocity == glm::vec2(0.0f, 0.0f)) {
@@ -104,8 +130,8 @@ class Walle : public Character {
             processingTimer->updateTimer(deltaTime);
 
             if (processing) {
-                m_scale.x = abs(sin(processingTimer->getElapsed() * 5.0f)) * 0.15 + maxScale.x * 0.8f;
-                m_scale.y = (abs(cos(processingTimer->getElapsed() * 6.0f)) * 0.15 + maxScale.y * 0.8f) * sign(m_direction.x);
+                m_scale.x = abs(sin((float)processingTimer->getElapsed() * 5.0f)) * 0.15f + maxScale.x * 0.8f;
+                m_scale.y = (abs(cos((float)processingTimer->getElapsed() * 6.0f)) * 0.15f + maxScale.y * 0.8f) * sign(m_direction.x);
                 return;
             }
 
@@ -113,9 +139,11 @@ class Walle : public Character {
 
             m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
+            // TODO: capire cosa fare con la velocità
+            //m_position += m_velocity * m_speed * deltaTime;
             m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
 
-            m_position = clamp(glm::vec2(-0.82f, -0.82f) - camera->getPosition2D(), glm::vec2(0.82f, 0.82f) - camera->getPosition2D(), m_position);
+            m_position = clamp(glm::vec2(-0.82f, -0.82f) + camera->getPosition2D(), glm::vec2(0.82f, 0.82f) + camera->getPosition2D(), m_position);
 
             glm::vec2 lightPosition = m_position + m_direction * 0.2f;
             light->position = glm::vec3(lightPosition.x, lightPosition.y, 0.2f);
@@ -177,7 +205,7 @@ class Walle : public Character {
         glm::vec2 maxScale;
 
         float m_speed;
-        float m_collection_distance = 0.2f;
+        float collectionRange;
 
         int m_collected = 0;
         const int m_max_rubbish = JUNK_TO_BLOCK;

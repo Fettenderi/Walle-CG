@@ -11,6 +11,7 @@ class StatsManager {
 			return instance;
 		}
 
+		int currentRubbish = 0;
 		int collectedBlocks = 0;
 		int highScore = 0;
 

@@ -159,6 +159,7 @@
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\text.h" />
     <ClInclude Include="core\timer.h" />
+    <ClInclude Include="scenes\game_over_scene.h" />
     <ClInclude Include="globals\scene_manager.h" />
     <ClInclude Include="globals\stats_manager.h" />
     <ClInclude Include="scenes\game_scene.h" />
@@ -170,6 +171,7 @@
   <ItemGroup>
     <ClCompile Include="core\quad.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="globals\scene_manager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="stb_image.cpp" />
   </ItemGroup>

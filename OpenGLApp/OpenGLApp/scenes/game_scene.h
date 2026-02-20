@@ -1,41 +1,19 @@
 #ifndef GAME_SCENE_H
 #define GAME_SCENE_H
 
-#include <memory>
-
-#include <iostream>
-#include <string>
-#include <format>
-
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include <irrKlang.h>
-
+#include "../core/scene.h"
 #include "../globals/scene_manager.h"
 
-#include "../core/text.h"
-#include "../core/shader.h"
-#include "../core/quad.h"
-#include "../core/timer.h"
 #include "../core/pool.h"
-#include "../core/light.h"
-#include "../core/camera.h"
+#include "../core/timer.h"
+#include "../core/text.h"
 
 #include "../characters/character.h"
 #include "../characters/walle.h"
 #include "../characters/eve.h"
-#include "../characters/wind.h"
+#include "../characters/mo.h"
 #include "../characters/rubbish.h"
 #include "../characters/block.h"
-
-#include "../utils.h"
-
-#include "../core/scene.h"
 
 #define PI 3.14159265358979323846
 
@@ -45,7 +23,6 @@ class GameScene : public Scene {
 		std::shared_ptr<Light> sun;
 
 		std::shared_ptr<Image> background;
-		std::shared_ptr<Wind> wind;
 		std::shared_ptr<Mo> mo;
 		std::shared_ptr<Eve> eve;
 		std::shared_ptr<Walle> walle;
@@ -65,8 +42,10 @@ class GameScene : public Scene {
 
 		bool lmbPressed = false;
 
+		int maxRubbish;
+
 		void handleDayNightCycle() {
-			float totalTime = 30.0f;
+			float totalTime = 500.0f;
 			float nightPercentage = 0.3f;
 			float newDayNightFrequency;
 
@@ -74,18 +53,18 @@ class GameScene : public Scene {
 
 			if (time <= (1.0f - nightPercentage)) {
 				// day
-				newDayNightFrequency = PI / (totalTime * (1.0f - nightPercentage));
+				newDayNightFrequency = (float)PI / (totalTime * (1.0f - nightPercentage));
 				walle->setFlashlight(false);
 			} else {
 				// night
-				newDayNightFrequency = PI / (totalTime * nightPercentage);
+				newDayNightFrequency = (float)PI / (totalTime * nightPercentage);
 				walle->setFlashlight(true);
 			}
 
 			// When changing frequency you need to add a phase in order to allign 
 			// to the next valid y value of the new trig function
 			if (currentDayNightFrequency != newDayNightFrequency) {
-				dayNightPhase = (currentDayNightFrequency - newDayNightFrequency) * elapsed + dayNightPhase;
+				dayNightPhase = (currentDayNightFrequency - newDayNightFrequency) * (float)elapsed + dayNightPhase;
 				currentDayNightFrequency = newDayNightFrequency;
 			}
 
@@ -104,7 +83,10 @@ class GameScene : public Scene {
 		virtual void init() {
 			glDisable(GL_DEPTH_TEST);
 
-			// Text Provider
+			// loading config
+			maxRubbish = 5;
+
+			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
 
 			// time initialization
@@ -129,12 +111,10 @@ class GameScene : public Scene {
 			background = std::make_shared<Image>(spriteShader, "assets/textures/bg_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
 
 			// characters
-			eve = std::make_shared<Eve>(rubbishPool, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.0f);
+			eve = std::make_shared<Eve>(rubbishPool, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.3f);
 			walle = std::make_shared<Walle>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
 			mo = make_shared<Mo>(blockPool, spriteShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
-			wind = make_shared<Wind>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, -0.6f));
 
-			SceneManager::getInstance().addObject(wind);
 			SceneManager::getInstance().addObject(mo);
 			SceneManager::getInstance().addObject(walle);
 			SceneManager::getInstance().addObject(eve);
@@ -167,16 +147,17 @@ class GameScene : public Scene {
 			lastElapsed = elapsed;
 
 			// global update
+			if (StatsManager::getInstance().currentRubbish > maxRubbish) {
+				StatsManager::getInstance().currentRubbish = 0;
+				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameOverScene, window);
+				return (float)deltaTime;
+			}
+			
 			camera->update((float)deltaTime);
-			background->setPosition(glm::vec2(0.0f, 0.0f) - camera->getPosition2D());
+			background->setPosition(camera->getPosition2D());
 			background->renderSprite();
 
 			handleDayNightCycle();
-
-			wind->updateStrength((float)StatsManager::getInstance().collectedBlocks);
-			if (StatsManager::getInstance().collectedBlocks / BLOCK_COLUMNS > 3) {
-				camera->setTarget(explerp(camera->getTargetY(), 0.0f, (float)deltaTime * 0.05f));
-			}
 
 			spriteShader->use();
 			spriteShader->setMat4("camera", camera->getViewMatrix());
@@ -197,7 +178,7 @@ class GameScene : public Scene {
 				float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
 
 				//destinazione di Mo
-				mo->setTarget(glm::vec2(scX, scY) - camera->getPosition2D());
+				mo->setTarget(glm::vec2(scX, scY) + camera->getPosition2D());
 			}
 
 			return (float)deltaTime;
@@ -207,10 +188,9 @@ class GameScene : public Scene {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 			
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor(elapsed / 60.0f), mod(elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)elapsed / 60.0f), mod((float)elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
 			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, height - 40.0f), 0.7f, "#0a1518");
-			guiText->RenderText(std::format("Wind: {:.2f}", wind->getStrength()), glm::vec2(10.0f, 10.0f), 0.7f, "#0a1518");
-			guiText->RenderText(std::format("Debug: {:.2f}", debug), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format("Current Rubbish: {}", StatsManager::getInstance().currentRubbish), glm::vec2(10.0f, 50.0f), 0.7f, "#0a1518");
 
 			//glm::vec2 camPosition = SceneManager::getInstance().camera->getPosition2D();
 			//float pileHeight = StatsManager::getInstance().maxBlockProgress;
@@ -228,7 +208,21 @@ class GameScene : public Scene {
 		}
 
 		virtual void end() {
+			spriteShader.reset();
+			sun.reset();
 
+			background.reset();
+			mo.reset();
+			eve.reset();
+			walle.reset();
+
+			camera.reset();
+			guiText.release();
+
+			rubbishPool.reset();
+			blockPool.reset();
+
+			SceneManager::getInstance().removeAllObjects();
 		}
 };
 

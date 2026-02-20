@@ -22,13 +22,14 @@ class Camera {
         bool hasTarget = false;
 
         //for 3d
-        glm::vec3 position3d = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 position3d;
         glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     public:
         Camera() {
             position = glm::vec2(0.0f, 0.0f);
+            position3d = glm::vec3(0.0f, 0.0f, 1.0f);
             speed = 0.0f;
             targetY = 0.0f;
             canMove = false;
@@ -60,6 +61,7 @@ class Camera {
 
         void setPosition(glm::vec3 newPosition) {
             position3d = newPosition;
+            position = glm::vec2(position3d.x, position3d.y);
         }
 
         glm::vec2 getPosition2D() {

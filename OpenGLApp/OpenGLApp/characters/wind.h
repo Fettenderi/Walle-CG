@@ -72,7 +72,7 @@ class Wind : public Character {
         void setTarget(glm::vec2 pos) {
             //printf("(%f, %f)\n", pos.x, pos.y);
 
-            int rubbishAmt = getNextRandomIntRange(5, clamp(7.0f, 30.0f, flerp(7.0f, 25.0f, strength)));
+            int rubbishAmt = getNextRandomIntRange(5, (int)clamp(7.0f, 30.0f, flerp(7.0f, 25.0f, strength)));
             __nop();
             int blockAmt = getNextRandomIntRange(1, rubbishAmt - 1);
             rubbishAmt = rubbishAmt - blockAmt;

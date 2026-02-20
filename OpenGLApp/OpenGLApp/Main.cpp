@@ -12,25 +12,9 @@
 #include "globals/scene_manager.h"
 #include "globals/stats_manager.h"
 
-#include "core/text.h"
-#include "core/shader.h"
 #include "core/quad.h"
-#include "core/timer.h"
-#include "core/pool.h"
-#include "core/light.h"
-#include "core/camera.h"
 
 #include "characters/character.h"
-#include "characters/walle.h"
-#include "characters/mo.h"
-#include "characters/eve.h"
-#include "characters/rubbish.h"
-#include "characters/block.h"
-#include "characters/image.h"
-
-#include "scenes/game_scene.h"
-#include "scenes/test_scene.h"
-#include "scenes/main_menu_scene.h"
 
 #include "utils.h"
 
@@ -67,6 +51,7 @@ int main() {
             glfwTerminate();
             return -1;
         }
+
         glfwMakeContextCurrent(window);
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwSetMouseButtonCallback(window, mouseCallback);
@@ -84,9 +69,7 @@ int main() {
         Quad::instantiatePrimitive();
 
         // Scene initialization
-        SceneManager::getInstance().currentScene = std::make_shared<MainMenuScene>(window);
-
-        SceneManager::getInstance().currentScene->init();
+        SceneManager::getInstance().changeScene(SceneManager::SceneID::MainMenuScene, window);
 
         // render loop
         while (!glfwWindowShouldClose(window)) {

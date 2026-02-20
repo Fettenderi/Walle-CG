@@ -5,18 +5,20 @@
 #include <vector>
 #include <utility>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "../stb_image.h"
 
-#include "../globals/scene_manager.h"
+#include <irrKlang.h>
+#include "../stb_image.h"
 
 #include "../core/collision_shape.h"
 #include "../core/shader.h"
 #include "../core/quad.h"
 
-#include <irrKlang.h>
 
 static unsigned long assignedIds;
 
@@ -90,6 +92,10 @@ class Character {
             loadTexture(&m_textureID, texturePath, GL_RGBA);
             soundManager = irrklang::createIrrKlangDevice();
             id = assignedIds++;
+        }
+
+        virtual ~Character() {
+            m_shader.reset();
         }
 
         void renderSprite() {

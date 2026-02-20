@@ -16,6 +16,10 @@
 
 class SceneManager {
 	public:
+		enum class SceneID {
+			MainMenuScene, GameScene, GameOverScene
+		};
+
 		using iterator = std::list<std::shared_ptr<Character>>::iterator;
 		using const_iterator = std::list<std::shared_ptr<Character>>::const_iterator;
 
@@ -55,17 +59,14 @@ class SceneManager {
 		}
 
 		void removeAllObjects() {
+			for (std::shared_ptr<Character> object : objects) {
+				object.reset();
+			}
+
 			objects.clear();
 		}
 
-		void changeScene(std::shared_ptr<Scene> newScene) {
-			if (currentScene) {
-				currentScene->end();
-			}
-			
-			currentScene = newScene;
-			currentScene->init();
-		}
+		void changeScene(SceneID newSceneID, GLFWwindow* windowRef);
 
 		std::shared_ptr<Scene> currentScene;
 
@@ -82,7 +83,9 @@ class SceneManager {
 			// IrrKlang
 			soundManager = irrklang::createIrrKlangDevice();
 
-			assert(soundManager, "Unable to start sound manager");
+			if (soundManager == NULL) {
+				printf("Unable to start sound manager");
+			}
 		};
 
 		SceneManager(const SceneManager&) = delete;

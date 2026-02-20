@@ -1,6 +1,28 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <memory>
+
+#include <iostream>
+#include <string>
+#include <format>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <irrKlang.h>
+
+#include "../core/shader.h"
+#include "../core/quad.h"
+#include "../core/light.h"
+#include "../core/camera.h"
+
+#include "../utils.h"
+
 class Scene {
     public:
         Scene(GLFWwindow* windowRef) : window(windowRef), offset(glfwGetTime()) {};
