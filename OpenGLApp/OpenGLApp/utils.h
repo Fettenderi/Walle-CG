@@ -22,7 +22,11 @@ static float mod(float num, float m) {
 }
 
 static float flerp(float a, float b, float t) {
-	return a + t * (b - a);
+    return a + t * (b - a);
+}
+
+static glm::vec2 flerpVec2(glm::vec2 a, glm::vec2 b, float t) {
+    return a + t * (b - a);
 }
 
 static float explerp(float a, float b, float t) {

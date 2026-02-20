@@ -14,6 +14,9 @@
 
 #include <memory>
 #include <list>
+#include <format>
+#include <iostream>
+#include <string>
 
 class Eve : public Character {
 
@@ -26,7 +29,9 @@ class Eve : public Character {
 
             timeBetweenDelivery = 1.0f;
             timeBetweenDeliveryDeviation = 0.5f;
-            deliveryAmount = 1;
+            deliveryAmount = 3;
+
+            float throwCooldownTime = 0.5f;
 
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
@@ -34,6 +39,12 @@ class Eve : public Character {
             cooldownTimer = std::make_unique<Timer>(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation), [this] {
                     tryGettingRubbish();
                 } , false);
+
+            throwCooldownTimer = std::make_unique<Timer>(throwCooldownTime, [this] {
+                throwRubbish();
+                }, false);
+
+            throwCooldownTimer->pause();
         }
 
         virtual ~Eve() {
@@ -42,9 +53,10 @@ class Eve : public Character {
             }
 
             pickedRubbish.clear();
-            rubbishOffsets.clear();
+            rubbishPositions.clear();
 
             cooldownTimer.release();
+            throwCooldownTimer.release();
 
             rubbishPool.reset();
 
@@ -59,12 +71,11 @@ class Eve : public Character {
             }
         }
 
-
-
         void update(float deltaTime) {
             cooldownTimer->updateTimer(deltaTime);
+            throwCooldownTimer->updateTimer(deltaTime);
 
-            if (!hasTarget) return;
+            if (currentState != MOVING && currentState != RETURNING) return;
 
             m_direction = target - m_position;
 
@@ -73,82 +84,31 @@ class Eve : public Character {
 
             float dist = glm::length(m_direction);
 
-            if (dist < 0.01f) {
-                if (!hasRubbish) {
-                    hasTarget = false;
-
-                    cooldownTimer->changeDuration(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation));
-
-                    cooldownTimer->resume();
-                    cooldownTimer->reset();
-
-                    if (movingSound != nullptr) {
-                        movingSound->stop();
-                        movingSound->drop();
-                        movingSound = nullptr;
-                    }
-
-                    return;
-                }
-                
-                target = m_prev_position;
-
-                int deposited = 0;
-                for (std::shared_ptr<Rubbish> tempRubbish : pickedRubbish) {
-                    tempRubbish->isPickable = true;
-                    deposited++;
-                }
-
-                StatsManager::getInstance().currentRubbish += deposited;
-
-                pickedRubbish.clear();
-                rubbishOffsets.clear();
-
-                hasRubbish = false;
-            }
-            else {
-                if (movingSound == nullptr) {
-                    movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
-                }
-                else {
-                    movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
-                }
-
-                m_direction = glm::normalize(m_direction);
-                m_position += m_direction * m_speed * deltaTime;
-
-                auto tempRubbish = pickedRubbish.begin();
-                auto offset = rubbishOffsets.begin();
-
-                for (; tempRubbish != pickedRubbish.end() && offset != rubbishOffsets.end(); ++tempRubbish, ++offset) {
-                    //int offset;
-                    //if (i % 2 == 0) {
-                      //  offset = -i / 2;
-                    //} else {
-                      //  offset = (int)ceil(((float)i) / 2.0f);
-                    //}
-
-                    //tempRubbish->setPosition(glm::vec2(0.0f, offset * 0.1f) + m_position + m_direction * 0.2f);
-                    //i++;
-
-                    (*tempRubbish)->setPosition(*offset + m_position + m_direction * 0.2f);
-                }
-            }
+            if (dist < 0.01f)
+                handleArrived();
+            else
+                handleMovingToTarget(deltaTime);
         }
 
     private:
+        enum State {
+            IDLE, MOVING, THROWING, RETURNING
+        };
+
         glm::vec2 m_prev_position;
 
         glm::vec2 m_direction;
         glm::vec2 target;
 
+        glm::vec2 frontPosition;
+
         float m_speed;
-        bool hasTarget = false;
-        bool hasRubbish = false;
+        State currentState = IDLE;
 
         std::list<std::shared_ptr<Rubbish>> pickedRubbish;
-        std::list<glm::vec2> rubbishOffsets;
+        std::list<glm::vec2> rubbishPositions;
         std::unique_ptr<Timer> cooldownTimer;
+        std::unique_ptr<Timer> throwCooldownTimer;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;
@@ -157,14 +117,85 @@ class Eve : public Character {
         float timeBetweenDeliveryDeviation;
         int deliveryAmount;
 
-        void tryGettingRubbish() {
-            setTarget(getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress));
+        void handleArrived() {
+            if (currentState == MOVING) {
+                currentState = THROWING;
+
+                throwCooldownTimer->resume();
+                throwCooldownTimer->reset();
+            }
+            else if (currentState == RETURNING) {
+                currentState = IDLE;
+
+                cooldownTimer->changeDuration(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation));
+
+                cooldownTimer->resume();
+                cooldownTimer->reset();
+            }
         }
 
-        void setTarget(glm::vec2 pos) {
+        void throwRubbish() {
+            if (pickedRubbish.empty()) {
+                handleFinishedThrowing();
+                return;
+            }
+
+            std::shared_ptr<Rubbish> rubbish = pickedRubbish.front();
+            glm::vec2 position = rubbishPositions.front();
+
+            pickedRubbish.pop_front();
+            rubbishPositions.pop_front();
+
+            //cout << std::format("{:.2f}, {:.2f}", frontPosition.x, frontPosition.y) << endl;
+
+            rubbish->setPosition(frontPosition);
+            rubbish->setLandingPosition(position);
+
+            throwCooldownTimer->resume();
+            throwCooldownTimer->reset();
+
+            if (!pickedRubbish.empty()) {
+                rubbish = pickedRubbish.front();
+                rubbish->setPosition(frontPosition);
+            }
+        }
+
+        void handleFinishedThrowing() {
+            currentState = RETURNING;
+
+            target = m_prev_position;
+
+            if (movingSound != nullptr) {
+                movingSound->stop();
+                movingSound->drop();
+                movingSound = nullptr;
+            }
+        }
+
+        void handleMovingToTarget(float deltaTime) {
+            if (movingSound == nullptr) {
+                movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+            }
+            else {
+                movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+            }
+
+            m_direction = glm::normalize(m_direction);
+            m_position += m_direction * m_speed * deltaTime;
+
+            frontPosition = m_position + m_direction * 0.2f;
+
+            if (!pickedRubbish.empty()) {
+                std::shared_ptr<Rubbish> rubbish = pickedRubbish.front();
+                rubbish->setPosition(frontPosition);
+            }
+        }
+
+        void tryGettingRubbish() {
             int actualDelivery = getNextRandomIntRange(std::max(deliveryAmount - 1, 1), deliveryAmount + 1);
             bool foundRubbish = false;
             std::shared_ptr<Rubbish> tempRubbish;
+            glm::vec2 midPoint = glm::vec2(0.0f, 0.0f);
 
             for (int i = 0; i < actualDelivery; i++) {
                 tempRubbish = rubbishPool->getInstance();
@@ -178,20 +209,24 @@ class Eve : public Character {
                 tempRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
 
                 pickedRubbish.push_back(tempRubbish);
-                rubbishOffsets.push_back(glm::normalize(getRandomVector()) * (((float)i) * 0.2f));
+                glm::vec2 tempPosition = getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);
+                rubbishPositions.push_back(tempPosition);
+
+                midPoint += tempPosition;
 
                 SceneManager::getInstance().addObject(tempRubbish);
             }
 
             if (!foundRubbish) return;
-            
-            target = pos;
 
-            m_position = glm::vec2(sign(getNextRandom()) * 2.0f, pos.y);
+            midPoint /= actualDelivery;
+
+            target = glm::vec2(sign(midPoint.x) * 0.8f, midPoint.y);
+
+            m_position = glm::vec2(sign(midPoint.x) * 2.0f, midPoint.y);
             m_prev_position = m_position;
 
-            hasTarget = true;
-            hasRubbish = true;
+            currentState = MOVING;
         }
 
 };

@@ -84,7 +84,7 @@ class GameScene : public Scene {
 			glDisable(GL_DEPTH_TEST);
 
 			// loading config
-			maxRubbish = 5;
+			maxRubbish = 10;
 
 			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
