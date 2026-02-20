@@ -36,6 +36,7 @@ class Mo : public Character {
 
             target = pos;
             hasTarget = true;
+
         }  
 
         void update(float deltaTime) {
@@ -43,15 +44,13 @@ class Mo : public Character {
 
            glm::vec2 pos = getPosition();
            m_direction = target - pos;
-
-           m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
            float dist = glm::length(m_direction);
 
            if (dist < m_reached_distance) {
                hasTarget = false;
-
+               
                if (movingSound != nullptr) {
                    movingSound->stop();
                    movingSound->drop();
@@ -78,10 +77,33 @@ class Mo : public Character {
                else {
                    movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
                }
+               //da qui
+               if (!isVertical){
+                    if (fabs(target.x - pos.x) > 0.01f) {
+                        m_direction = glm::vec2(target.x - pos.x, 0.0f); //muovo asse 
+                        m_direction = glm::normalize(m_direction);  //or: float dir = (target.x > pos.x) ? 1.0f : -1.0f; m_direction = glm::vec2(dir, 0.0f);
+                        m_position += m_direction * m_speed * deltaTime;
 
-               m_direction = glm::normalize(m_direction);
+                        m_direction.x > 0 ? m_rotation = 0.0f : m_rotation = 180.0f;
+                    }
+                    else {
+                        isVertical = true;
+                    }
+               }
+               else //(fabs(target.y - pos.y) >= 0.01f) 
+               {    
+                   if (fabs(target.y - pos.y) > 0.01f) {
+                       //isVertical = true; 
+                       m_direction = glm::vec2(0.0f, target.y - pos.y); //muovo asse y
+                       m_direction = glm::normalize(m_direction); // or: float dir = (target.y > pos.y) ? 1.0f : -1.0f; m_direction = glm::vec2(0.0f, dir);
+                       m_position += m_direction * m_speed * deltaTime;
 
-               m_position += m_direction * m_speed * deltaTime;
+                       m_direction.y > 0 ? m_rotation = 270.0f : m_rotation = 90.0f;
+                   }
+                   else {
+                       isVertical = false; 
+                   }
+               }
 
                if (hasBlock) {
                    pickedBlock->setPosition(m_position + m_direction * 0.2f);
@@ -101,6 +123,7 @@ class Mo : public Character {
         bool hasTarget = false;
         bool hasBufferedTarget = false;
         bool hasBlock = false;
+        bool isVertical = false;
         float m_reached_distance = 0.2f;
         float m_collection_distance = 0.3f;
 
