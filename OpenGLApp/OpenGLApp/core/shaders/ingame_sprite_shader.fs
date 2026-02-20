@@ -49,7 +49,7 @@ void main() {
 	lightDir = normalize(lights[1].position - FragPos);
 	distance = length(lights[1].position - FragPos);
 	//attenuation = 1.0 / (distance * distance);
-	attenuation = 1.8 * exp(-distance * distance / 10.0);
+	attenuation = 1.8 * exp(-distance * distance * 10.0);
 
 	diffLight = max(dot(norm, lightDir), 0.0);
 
@@ -60,7 +60,9 @@ void main() {
 	result += attenuation * lights[1].color * diffLight + specularStrength * specLight;
 
 	// Result
-	result = max((ambient + result) * objectColor.rgb, 0.0);
+	result += ambient;
+
+	result = max(result * objectColor.rgb, 0.0);
 
 	FragColor = vec4(result, objectColor.a);
 }

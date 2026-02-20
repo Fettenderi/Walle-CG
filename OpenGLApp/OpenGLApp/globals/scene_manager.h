@@ -72,6 +72,8 @@ class SceneManager {
 
 		std::shared_ptr<Camera> camera;
 
+		float ambientStrength;
+
 		std::shared_ptr<Light> sun;
 		std::shared_ptr<Light> flashlight;
 

@@ -45,8 +45,8 @@ class GameScene : public Scene {
 		int maxRubbish;
 
 		void handleDayNightCycle() {
-			float totalTime = 500.0f;
-			float nightPercentage = 0.3f;
+			float totalTime = 300.0f;
+			float nightPercentage = 0.90f;
 			float newDayNightFrequency;
 
 			float time = elapsed / totalTime - floor(elapsed / totalTime);
@@ -55,6 +55,7 @@ class GameScene : public Scene {
 				// day
 				newDayNightFrequency = (float)PI / (totalTime * (1.0f - nightPercentage));
 				walle->setFlashlight(false);
+
 			} else {
 				// night
 				newDayNightFrequency = (float)PI / (totalTime * nightPercentage);
@@ -122,6 +123,8 @@ class GameScene : public Scene {
 			// lights setup
 			sun = std::make_shared<Light>(glm::vec3(1.0f, 0.0f, 0.0f), 80.0f, "#ffffab");
 			SceneManager::getInstance().sun = sun;
+			SceneManager::getInstance().ambientStrength = 0.3f;
+
 
 			spriteShader->use();
 			spriteShader->setInt("mainTexture", 0);
@@ -129,7 +132,7 @@ class GameScene : public Scene {
 			spriteShader->setMat4("camera", camera->getViewMatrix());
 			spriteShader->setVec3("viewPosition", camera->getPosition());
 
-			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * SceneManager::getInstance().ambientStrength);
 
 			spriteShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
 			spriteShader->setVec3("lights[0].position", sun->position);
@@ -147,7 +150,7 @@ class GameScene : public Scene {
 			lastElapsed = elapsed;
 
 			// global update
-			if (StatsManager::getInstance().currentRubbish > maxRubbish) {
+			if (false){//StatsManager::getInstance().currentRubbish > maxRubbish) {
 				StatsManager::getInstance().currentRubbish = 0;
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameOverScene, window);
 				return (float)deltaTime;

@@ -147,9 +147,11 @@ class Walle : public Character {
 
             glm::vec2 lightPosition = m_position + m_direction * 0.2f;
             light->position = glm::vec3(lightPosition.x, lightPosition.y, 0.2f);
-            light->strength = explerp(light->strength, light_target_strength, deltaTime * 3.0f);
+            light->strength = explerp(light->strength, light_target_strength, deltaTime * 2.0f);
+            SceneManager::getInstance().ambientStrength = explerp(SceneManager::getInstance().ambientStrength, ambient_target_strength, deltaTime * 2.0f);
 
             m_shader->use();
+            m_shader->setVec3("ambient", hex_color("#a1d8e8") * SceneManager::getInstance().ambientStrength);
             m_shader->setVec3("lights[1].position", light->position);
             m_shader->setVec3("lights[1].color", light->getColor() * light->strength);
         }
@@ -183,6 +185,7 @@ class Walle : public Character {
 
         void setFlashlight(bool state) {
             light_target_strength = state ? 0.75f : 0.0f;
+            ambient_target_strength = state ? 0.06f : 0.3f;
         }
 
         void expellBlock() {
@@ -215,6 +218,7 @@ class Walle : public Character {
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
         float light_target_strength;
+        float ambient_target_strength;
 
         std::unique_ptr<Timer> processingTimer;
         bool processing = false;
