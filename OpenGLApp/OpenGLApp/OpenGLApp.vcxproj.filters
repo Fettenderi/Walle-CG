@@ -108,6 +108,12 @@
     <ClInclude Include="characters\rubbish_spawner.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\welcome_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\i_menu_subscene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">

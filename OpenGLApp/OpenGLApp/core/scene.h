@@ -25,6 +25,9 @@
 
 class Scene {
     public:
+        std::shared_ptr<Scene> parentScene;
+        std::shared_ptr<Scene> currentSubscene;
+
         Scene(GLFWwindow* windowRef) : window(windowRef), offset(glfwGetTime()) {};
 
         virtual void init() {

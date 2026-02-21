@@ -9,6 +9,8 @@
 class Image : public Character {
 
 public:
+    float elapsedOver = 0.0f;
+
     Image(std::shared_ptr<Shader> spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale)
         : Character(spriteShader, texturePath, CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f, false), position, scale, 0.0f), maxScale(scale) {
         m_collider.isActive = false;

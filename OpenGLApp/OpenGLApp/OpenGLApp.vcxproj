@@ -167,8 +167,10 @@
     <ClInclude Include="globals\scene_manager.h" />
     <ClInclude Include="globals\stats_manager.h" />
     <ClInclude Include="scenes\game_scene.h" />
+    <ClInclude Include="scenes\i_menu_subscene.h" />
     <ClInclude Include="scenes\main_menu_scene.h" />
     <ClInclude Include="scenes\test_scene.h" />
+    <ClInclude Include="scenes\welcome_scene.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
