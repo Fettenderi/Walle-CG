@@ -49,7 +49,7 @@ void main() {
 	lightDir = normalize(lights[1].position - FragPos);
 	distance = length(lights[1].position - FragPos);
 	//attenuation = 1.0 / (distance * distance);
-	attenuation = 1.8 * exp(-distance * distance * 10.0);
+	attenuation = min(3.0f * exp(-distance * distance * 10.0), 1.0);
 
 	diffLight = max(dot(norm, lightDir), 0.0);
 

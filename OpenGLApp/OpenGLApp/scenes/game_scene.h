@@ -45,8 +45,8 @@ class GameScene : public Scene {
 		int maxRubbish;
 
 		void handleDayNightCycle() {
-			float totalTime = 300.0f;
-			float nightPercentage = 0.90f;
+			float totalTime = 500.0f;
+			float nightPercentage = 0.3f;
 			float newDayNightFrequency;
 
 			float time = elapsed / totalTime - floor(elapsed / totalTime);
