@@ -146,8 +146,6 @@ class Eve : public Character {
             pickedRubbish.pop_front();
             rubbishPositions.pop_front();
 
-            //cout << std::format("{:.2f}, {:.2f}", frontPosition.x, frontPosition.y) << endl;
-
             rubbish->setPosition(frontPosition);
             rubbish->setLandingPosition(position);
 
@@ -207,6 +205,10 @@ class Eve : public Character {
                 tempRubbish->show();
                 tempRubbish->isPickable = false;
                 tempRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
+                tempRubbish->setUniformScale(1.0f);
+                tempRubbish->setRubbishPool(rubbishPool);
+                tempRubbish->setStatic(true);
+                tempRubbish->setSecondGeneration(false);
 
                 pickedRubbish.push_back(tempRubbish);
                 glm::vec2 tempPosition = getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);

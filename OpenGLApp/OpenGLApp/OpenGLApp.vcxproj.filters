@@ -105,6 +105,9 @@
     <ClInclude Include="scenes\game_over_scene.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="characters\rubbish_spawner.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -120,6 +123,9 @@
       <Filter>File di origine\core</Filter>
     </ClCompile>
     <ClCompile Include="globals\scene_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="characters\rubbish_spawner.cpp">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

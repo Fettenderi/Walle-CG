@@ -197,6 +197,9 @@ class Walle : public Character {
             block->show();
             block->isPickable = true;
             block->setPosition(m_position + m_direction * 0.2f);
+            block->setRubbishPool(rubbishPool);
+            block->setBlockPool(blockPool);
+            block->setSplittable(true);
 
             SceneManager::getInstance().addObject(block);
         }

@@ -1,10 +1,15 @@
 #ifndef BLOCK_H
 #define BLOCK_H
 
+#include "../core/timer.h"
 #include "../core/shader.h"
+#include "../core/pool.h"
 #include "../utils.h"
 
+#include "../globals/scene_manager.h"
+
 #include "character.h"
+#include "rubbish.h"
 
 class Block : public Character {
 
@@ -15,6 +20,22 @@ class Block : public Character {
             : Character(spriteShader, "assets/textures/block.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f)
         {
             m_is_visible = false;
+
+            splitStrength = 0.3f;
+            float splitTime = 8.0f;
+
+            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, 1.0f), [this] {
+                split();
+                }, false);
+
+            splittingCountdown->pause();
+        }
+
+        ~Block() {
+            rubbishPool.reset();
+            blockPool.reset();
+
+            splittingCountdown.release();
         }
 
         void setPosition(glm::vec2 position) {
@@ -28,6 +49,24 @@ class Block : public Character {
             m_rotation = rotation;
         }
 
+        void setRubbishPool(std::shared_ptr<ObjectPool<Rubbish>> pool) {
+            rubbishPool = pool;
+        }
+
+        void setBlockPool(std::shared_ptr<ObjectPool<Block>> pool) {
+            blockPool = pool;
+        }
+
+        void setSplittable(bool value) {
+            if (value) {
+                splittingCountdown->reset();
+                splittingCountdown->resume();
+            }
+            else {
+                splittingCountdown->pause();
+            }
+        }
+
         void getBlownTo(glm::vec2 pos, bool fromRight) {
             m_position = glm::vec2(fromRight ? 2.0f : -2.0f, pos.y);
             target = pos;
@@ -36,21 +75,72 @@ class Block : public Character {
         }
 
         virtual void update(float deltaTime) {
+            splittingCountdown->updateTimer(deltaTime);
+
             if (!hasTarget) return;
 
             float dist = glm::length(target - m_position);
 
             if (dist < 0.1) {
-                hasTarget = false;
+                handleArrived();
             }
             else {
-                m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
+                handleArriving(deltaTime);
             }
         }
 
     private:
         glm::vec2 target;
         bool hasTarget = false;
+        std::unique_ptr<Timer> splittingCountdown;
+        std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
+        std::shared_ptr<ObjectPool<Block>> blockPool;
+        std::shared_ptr<Block> selfPointer;
+
+        float splitStrength;
+
+        void split() {
+            if (!m_is_visible) return;
+
+            int parts = 4;
+
+            for (int i = 0; i < parts; i++) {
+                std::shared_ptr<Rubbish> tempRubbish = rubbishPool->getInstance();
+
+                if (tempRubbish == nullptr) break;
+
+                tempRubbish->show();
+                tempRubbish->isPickable = false;
+                tempRubbish->trashAmount = JUNK_TO_BLOCK / parts;
+                tempRubbish->setRubbishPool(rubbishPool);
+                tempRubbish->setPosition(m_position);
+                tempRubbish->setStatic(true);
+                tempRubbish->setSecondGeneration(true);
+                tempRubbish->setLandingPosition(m_position + getRandomVector() * splitStrength);
+
+                SceneManager::getInstance().addObject(tempRubbish);
+            }
+
+            std::shared_ptr<Block> selfPointer;
+
+            for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
+                if (object.get() == this) {
+                    selfPointer = std::static_pointer_cast<Block>(object);
+                }
+            }
+
+            hide();
+            setPosition(glm::vec2(2.0f, 2.0f));
+            blockPool->returnToPool(selfPointer);
+        }
+
+        void handleArrived() {
+            hasTarget = false;
+        }
+
+        void handleArriving(float deltaTime) {
+            m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
+        }
 };
 
 #endif

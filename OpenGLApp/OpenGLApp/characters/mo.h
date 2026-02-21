@@ -16,7 +16,7 @@ class Mo : public Character {
     public:
 
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, false), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, true), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.7f);
@@ -63,73 +63,15 @@ class Mo : public Character {
         void update(float deltaTime) {
            if (!hasTarget) return;
 
-           glm::vec2 pos = getPosition();
-           m_direction = target - pos;
+           m_direction = target - m_position;
            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
            float dist = glm::length(m_direction);
 
            if (dist < m_reached_distance) {
-               hasTarget = false;
-               
-               if (movingSound != nullptr) {
-                   movingSound->stop();
-                   movingSound->drop();
-                   movingSound = nullptr;
-               }
-
-               if (hasBlock) {
-                   releaseBlock();
-               }
-               else {
-                   tryPickingBlock();
-               }
-
-               if (hasBufferedTarget) {
-                   target = buffered_target;
-                   hasTarget = true;
-                   hasBufferedTarget = false;
-               }
-           }
-           else {
-               if (movingSound == nullptr) {
-                   movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
-               }
-               else {
-                   movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
-               }
-               //da qui
-               if (!isVertical){
-                    if (fabs(target.x - pos.x) > 0.01f) {
-                        m_direction = glm::vec2(target.x - pos.x, 0.0f); //muovo asse 
-                        m_direction = glm::normalize(m_direction);  //or: float dir = (target.x > pos.x) ? 1.0f : -1.0f; m_direction = glm::vec2(dir, 0.0f);
-                        m_position += m_direction * m_speed * deltaTime;
-
-                        m_direction.x > 0 ? m_rotation = 0.0f : m_rotation = 180.0f;
-                    }
-                    else {
-                        isVertical = true;
-                    }
-               }
-               else //(fabs(target.y - pos.y) >= 0.01f) 
-               {    
-                   if (fabs(target.y - pos.y) > 0.01f) {
-                       //isVertical = true; 
-                       m_direction = glm::vec2(0.0f, target.y - pos.y); //muovo asse y
-                       m_direction = glm::normalize(m_direction); // or: float dir = (target.y > pos.y) ? 1.0f : -1.0f; m_direction = glm::vec2(0.0f, dir);
-                       m_position += m_direction * m_speed * deltaTime;
-
-                       m_direction.y > 0 ? m_rotation = 270.0f : m_rotation = 90.0f;
-                   }
-                   else {
-                       isVertical = false; 
-                   }
-               }
-
-               if (hasBlock) {
-                   pickedBlock->setPosition(m_position + m_direction * 0.2f);
-                   pickedBlock->setRotation(m_rotation);
-               }
+               handleArrived();
+           } else {
+               handleArriving(deltaTime);
            }
         }
 
@@ -157,18 +99,79 @@ class Mo : public Character {
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;
 
+        void handleArrived() {
+            hasTarget = false;
+
+            if (movingSound != nullptr) {
+                movingSound->stop();
+                movingSound->drop();
+                movingSound = nullptr;
+            }
+
+            if (hasBlock) {
+                releaseBlock();
+            } else {
+                tryPickingBlock();
+            }
+
+            if (hasBufferedTarget) {
+                target = buffered_target;
+                hasTarget = true;
+                hasBufferedTarget = false;
+            }
+        }
+
+        void handleArriving(float deltaTime) {
+            if (movingSound == nullptr) {
+                movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+            } else {
+                movingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+            }
+
+            if (!isVertical) {
+                if (fabs(target.x - m_position.x) > 0.01f) {
+                    m_direction = glm::vec2(target.x - m_position.x, 0.0f); //muovo asse 
+                    m_direction = glm::normalize(m_direction);  //or: float dir = (target.x > pos.x) ? 1.0f : -1.0f; m_direction = glm::vec2(dir, 0.0f);
+                    m_position += m_direction * m_speed * deltaTime;
+
+                    m_direction.x > 0 ? m_rotation = 0.0f : m_rotation = 180.0f;
+                } else {
+                    isVertical = true;
+                }
+            } else {
+                if (fabs(target.y - m_position.y) > 0.01f) {
+                    //isVertical = true; 
+                    m_direction = glm::vec2(0.0f, target.y - m_position.y); //muovo asse y
+                    m_direction = glm::normalize(m_direction); // or: float dir = (target.y > pos.y) ? 1.0f : -1.0f; m_direction = glm::vec2(0.0f, dir);
+                    m_position += m_direction * m_speed * deltaTime;
+
+                    m_direction.y > 0 ? m_rotation = 270.0f : m_rotation = 90.0f;
+                } else {
+                    isVertical = false;
+                }
+            }
+
+            if (hasBlock) {
+                pickedBlock->setPosition(m_position + m_direction * 0.2f);
+                pickedBlock->setRotation(m_rotation);
+            }
+        }
+
         void tryPickingBlock() {
             for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                 if (std::shared_ptr<Block> block = dynamic_pointer_cast<Block>(object)) {
                     if (block->isPickable && glm::distance(block->getPosition(), m_position) <= m_collection_distance) {
                         pickedBlock = block;
                         pickedBlock->isPickable = false;
+                        pickedBlock->setSplittable(false);
 
                         hasBlock = true;
 
                         target = getBlockReleasePosition();
                         hasTarget = true;
                         m_speed = maxSpeed * 0.6f;
+
+                        isVertical = false;
 
                         break;
                     }

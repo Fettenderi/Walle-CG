@@ -6,8 +6,6 @@
 #include <irrKlang.h>
 
 #include "../characters/character.h"
-#include "../characters/rubbish.h"
-#include "../characters/block.h"
 
 #include "../core/scene.h"
 #include "../core/camera.h"

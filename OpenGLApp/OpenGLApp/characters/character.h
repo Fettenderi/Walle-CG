@@ -26,6 +26,7 @@ class Character {
     protected:
         glm::vec2 m_position;
         glm::vec2 m_scale;
+        float m_uniform_scale = 1.0f;
         float m_rotation;
         bool m_is_visible = true;
 
@@ -82,7 +83,7 @@ class Character {
 
             float dist = glm::distance(center, otherCenter);
 
-            return dist <= m_collider.radius + other->m_collider.radius;
+            return dist <= m_collider.radius * m_uniform_scale + other->m_collider.radius * m_uniform_scale;
         }
 
     public:
@@ -100,7 +101,7 @@ class Character {
 
         void renderSprite() {
             if (!m_is_visible) return;
-            loadSprite(*m_shader, m_textureID, m_position, m_scale, m_rotation);
+            loadSprite(*m_shader, m_textureID, m_position, m_scale * m_uniform_scale, m_rotation);
         }
 
         virtual void processInput(GLFWwindow* window) {}
@@ -123,6 +124,14 @@ class Character {
 
         glm::vec2 getScale() const {
             return m_scale;
+        }
+
+        void setUniformScale(float newScale) {
+            m_uniform_scale = newScale;
+        }
+
+        float getUniformScale() const {
+            return m_uniform_scale;
         }
 
         float getY() {
