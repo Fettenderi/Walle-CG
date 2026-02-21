@@ -8,6 +8,7 @@
 
 #define BLOCK_COLUMNS 9
 #define JUNK_TO_BLOCK 10
+#define PI 3.14159265358979323846
 
 static std::random_device rd;
 static std::mt19937 gen(rd());

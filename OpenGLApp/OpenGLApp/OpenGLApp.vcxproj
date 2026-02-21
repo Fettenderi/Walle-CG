@@ -210,6 +210,7 @@
   <ItemGroup>
     <Media Include="assets\audio\boot_up.wav" />
     <Media Include="assets\audio\eve_moving.wav" />
+    <Media Include="assets\audio\game_over.wav" />
     <Media Include="assets\audio\junk_picked_up.wav" />
     <Media Include="assets\audio\mo_pickup.wav" />
     <Media Include="assets\audio\mo_release.wav" />

@@ -239,5 +239,8 @@
     <Media Include="assets\audio\boot_up.wav">
       <Filter>File di risorse</Filter>
     </Media>
+    <Media Include="assets\audio\game_over.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
   </ItemGroup>
 </Project>
