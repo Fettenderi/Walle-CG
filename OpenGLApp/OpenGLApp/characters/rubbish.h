@@ -2,7 +2,10 @@
 #define RUBBISH_H
 
 #include "../core/shader.h"
+#include "../core/timer.h"
 #include "../utils.h"
+
+#include "../globals/stats_manager.h"
 
 #include "character.h"
 
@@ -21,24 +24,19 @@ class Rubbish : public Character {
             m_position = position;
         }
 
-        void getBlownTo(glm::vec2 pos, bool fromRight) {
-            m_position = glm::vec2(fromRight ? 2.0f : -2.0f, pos.y);
+        void setLandingPosition(glm::vec2 pos) {
             hasTarget = true;
             target = pos;
         }
 
         virtual void update(float deltaTime) {
-            if (!hasTarget) return;
-
-            float dist = glm::length(target - m_position);
-
-            if (dist < 0.1) {
-                hasTarget = false;
-                isPickable = true;
+            if (hasTarget) {
+                handleTarget(deltaTime);
+                return;
             }
-            else {
-                m_position = explerpVec2(m_position, target, deltaTime * 1.0f);
-            }
+
+            if (splittingCountdown != nullptr)
+                splittingCountdown->updateTimer(deltaTime);
         }
 
         int trashAmount;
@@ -47,6 +45,37 @@ class Rubbish : public Character {
     private:
         glm::vec2 target;
         bool hasTarget = false;
+        std::unique_ptr<Timer> splittingCountdown;
+
+        void split() {
+
+        }
+
+        void handleTarget(float deltaTime) {
+            float dist = glm::length(target - m_position);
+
+            if (dist < 0.1) {
+                handleArrived();
+            }
+            else {
+                handleArriving(deltaTime);
+            }
+        }
+
+        void handleArrived() {
+            hasTarget = false;
+            isPickable = true;
+            m_collider.isStatic = false;
+            StatsManager::getInstance().currentRubbish++;
+
+            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(8.0f, 1.0f), [this] {
+                split();
+                }, false);
+        }
+
+        void handleArriving(float deltaTime) {
+            m_position = explerpVec2(m_position, target, deltaTime * 2.0f);
+        }
 };
 
 #endif
