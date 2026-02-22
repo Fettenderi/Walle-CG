@@ -25,6 +25,10 @@
 
 class Scene {
     public:
+        std::shared_ptr<Scene> parentScene;
+        std::shared_ptr<Scene> currentSubscene;
+        bool inLimbo = false;
+
         Scene(GLFWwindow* windowRef) : window(windowRef), offset(glfwGetTime()) {};
 
         virtual void init() {

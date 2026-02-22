@@ -50,6 +50,13 @@ public:
         return elapsed;
     }
 
+    float getProgress() {
+        return elapsed / duration;
+    }
+
+    bool isRunning() {
+        return !paused && !finished;
+    }
 
     //faccio ricominciare il timer
     void reset() {
@@ -75,6 +82,7 @@ public:
         elapsed += deltaTime;
         // printf("timer va ancora %f\n", elapsed);
         if (elapsed >= duration) {
+            elapsed = duration;
             finished = true;
             // printf("timer di %f secondi terminato\n", duration);
             if (callbackFunction)

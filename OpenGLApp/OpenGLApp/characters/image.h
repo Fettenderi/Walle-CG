@@ -9,6 +9,8 @@
 class Image : public Character {
 
 public:
+    float elapsedOver = 0.0f;
+
     Image(std::shared_ptr<Shader> spriteShader, const char* texturePath, glm::vec2 position, glm::vec2 scale)
         : Character(spriteShader, texturePath, CollisionShape(glm::vec2(0.0f, 0.0f), 0.4f, false), position, scale, 0.0f), maxScale(scale) {
         m_collider.isActive = false;
@@ -51,6 +53,20 @@ public:
             mousePos.x <= m_position.x + halfW &&
             mousePos.y >= m_position.y - halfH &&
             mousePos.y <= m_position.y + halfH;
+    }
+
+    void animate(float deltaTime, glm::vec2 mousePos, std::function<float(float)> scaleAnim, std::function<float(float)> rotAnim, float overAnimSpeed, float idleAnimSpeed = 1.0f) {
+        if (isMouseOver(mousePos)) {
+            elapsedOver += (float)deltaTime;
+            setScale(explerp(getScale(), scaleAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
+            setRotation(explerp(getRotation(), rotAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
+        }
+        else {
+            setScale(explerp(getScale(), 1.0f, (float)deltaTime * idleAnimSpeed));
+            setRotation(explerp(getRotation(), 0.0f, (float)deltaTime * idleAnimSpeed));
+
+            elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * idleAnimSpeed);
+        }
     }
 
 private:

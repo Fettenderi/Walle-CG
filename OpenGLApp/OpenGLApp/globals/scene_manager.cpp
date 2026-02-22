@@ -3,6 +3,9 @@
 #include "../scenes/main_menu_scene.h"
 #include "../scenes/game_scene.h"
 #include "../scenes/game_over_scene.h"
+#include "../scenes/welcome_scene.h"
+#include "../scenes/difficulty_scene.h"
+#include "../scenes/instructions_scene.h"
 
 void SceneManager::changeScene(SceneID newSceneID, GLFWwindow* windowRef) {
 	std::shared_ptr<Scene> newScene;
@@ -28,3 +31,32 @@ void SceneManager::changeScene(SceneID newSceneID, GLFWwindow* windowRef) {
 	currentScene = newScene;
 	currentScene->init();
 }
+
+void SceneManager::changeSubscene(std::shared_ptr<Scene> mainScene, SceneID newSceneID, GLFWwindow* windowRef, std::function<void(std::shared_ptr<Scene>)> preInit) {
+	std::shared_ptr<Scene> newScene;
+
+	switch (newSceneID) {
+	case SceneID::MMWelcomeScene:
+		newScene = std::make_shared<WelcomeScene>(windowRef);
+		break;
+	case SceneID::MMDifficultyScene:
+		newScene = std::make_shared<DifficultyScene>(windowRef);
+		break;
+	case SceneID::MMInstructionsScene:
+		newScene = std::make_shared<InstructionsScene>(windowRef);
+		break;
+	}
+
+	newScene->inLimbo = true;
+	newScene->parentScene = mainScene;
+	preInit(newScene);
+
+	if (mainScene->currentSubscene) {
+		mainScene->currentSubscene->end();
+	}
+
+	newScene->inLimbo = false;
+	mainScene->currentSubscene = newScene;
+	mainScene->currentSubscene->init();
+}
+

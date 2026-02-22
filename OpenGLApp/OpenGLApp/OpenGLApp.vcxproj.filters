@@ -108,6 +108,18 @@
     <ClInclude Include="characters\rubbish_spawner.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\welcome_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\i_menu_subscene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\difficulty_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="scenes\instructions_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -237,6 +249,9 @@
       <Filter>File di risorse</Filter>
     </Media>
     <Media Include="assets\audio\boot_up.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\game_over.wav">
       <Filter>File di risorse</Filter>
     </Media>
   </ItemGroup>

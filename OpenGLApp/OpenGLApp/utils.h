@@ -8,13 +8,48 @@
 
 #define BLOCK_COLUMNS 9
 #define JUNK_TO_BLOCK 10
+#define PI 3.14159265358979323846
 
 static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
 
+static float easeInElastic(float x) {
+    float c4 = (2.0f * PI) / 3.0f;
+
+    return (x == 0.0f) ? 0.0f :
+        (x == 1.0f) ? 1.0f :
+        -pow(2.0f, 10.0f * x - 10.0f) * sin((x * 10.0f - 10.75f) * c4);
+}
+
+static float easeInBack(float x) {
+    float c1 = 1.70158f;
+    float c3 = c1 + 1.0f;
+
+    return c3 * x * x * x - c1 * x * x;
+}
+
+static float easeOutBack(float x) {
+    float c1 = 1.70158f;
+    float c3 = c1 + 1.0f;
+
+    return 1.0f + c3 * pow(x - 1.0f, 3.0f) + c1 * pow(x - 1.0f, 2.0f);
+}
+
+static float easeInCubic(float x) {
+    return x * x * x;
+}
+
+static float easeOutCubic(float x) {
+    return 1.0f - pow(x - 1.0f, 3.0f);
+}
+
 static float remap(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+static float uremap(float x, float out_min, float out_max) {
+    return remap(x, 0.0f, 1.0f, out_min, out_max);
 }
 
 static float mod(float num, float m) {

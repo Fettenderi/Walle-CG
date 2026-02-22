@@ -1,1 +1,20 @@
-﻿  OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
+﻿  Main.cpp
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(18,14): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'Main.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(56,30): warning C4244: 'return': conversione da 'int' a 'float'. Possibile perdita di dati.
+  (compilazione del file di origine 'Main.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(127,33): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+  (compilazione del file di origine 'Main.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(127,23): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+  (compilazione del file di origine 'Main.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(127,18): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
+  (compilazione del file di origine 'Main.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(127,17): warning C4244: 'return': conversione da 'float' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'Main.cpp')
+  
+  OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe

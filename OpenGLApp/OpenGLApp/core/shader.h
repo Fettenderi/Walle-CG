@@ -182,6 +182,10 @@ public:
         return VAO;
     }
 
+    int getID() {
+        return ID;
+    }
+
 private:
     static unsigned int VAO, VBO, EBO;
 

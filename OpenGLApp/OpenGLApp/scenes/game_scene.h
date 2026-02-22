@@ -15,8 +15,6 @@
 #include "../characters/rubbish.h"
 #include "../characters/block.h"
 
-#define PI 3.14159265358979323846
-
 class GameScene : public Scene {
 	private:
 		std::shared_ptr<Shader> spriteShader;

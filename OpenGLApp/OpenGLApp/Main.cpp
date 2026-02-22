@@ -70,7 +70,7 @@ int main() {
         Quad::instantiatePrimitive();
 
         // Scene initialization
-        SceneManager::getInstance().changeScene(SceneManager::SceneID::MainMenuScene, window);
+        SceneManager::getInstance().changeScene(SceneManager::SceneID::GameOverScene, window);
 
         ScoreManager::getInstance().load();
 

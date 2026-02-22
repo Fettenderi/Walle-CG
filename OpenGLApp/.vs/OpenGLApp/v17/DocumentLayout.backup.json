@@ -3,35 +3,36 @@
   "WorkspaceRootPath": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\rubbish.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\character.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\eve.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\eve.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\Main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include\\list||{3B902123-F8A7-4915-9F01-361F908088D0}|"
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\difficulty_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\utils.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\welcome_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\welcome_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\main_menu_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\main_menu_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\core\\timer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\image.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\image.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -41,108 +42,104 @@
       "DocumentGroups": [
         {
           "DockedWidth": 211,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "character.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\character.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\character.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\character.h",
-              "ViewState": "AgIAADkAAAAAAAAAAAAAAEUAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:58:26.053Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "eve.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\eve.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\eve.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\eve.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\eve.h",
-              "ViewState": "AgIAAMMAAAAAAAAAAAAAANEAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:54:19.342Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "Main.cpp",
               "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
               "RelativeDocumentMoniker": "OpenGLApp\\Main.cpp",
               "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\Main.cpp",
               "RelativeToolTip": "OpenGLApp\\Main.cpp",
-              "ViewState": "AgIAAEQAAAAAAAAAAAAcwFUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADwAAAAAAAAAAAAAAEcAAABVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-21T17:40:28.722Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "list",
-              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include\\list",
-              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\include\\list",
-              "ViewState": "AgIAAJcAAAAAAAAAAAAcwJ8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-02-21T17:40:06.4Z",
+              "WhenOpened": "2026-02-22T13:52:57.694Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "mo.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\mo.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\mo.h",
-              "ViewState": "AgIAAMMAAAAAAAAAAAAAAKUAAAAyAAAAAAAAAA==",
+              "Title": "main_menu_scene.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\main_menu_scene.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\main_menu_scene.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\main_menu_scene.h",
+              "RelativeToolTip": "OpenGLApp\\scenes\\main_menu_scene.h",
+              "ViewState": "AgIAAHIAAAAAAAAAAAAAAH0AAAB7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:37:44.528Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T11:31:51.234Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "walle.h",
               "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h",
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\walle.h",
               "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h",
               "RelativeToolTip": "OpenGLApp\\characters\\walle.h",
-              "ViewState": "AgIAALMAAAAAAAAAAAAqwMkAAAAgAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:35:41.301Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T11:16:21.327Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "image.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\image.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\characters\\image.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\image.h",
+              "RelativeToolTip": "OpenGLApp\\characters\\image.h",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAUwEUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-22T11:06:49.248Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "block.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\block.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\block.h",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAAAGcAAAAAAAAAAAAAAA==",
+              "Title": "utils.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\utils.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\utils.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\utils.h",
+              "RelativeToolTip": "OpenGLApp\\utils.h",
+              "ViewState": "AgIAABgAAAAAAAAAAAAmwCsAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:14:22.456Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T10:33:01.28Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "rubbish.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\characters\\rubbish.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h",
-              "RelativeToolTip": "OpenGLApp\\characters\\rubbish.h",
-              "ViewState": "AgIAACEAAAAAAAAAAAAMwD0AAAAQAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "timer.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\core\\timer.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\core\\timer.h",
+              "RelativeToolTip": "OpenGLApp\\core\\timer.h",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAUwEUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:14:20.097Z",
+              "WhenOpened": "2026-02-22T10:24:52.275Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "welcome_scene.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\welcome_scene.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\welcome_scene.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\welcome_scene.h",
+              "RelativeToolTip": "OpenGLApp\\scenes\\welcome_scene.h",
+              "ViewState": "AgIAAJQAAAAAAAAAAAAEwDoAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-22T10:20:45.93Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "difficulty_scene.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\difficulty_scene.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h",
+              "RelativeToolTip": "OpenGLApp\\scenes\\difficulty_scene.h",
+              "ViewState": "AgIAAGoAAAAAAAAAAAAUwHcAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-22T09:41:07.922Z",
               "EditorCaption": ""
             }
           ]

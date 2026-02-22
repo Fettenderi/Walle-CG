@@ -4,6 +4,7 @@
 #include <list>
 
 #include <irrKlang.h>
+#include <functional>
 
 #include "../characters/character.h"
 
@@ -12,10 +13,11 @@
 #include "../core/light.h"
 #include "../core/pool.h"
 
+
 class SceneManager {
 	public:
 		enum class SceneID {
-			MainMenuScene, GameScene, GameOverScene
+			MainMenuScene, GameScene, GameOverScene, MMWelcomeScene, MMDifficultyScene, MMInstructionsScene 
 		};
 
 		using iterator = std::list<std::shared_ptr<Character>>::iterator;
@@ -65,6 +67,8 @@ class SceneManager {
 		}
 
 		void changeScene(SceneID newSceneID, GLFWwindow* windowRef);
+
+		void changeSubscene(std::shared_ptr<Scene> mainScene, SceneID newSceneID, GLFWwindow* windowRef, std::function<void(std::shared_ptr<Scene>)> preInit);
 
 		std::shared_ptr<Scene> currentScene;
 
