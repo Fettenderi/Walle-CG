@@ -63,3 +63,7 @@ OpenGLApp/.vs/OpenGLApp/v17/.suo
 *.tlog
 *.log
 /OpenGLApp/OpenGLApp/x64
+/OpenGLApp/.vs
+OpenGLApp/.vs/OpenGLApp/v17/.suo
+OpenGLApp/.vs/OpenGLApp/v17/Browse.VC.db
+OpenGLApp/.vs/OpenGLApp/v17/DocumentLayout.json
