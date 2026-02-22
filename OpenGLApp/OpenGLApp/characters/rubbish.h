@@ -13,7 +13,6 @@
 #include "../globals/scene_manager.h"
 
 #include "character.h"
-#include "rubbish_effects.h"
 
 class Rubbish : public Character {
 

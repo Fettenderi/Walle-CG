@@ -108,7 +108,7 @@ int main() {
 
         Quad::freePrimitive();
 
-        ScoreManager::getInstance().set("current_score", to_string(StatsManager::getInstance().collectedBlocks));
+        ScoreManager::getInstance().set("current_score", std::to_string(StatsManager::getInstance().collectedBlocks));
         ScoreManager::getInstance().set("time", "00");
         ScoreManager::getInstance().save();
 

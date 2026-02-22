@@ -58,3 +58,8 @@ dkms.conf
 /OpenGLApp/OpenGLApp/x64
 *.tlog
 *.tlog
+OpenGLApp/.vs/OpenGLApp/v17/.suo
+/OpenGLApp/.vs
+*.tlog
+*.log
+/OpenGLApp/OpenGLApp/x64
