@@ -35,7 +35,13 @@ class Character {
         CollisionShape m_collider;
         bool solved = false;
 
-        int m_h_tiles = 1;
+        
+        int m_h_tiles = 1; //numero colonne atlas
+        int m_v_tiles = 1; //numero righe atlas
+
+        //tile attuale
+        int m_current_frame_x = 0;
+        int m_current_frame_y = 0;
 
         void resolve(std::vector<std::shared_ptr<Character>> objects, int starting) {
             if (!m_is_visible || solved) return;
@@ -101,6 +107,8 @@ class Character {
 
         virtual void update(float deltaTime) {}
 
+        virtual void hitByBomb() {}
+
         void collide(std::vector<std::shared_ptr<Character>> objects) {
             if (!m_collider.isActive) return;
 
@@ -119,6 +127,14 @@ class Character {
             return m_scale;
         }
 
+        void setScale(glm::vec2 scale) {
+            m_scale = scale;
+        }
+
+        void updateTexture(const char* newTexture) {
+            loadTexture(&m_textureID, newTexture, GL_RGBA);
+        }
+
         float getY() {
             return m_position.y;
         }
@@ -133,6 +149,25 @@ class Character {
 
         bool operator==(const Character& other) {
             return id == other.id;
+        }
+
+        //per atlas
+        //configura dimensioni griglia
+        void setAtlasGrid(int h_tiles, int v_tiles) {
+            m_h_tiles = h_tiles;
+            m_v_tiles = v_tiles;
+        }
+
+        //cambio tile con x e y
+        void setTile(int x, int y) {
+            m_current_frame_x = x;
+            m_current_frame_y = y;
+        }
+
+        //cambio tile usando un singolo indice (da 0 a h_tiles*v_tiles - 1)
+        void setTileIndex(int index) {
+            m_current_frame_x = index % m_h_tiles;
+            m_current_frame_y = index / m_h_tiles;
         }
 
 
@@ -173,7 +208,14 @@ class Character {
             model = glm::scale(model, glm::vec3(scale, 1.0f));
 
             shader.setMat4("model", model);
-            shader.setInt("hTiles", m_h_tiles);
+
+            //calcoli per texture atlas
+            glm::vec2 tilesConfig((float)m_h_tiles, (float)m_v_tiles);
+            glm::vec2 currentTile((float)m_current_frame_x, (float)m_current_frame_y);
+
+            // Passiamo i vec2 allo shader (assicurati che il Fragment Shader sia aggiornato come nell'opzione 2!)
+            shader.setVec2("tilesConfig", tilesConfig);
+            shader.setVec2("currentTile", currentTile);
 
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }

@@ -9,8 +9,8 @@ struct Light {
 	vec3 color;
 };
 
-uniform int hTiles = 1;
-uniform int tile = 0;
+uniform vec2 tilesConfig = vec2(1.0, 1.0); // x = colonne (hTiles), y = righe (vTiles)
+uniform vec2 currentTile = vec2(0.0, 0.0); // x = colonna attuale, y = riga attuale
 
 uniform sampler2D mainTexture;
 
@@ -25,7 +25,7 @@ float specularStrength = 0.2;
 void main() {
 	vec3 viewDir = normalize(viewPosition - FragPos);
 
-	vec4 objectColor = texture(mainTexture, (TexCoord + vec2(tile, 0.0))/ vec2(hTiles, 1.0));
+	vec4 objectColor = texture(mainTexture, (TexCoord + currentTile) / tilesConfig);
 	
 	vec3 norm = normalize(vec3(0.0, 0.0, 1.0));
 

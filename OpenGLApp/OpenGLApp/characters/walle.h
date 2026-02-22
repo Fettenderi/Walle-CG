@@ -39,27 +39,66 @@ class Walle : public Character {
                 expellBlock();
                 }, false);
 
+            magnetTimer = std::make_unique<Timer>(5.0f, [this] {
+                endMagnetEffect();
+                }, false);
+            compressorTimer = std::make_unique<Timer>(15.0f, [this] {
+                endCompressorEffect();
+                }, false);
+            fireExtTimer = std::make_unique<Timer>(10.0f, [this] {
+                endFireExtEffect();
+                }, false);
+            bombTimer = std::make_unique<Timer>(3.0f, [this] {
+                endBombEffect();
+                }, false);
+            
+
             maxScale = scale;
 
             processingTimer->pause();
+            magnetTimer->pause();
+            compressorTimer->pause();
+            fireExtTimer->pause();
+            bombTimer->pause();
         }
 
         void processInput(GLFWwindow* window) {
+            if (bombActive) {
+                m_velocity = glm::vec2(0.0f, 0.0f);
+                return;
+            }
+
             if (processing) return;
 
             m_velocity = glm::vec2(0.0f, 0.0f);
 
-            if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-                m_velocity += glm::vec2(0.0f, 1.0f);
+            if (!fireExtActive) {
+                if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+                    m_velocity += glm::vec2(0.0f, 1.0f);
 
-            if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-                m_velocity -= glm::vec2(0.0f, 1.0f);
+                if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+                    m_velocity -= glm::vec2(0.0f, 1.0f);
 
-            if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-                m_velocity -= glm::vec2(1.0f, 0.0f);
+                if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+                    m_velocity -= glm::vec2(1.0f, 0.0f);
 
-            if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-                m_velocity += glm::vec2(1.0f, 0.0f);
+                if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+                    m_velocity += glm::vec2(1.0f, 0.0f);
+            }
+            else {
+                if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+                    m_velocity -= glm::vec2(0.0f, 1.0f);
+
+                if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+                    m_velocity += glm::vec2(0.0f, 1.0f);
+
+                if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+                    m_velocity += glm::vec2(1.0f, 0.0f);
+
+                if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+                    m_velocity -= glm::vec2(1.0f, 0.0f);
+            }
+            
 
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
                 for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
@@ -68,6 +107,8 @@ class Walle : public Character {
                             rubbish->hide();
                             rubbish->setPosition(glm::vec2(2.0f, 2.0f));
                             
+                            rubbishEffectActivate(rubbish->executeEffect());
+
                             collect(rubbish->trashAmount);
 
                             rubbishPool->returnToPool(rubbish);
@@ -102,6 +143,10 @@ class Walle : public Character {
 
         void update(float deltaTime) {
             processingTimer->updateTimer(deltaTime);
+            magnetTimer->updateTimer(deltaTime);
+            compressorTimer->updateTimer(deltaTime);
+            fireExtTimer->updateTimer(deltaTime);
+            bombTimer->updateTimer(deltaTime);
 
             if (processing) {
                 m_scale.x = abs(sin(processingTimer->getElapsed() * 5.0f)) * 0.15 + maxScale.x * 0.8f;
@@ -124,6 +169,16 @@ class Walle : public Character {
             m_shader->use();
             m_shader->setVec3("lights[1].position", light->position);
             m_shader->setVec3("lights[1].color", light->getColor() * light->strength);
+
+
+            if(magnetActive)
+                for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
+                    if (std::shared_ptr<Rubbish> rubbish = dynamic_pointer_cast<Rubbish>(object)) {
+                        if ( glm::distance(rubbish->getPosition(), m_position) <= 0.7) {
+                            rubbish->moveToWalle(this->getPosition());
+                        }
+                    }
+                }
         }
 
         void collect(int trash) {
@@ -170,6 +225,54 @@ class Walle : public Character {
             SceneManager::getInstance().addObject(block);
         }
 
+
+        void rubbishEffectActivate(int effectNumber) {
+            switch (effectNumber) {
+                case 0:
+                    break;
+                case 1: //magnete
+                    magnetActive = true;
+                    magnetTimer->resume();
+                    magnetTimer->reset();
+                    break;
+                case 2: //compressori
+                    processingTimer->changeDuration(1.0f);
+                    compressorTimer->resume();
+                    compressorTimer->reset();
+                    break;
+                case 3: //estintore
+                    fireExtActive = true;
+                    fireExtTimer->resume();
+                    fireExtTimer->reset();
+                    break;
+                case 4: 
+                    break;
+            }
+        }
+
+        void endMagnetEffect() {
+            magnetActive = false;
+        }
+
+        void endCompressorEffect() {
+            processingTimer->changeDuration(2.0f);
+        }
+
+        void endFireExtEffect() {
+            fireExtActive = false;
+        }
+
+        void endBombEffect() {
+            bombActive = false;
+        }
+
+        void hitByBomb() {
+            bombActive = true;
+            bombTimer->resume();
+            bombTimer->reset();
+        }
+
+
     private:
         glm::vec2 m_direction;
         glm::vec2 m_velocity;
@@ -191,8 +294,18 @@ class Walle : public Character {
         std::unique_ptr<Timer> processingTimer;
         bool processing = false;
 
+        std::unique_ptr<Timer> magnetTimer;
+        std::unique_ptr<Timer> compressorTimer;
+        std::unique_ptr<Timer> fireExtTimer;
+        std::unique_ptr<Timer> bombTimer;
+        bool magnetActive = false;
+        bool fireExtActive = false;
+        bool bombActive = false;
+
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;
+
+
 
 };
 

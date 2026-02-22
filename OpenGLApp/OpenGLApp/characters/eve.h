@@ -105,6 +105,36 @@ class Eve : public Character {
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;
 
+        int normalRubbishLeft = 1;
+        int lastRubbishType = 0;
+
+        //return 0 se normale o 1-4 per spazzatura speciale
+        int updateRubbishQueue() {
+
+            //se ho ancora spazzatura normale
+            if (normalRubbishLeft > 0) {
+                //printf("spawn rubbish normale\n");
+                normalRubbishLeft--;
+                return 0;
+            }
+
+            //printf("finita la rubbish normale\n");
+
+            //reset counter
+            normalRubbishLeft = getNextRandomIntRange(1, 2);
+
+            //speciale diverso dal precedente
+            int newRubbishType;
+            do {
+                newRubbishType = getNextRandomIntRange(1, 4);
+            } while (newRubbishType == lastRubbishType);
+
+            lastRubbishType = newRubbishType;
+
+            printf("spawn rubbish speciale tipo %d\n", newRubbishType);
+            return newRubbishType;
+        }
+
         void tryGettingRubbish() {
             setTarget(getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress));
         }
@@ -114,6 +144,11 @@ class Eve : public Character {
 
             if (pickedRubbish == nullptr) return;
 
+            
+            pickedRubbish->updateType(updateRubbishQueue());
+            if (lastRubbishType == 4)
+                pickedRubbish->activateBomb();
+            //printf("update rubbish finito su eve\n");
             target = pos;
 
             m_position = glm::vec2(sign(getNextRandom()) * 2.0f, pos.y);
