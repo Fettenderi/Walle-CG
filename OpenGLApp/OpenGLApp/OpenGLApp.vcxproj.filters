@@ -195,6 +195,21 @@
     <Image Include="assets\textures\bg_placeholder.png">
       <Filter>File di risorse</Filter>
     </Image>
+    <Image Include="assets\textures\bg_happy.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\bg_menu_placeholder.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\bg_sad.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\rubbish_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\walle-test.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
@@ -248,7 +263,13 @@
     <Media Include="assets\audio\boot_up.wav">
       <Filter>File di risorse</Filter>
     </Media>
-    <Media Include="assets\audio\game_over.wav">
+    <Media Include="assets\audio\explosion.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\happy_game_over.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\sad_game_over.wav">
       <Filter>File di risorse</Filter>
     </Media>
   </ItemGroup>

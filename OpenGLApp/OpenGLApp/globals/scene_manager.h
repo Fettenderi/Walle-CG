@@ -17,8 +17,40 @@
 class SceneManager {
 	public:
 		enum class SceneID {
-			UNSET, MainMenuScene, GameScene, GameOverScene, MMWelcomeScene, MMDifficultyScene, MMInstructionsScene, MMCustomScene
+			MainMenuScene, GameScene, GameOverScene, MMWelcomeScene, MMDifficultyScene, MMInstructionsScene, MMCustomScene
 		};
+
+		static SceneID getID(const std::string& str) {
+			if (str == "main_menu_scene")
+				return SceneID::MainMenuScene;
+			else if (str == "game_scene")
+				return SceneID::GameScene;
+			else if (str == "game_over_scene")
+				return SceneID::GameOverScene;
+			else
+				return SceneID::MainMenuScene;
+		}
+
+		static std::string getStringID(SceneID id) {
+			switch (id) {
+				case SceneID::MainMenuScene:
+					return "main_menu_scene";
+					break;
+
+				case SceneID::GameScene:
+					return "game_scene";
+					break;
+
+				case SceneID::GameOverScene:
+					return "game_over_scene";
+					break;
+
+				default:
+					return "main_menu_scene";
+					break;
+				}
+		}
+
 
 		using iterator = std::list<std::shared_ptr<Character>>::iterator;
 		using const_iterator = std::list<std::shared_ptr<Character>>::const_iterator;

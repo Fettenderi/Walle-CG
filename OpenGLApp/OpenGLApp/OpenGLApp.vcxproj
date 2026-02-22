@@ -197,7 +197,10 @@
   <ItemGroup>
     <Image Include="assets\models\mela\mela.png" />
     <Image Include="assets\models\walle_placeholder.png" />
+    <Image Include="assets\textures\bg_happy.png" />
+    <Image Include="assets\textures\bg_menu_placeholder.png" />
     <Image Include="assets\textures\bg_placeholder.png" />
+    <Image Include="assets\textures\bg_sad.png" />
     <Image Include="assets\textures\block.png" />
     <Image Include="assets\textures\eve.png" />
     <Image Include="assets\textures\instructions_mo.png" />
@@ -205,6 +208,8 @@
     <Image Include="assets\textures\mo.png" />
     <Image Include="assets\textures\play_button.png" />
     <Image Include="assets\textures\rubbish.png" />
+    <Image Include="assets\textures\rubbish_atlas.png" />
+    <Image Include="assets\textures\walle-test.png" />
     <Image Include="assets\textures\walle.png" />
   </ItemGroup>
   <ItemGroup>
@@ -213,11 +218,13 @@
   <ItemGroup>
     <Media Include="assets\audio\boot_up.wav" />
     <Media Include="assets\audio\eve_moving.wav" />
-    <Media Include="assets\audio\game_over.wav" />
+    <Media Include="assets\audio\explosion.wav" />
+    <Media Include="assets\audio\happy_game_over.wav" />
     <Media Include="assets\audio\junk_picked_up.wav" />
     <Media Include="assets\audio\mo_pickup.wav" />
     <Media Include="assets\audio\mo_release.wav" />
     <Media Include="assets\audio\pin_image.wav" />
+    <Media Include="assets\audio\sad_game_over.wav" />
     <Media Include="assets\audio\ui_click.wav" />
     <Media Include="assets\audio\unpin_image.wav" />
     <Media Include="assets\audio\walle_compacting.wav" />

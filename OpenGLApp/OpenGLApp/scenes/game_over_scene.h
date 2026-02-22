@@ -19,7 +19,7 @@ class GameOverScene : public Scene {
 		std::shared_ptr<Light> spotLight1;
 		std::shared_ptr<Light> spotLight2;
 
-		std::shared_ptr<Image> mouseDetector;
+		std::shared_ptr<Image> background;
 
 		std::shared_ptr<Image> menuButton;
 		std::shared_ptr<Image> startButton;
@@ -40,6 +40,9 @@ class GameOverScene : public Scene {
 		int bestScore;
 		int bestScoreTime;
 
+		bool newPB = false;
+		std::string textColor;
+
 	public:
 		GameOverScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
@@ -50,14 +53,54 @@ class GameOverScene : public Scene {
 			lastElapsed = glfwGetTime() - offset;
 			elapsed = glfwGetTime() - offset;
 
+			// camera
+			SceneManager::getInstance().camera = std::make_shared<Camera>();
+			camera = SceneManager::getInstance().camera;
+			camera->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+
+			// lights setup
+			spotLight1 = std::make_shared<Light>(glm::vec3(-0.62f, 2.75f, 0.72f), 10.7f, "#ffffff");
+			spotLight2 = std::make_shared<Light>(glm::vec3(-0.62f, 2.75f, 0.72f), 0.0f, "#ffffff");
+			SceneManager::getInstance().sun = spotLight1;
+
+			// shader
+			spriteShader = std::make_shared<Shader>("core/shaders/sprite_shader.vs", "core/shaders/menu_sprite_shader.fs");
+			PBRShader = std::make_shared<Shader>("core/shaders/PBR_shader.vs", "core/shaders/PBR_shader.fs");
+
+			spriteShader->use();
+			spriteShader->setInt("mainTexture", 0);
+			spriteShader->setMat4("camera", camera->getViewMatrix());
+			spriteShader->setVec3("viewPosition", camera->getPosition());
+			spriteShader->setVec3("lights[0].color", spotLight1->getColor() * spotLight1->strength);
+			spriteShader->setVec3("lights[1].color", spotLight2->getColor() * spotLight2->strength);
+
+			// view/projection transformations
+			int width, height;
+			glfwGetWindowSize(window, &width, &height);
+			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+			PBRShader->use();
+			PBRShader->setMat4("camera", camera->getViewMatrix());
+			PBRShader->setMat4("projection", perspectiveProjection);
+			PBRShader->setVec3("viewPosition", camera->getPosition());
+			PBRShader->setVec3("lights[0].color", spotLight1->getColor() * spotLight1->strength);
+			PBRShader->setVec3("lights[1].color", spotLight2->getColor() * spotLight2->strength);
+
 			// sfx player
 			soundPlayer = SceneManager::getInstance().soundManager;
+
+			// text initialization
+			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
+
+			menuButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(-0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
+			startButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
+
+			SceneManager::getInstance().addObject(menuButton);
+			SceneManager::getInstance().addObject(startButton);
 
 			// results last game
 			bestScore = to_int(FileManager::getInstance().get(FileManager::SCORES, "best_score"));
 			bestScoreTime = to_int(FileManager::getInstance().get(FileManager::SCORES, "best_scoretime"));
-
-			bool newPB = false;
 
 			if (StatsManager::getInstance().collectedBlocks > bestScore || StatsManager::getInstance().time > bestScoreTime) {
 				FileManager::getInstance().set(FileManager::SCORES, "best_score", to_string(StatsManager::getInstance().collectedBlocks));
@@ -75,68 +118,38 @@ class GameOverScene : public Scene {
 			FileManager::getInstance().save(FileManager::SCORES);
 			FileManager::getInstance().save(FileManager::CONFIG);
 
+			//newPB = true;
+
 			if (newPB) {
 				// new personal best
-				// game over sound
-				//soundPlayer->play2D("assets/audio/game_over.wav", false);
+				soundPlayer->play2D("assets/audio/happy_game_over.wav", false);
 
-				//3d models
-				walle = std::make_shared<Model>("assets/models/walle/walle-sad.gltf");
+				walle = std::make_shared<Model>("assets/models/walle/walle-happy.gltf");
+				background = std::make_shared<Image>(spriteShader, "assets/textures/bg_happy.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
 
+				spriteShader->use();
+				spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.2f);
+
+				PBRShader->use();
+				PBRShader->setVec3("ambient", hex_color("#a1d8e8") * 1.0f);
+
+				textColor = "#000000";
 			}
 			else {
 				// loser
-				// game over sound
-				soundPlayer->play2D("assets/audio/game_over.wav", false);
+				soundPlayer->play2D("assets/audio/sad_game_over.wav", false);
 
-				//3d models
 				walle = std::make_shared<Model>("assets/models/walle/walle-sad.gltf");
+				background = std::make_shared<Image>(spriteShader, "assets/textures/bg_sad.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
+
+				spriteShader->use();
+				spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+
+				PBRShader->use();
+				PBRShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
+
+				textColor = "#ffffff";
 			}
-
-			// text initialization
-			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
-
-			// camera
-			SceneManager::getInstance().camera = std::make_shared<Camera>();
-			camera = SceneManager::getInstance().camera;
-			camera->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-
-			// shader
-			spriteShader = std::make_shared<Shader>("core/shaders/sprite_shader.vs", "core/shaders/menu_sprite_shader.fs");
-			PBRShader = std::make_shared<Shader>("core/shaders/PBR_shader.vs", "core/shaders/PBR_shader.fs");
-
-			menuButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(-0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
-			startButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
-						
-			SceneManager::getInstance().addObject(menuButton);
-			SceneManager::getInstance().addObject(startButton);
-
-			// lights setup
-			//sun = std::make_shared<Light>(glm::vec3(getNextRandomRange(-1.0f, 1.0f), getNextRandomRange(-0.8f, 1.0f), getNextRandomRange(-0.3f, 0.3f)), 0.7f, "#ffffff");
-			spotLight1 = std::make_shared<Light>(glm::vec3(-0.62f, 2.75f, 0.72f), 10.7f, "#ffffff");
-			spotLight2 = std::make_shared<Light>(glm::vec3(-0.62f, 2.75f, 0.72f), 0.0f, "#ffffff");
-			SceneManager::getInstance().sun = spotLight1;
-
-			spriteShader->use();
-			spriteShader->setInt("mainTexture", 0);
-			spriteShader->setMat4("camera", camera->getViewMatrix());
-			spriteShader->setVec3("viewPosition", camera->getPosition());
-			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
-			spriteShader->setVec3("lights[0].color", spotLight1->getColor() * spotLight1->strength);
-			spriteShader->setVec3("lights[1].color", spotLight2->getColor() * spotLight2->strength);
-
-			// view/projection transformations
-			int width, height;
-			glfwGetWindowSize(window, &width, &height);
-			glm::mat4 perspectiveProjection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-
-			PBRShader->use();
-			PBRShader->setMat4("camera", camera->getViewMatrix());
-			PBRShader->setMat4("projection", perspectiveProjection);
-			PBRShader->setVec3("viewPosition", camera->getPosition());
-			PBRShader->setVec3("ambient", hex_color("#a1d8e8") * 0.3f);
-			PBRShader->setVec3("lights[0].color", spotLight1->getColor() * spotLight1->strength);
-			PBRShader->setVec3("lights[1].color", spotLight2->getColor() * spotLight2->strength);
 		}
 
 		virtual float update() {
@@ -166,7 +179,9 @@ class GameOverScene : public Scene {
 			walleModelMat = glm::translate(walleModelMat, glm::vec3(0.0f, -0.13f, -0.85f));
 			walleModelMat = glm::scale(walleModelMat, glm::vec3(0.042f));
 			walleModelMat = glm::rotate(walleModelMat, glm::radians(22.0f * sin((float)elapsed * rotationFrequency)), glm::vec3(0.0f, 1.0f, 0.0f));
-						
+					
+			background->renderSprite();
+
 			glEnable(GL_DEPTH_TEST);
 
 			// models update
@@ -192,15 +207,15 @@ class GameOverScene : public Scene {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 
-			guiText->RenderText(std::format("Game Over"), glm::vec2(width / 2.0f - 200.0f + 17.0f, height / 2.0f + 150.0f + 12.0f), 1.8f, "#ffffff");
+			guiText->RenderText(newPB ? "New Highscore" : "Game Over", glm::vec2(width / 2.0f - 200.0f + 17.0f, height / 2.0f + 150.0f + 12.0f), 1.8f, textColor);
 			
-			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, "#ffffff");
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, "#ffffff");
-			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, "#ffffff");
+			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
 			
-			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, "#ffffff");
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, "#ffffff");
-			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, "#ffffff");
+			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
 			
 			//guiText->RenderText(std::format("{:02.0f}:{:02.0f}", , ), glm::vec2(width / 2.0f - 34.0f, height / 2.0f), 3.0f, "#0a1518");
 		}
@@ -351,7 +366,7 @@ class GameOverScene : public Scene {
 			spotLight1.reset();
 			spotLight2.reset();
 
-			mouseDetector.reset();
+			background.reset();
 
 			startButton.reset();
 

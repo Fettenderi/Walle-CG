@@ -73,12 +73,9 @@ int main() {
         FileManager::getInstance().load(FileManager::SCORES);
 
         // Scene initialization
-        SceneManager::SceneID startScene = static_cast<SceneManager::SceneID>(to_int(FileManager::getInstance().get(FileManager::CONFIG, "start_scene")));
+        SceneManager::SceneID startScene = SceneManager::getID(FileManager::getInstance().get(FileManager::CONFIG, "start_scene"));
 
-        if (startScene == SceneManager::SceneID::UNSET) {
-            startScene = SceneManager::SceneID::GameScene;
-            FileManager::getInstance().set(FileManager::CONFIG, "start_scene", std::to_string(static_cast<int>(startScene)));
-        }
+        FileManager::getInstance().set(FileManager::CONFIG, "start_scene", SceneManager::getStringID(startScene));
 
         SceneManager::getInstance().changeScene(startScene, window);
 
