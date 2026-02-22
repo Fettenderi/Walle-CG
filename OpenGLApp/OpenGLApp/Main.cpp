@@ -11,6 +11,7 @@
 
 #include "globals/scene_manager.h"
 #include "globals/stats_manager.h"
+#include "globals/score_manager.h"
 
 #include "core/quad.h"
 
@@ -71,6 +72,8 @@ int main() {
         // Scene initialization
         SceneManager::getInstance().changeScene(SceneManager::SceneID::MainMenuScene, window);
 
+        ScoreManager::getInstance().load();
+
         // render loop
         while (!glfwWindowShouldClose(window)) {
             // window inputs
@@ -104,6 +107,10 @@ int main() {
         SceneManager::getInstance().currentScene->end();
 
         Quad::freePrimitive();
+
+        ScoreManager::getInstance().set("current_score", to_string(StatsManager::getInstance().collectedBlocks));
+        ScoreManager::getInstance().set("time", "00");
+        ScoreManager::getInstance().save();
 
         // glfw: terminate, clearing all previously allocated GLFW resources.
         glfwTerminate();
