@@ -84,9 +84,6 @@
     <ClInclude Include="globals\stats_manager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
-    <ClInclude Include="scenes\test_scene.h">
-      <Filter>File di intestazione</Filter>
-    </ClInclude>
     <ClInclude Include="characters\image.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
@@ -121,6 +118,9 @@
       <Filter>File di intestazione</Filter>
     </ClInclude>
     <ClInclude Include="characters\explosion.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
+    <ClInclude Include="json.hpp">
       <Filter>File di intestazione</Filter>
     </ClInclude>
   </ItemGroup>
@@ -213,6 +213,9 @@
     <Image Include="assets\textures\walle-test.png">
       <Filter>File di risorse</Filter>
     </Image>
+    <Image Include="assets\textures\explosion_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />
@@ -273,6 +276,9 @@
       <Filter>File di risorse</Filter>
     </Media>
     <Media Include="assets\audio\sad_game_over.wav">
+      <Filter>File di risorse</Filter>
+    </Media>
+    <Media Include="assets\audio\bomb_ticking.wav">
       <Filter>File di risorse</Filter>
     </Media>
   </ItemGroup>

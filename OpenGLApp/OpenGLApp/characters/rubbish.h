@@ -45,7 +45,13 @@ class Rubbish : public Character {
                 FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_time", std::to_string(splitTime));
             }
 
-            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, 1.0f), [this] {
+            splitTimeDeviation = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_time_std"));
+            if (splitTimeDeviation == 0.0f) {
+                splitTimeDeviation = 1.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_time_std", std::to_string(splitTimeDeviation));
+            }
+
+            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, splitTimeDeviation), [this] {
                 split();
                 }, false);
 
@@ -123,10 +129,13 @@ class Rubbish : public Character {
 
         void setSecondGeneration(bool value) {
             if (value) {
-                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime * 2.0f, 1.0f));
+                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime * 2.0f, splitTimeDeviation));
             } else {
-                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime, 1.0f));
+                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime, splitTimeDeviation));
             }
+
+            splittingCountdown->pause();
+            splittingCountdown->reset();
         }
 
         void moveToWalle(glm::vec2 pos) {
@@ -297,10 +306,12 @@ class Rubbish : public Character {
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
 
         float splitTime;
+        float splitTimeDeviation;
         float splitStrength;
         float targetUniformScale = 1.0f;
 
         std::unique_ptr<Timer> bombTimer;
+        bool isSecondGeneration = false;
         bool bombActive = false;
         //std::unique_ptr<RubbishEffects> effects;
 

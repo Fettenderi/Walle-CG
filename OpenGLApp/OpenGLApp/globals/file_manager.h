@@ -5,7 +5,7 @@
 #include <filesystem>
 #include <map>
 
-#include "../score_history/json.hpp"
+#include "../json.hpp"
 using json = nlohmann::json;
 
 class FileManager {

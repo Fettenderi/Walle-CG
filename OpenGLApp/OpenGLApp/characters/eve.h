@@ -105,6 +105,18 @@ class Eve : public Character {
                 handleMovingToTarget(deltaTime);
         }
 
+        void setActive(bool value) {
+            isActive = value;
+
+            if (isActive) {
+                cooldownTimer->resume();
+            }
+            else {
+                cooldownTimer->pause();
+                cooldownTimer->reset();
+            }
+        }
+
     private:
         enum State {
             IDLE, MOVING, THROWING, RETURNING
@@ -131,6 +143,8 @@ class Eve : public Character {
         float timeBetweenDelivery;
         float timeBetweenDeliveryDeviation;
         int deliveryAmount;
+
+        bool isActive = true;
 
         void handleArrived() {
             if (currentState == MOVING) {
@@ -235,6 +249,8 @@ class Eve : public Character {
         }
 
         void tryGettingRubbish() {
+            if (!isActive) return;
+
             int actualDelivery = getNextRandomIntRange(std::max(deliveryAmount - 1, 1), deliveryAmount + 1);
             bool foundRubbish = false;
             std::shared_ptr<Rubbish> tempRubbish;
@@ -251,7 +267,6 @@ class Eve : public Character {
                 tempRubbish->isPickable = false;
                 tempRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
                 tempRubbish->setUniformScale(1.0f);
-                //tempRubbish->setScale(tempRubbish->getMaxScale());
                 tempRubbish->setRubbishPool(rubbishPool);
                 tempRubbish->setStatic(true);
                 tempRubbish->setSecondGeneration(false);
@@ -259,7 +274,6 @@ class Eve : public Character {
                 tempRubbish->updateType(updateRubbishQueue());
                 if (lastRubbishType == 4)
                     tempRubbish->activateBomb();
-                //printf("update rubbish finito su eve\n");
 
                 pickedRubbish.push_back(tempRubbish);
                 glm::vec2 tempPosition = getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);

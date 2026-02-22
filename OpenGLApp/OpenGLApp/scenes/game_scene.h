@@ -38,6 +38,9 @@ class GameScene : public Scene {
 
 		float debug;
 
+		float totalTime;
+		float nightPercentage;
+		float startingTime;
 		float currentDayNightFrequency = 0.0f;
 		float dayNightPhase = 0.0f;
 
@@ -46,31 +49,22 @@ class GameScene : public Scene {
 		int maxRubbish;
 
 		void handleDayNightCycle() {
-			float totalTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "day_night_duration"));
-			if (totalTime == 0.0f) {
-				totalTime = 500.0f;
-				FileManager::getInstance().set(FileManager::CONFIG, "day_night_duration", std::to_string(totalTime));
-			}
-
-			float nightPercentage = to_float(FileManager::getInstance().get(FileManager::CONFIG, "night_percentage"));
-			if (nightPercentage == 0.0f) {
-				nightPercentage = 0.3f;
-				FileManager::getInstance().set(FileManager::CONFIG, "night_percentage", std::to_string(nightPercentage));
-			}
-
 			float newDayNightFrequency;
 
-			float time = elapsed / totalTime - floor(elapsed / totalTime);
+			//float time = fmod(elapsed, totalTime) / totalTime;
+			float time = fmod(startingTime + elapsed, totalTime) / totalTime;
 
 			if (time <= (1.0f - nightPercentage)) {
 				// day
 				newDayNightFrequency = (float)PI / (totalTime * (1.0f - nightPercentage));
 				walle->setFlashlight(false);
+				eve->setActive(true);
 
 			} else {
 				// night
 				newDayNightFrequency = (float)PI / (totalTime * nightPercentage);
 				walle->setFlashlight(true);
+				eve->setActive(false);
 			}
 
 			// When changing frequency you need to add a phase in order to allign 
@@ -80,12 +74,13 @@ class GameScene : public Scene {
 				currentDayNightFrequency = newDayNightFrequency;
 			}
 
-			debug = time;
+			//float x = (elapsed) * newDayNightFrequency + dayNightPhase;
+			float x = (startingTime + elapsed) * newDayNightFrequency + dayNightPhase;
 
-			sun->position = glm::vec3(7.0f * glm::vec4(-cos(elapsed * newDayNightFrequency + dayNightPhase), 0.0f, sin(elapsed * newDayNightFrequency + dayNightPhase), 1.0f) *
-				glm::rotate(glm::mat4(1.0f), glm::radians(11.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
-			
-			
+			//sun->position = glm::vec3(7.0f * glm::vec4(sin(x), 0.0f, cos(x), 1.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(11.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+			sun->position = glm::vec3(7.0f * glm::vec4(-cos(x), 0.0f, sin(x), 1.0f) * glm::rotate(glm::mat4(1.0f), glm::radians(11.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+
+			//printf("%f, %f, %f, %f\n", elapsed, time, x, dayNightPhase);
 		}
 
 	public:
@@ -103,6 +98,25 @@ class GameScene : public Scene {
 				maxRubbish = 10;
 				FileManager::getInstance().set(FileManager::CONFIG, "max_rubbish", std::to_string(maxRubbish));
 			}
+
+			totalTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "day_night_duration"));
+			if (totalTime == 0.0f) {
+				totalTime = 500.0f;
+				FileManager::getInstance().set(FileManager::CONFIG, "day_night_duration", std::to_string(totalTime));
+			}
+
+			nightPercentage = to_float(FileManager::getInstance().get(FileManager::CONFIG, "night_percentage"));
+			if (nightPercentage == 0.0f) {
+				nightPercentage = 0.3f;
+				FileManager::getInstance().set(FileManager::CONFIG, "night_percentage", std::to_string(nightPercentage));
+			}
+
+			startingTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "starting_time"));
+			if (startingTime == 0.0f) {
+				startingTime = 0.3f;
+				FileManager::getInstance().set(FileManager::CONFIG, "starting_time", std::to_string(startingTime));
+			}
+
 
 			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");

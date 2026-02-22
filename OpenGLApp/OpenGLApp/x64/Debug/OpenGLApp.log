@@ -17,13 +17,44 @@ F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(145,18): warning C4244: 
 F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(145,17): warning C4244: 'return': conversione da 'float' a 'int'. Possibile perdita di dati.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
-F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(266,48): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         with
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         [
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:             T=float
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         ]
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
-F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(278,31): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         with
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         [
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:             T=float
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         ]
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
-F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\game_scene.h(63,15): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         with
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         [
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:             T=float
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         with
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         [
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:             T=float
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(350,48): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(362,31): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\game_scene.h(55,15): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\game_scene.h(78,12): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
 F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\welcome_scene.h(170,34): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
@@ -68,5 +99,5 @@ F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\instructions_scene.h(108,
 F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\instructions_scene.h(169,23): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
-F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(193,1): warning C4715: 'Rubbish::executeEffect': non tutti i percorsi di controllo restituiscono un valore
+F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(243,1): warning C4715: 'Rubbish::executeEffect': non tutti i percorsi di controllo restituiscono un valore
   OpenGLApp.vcxproj -> F:\RobaNerd\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe

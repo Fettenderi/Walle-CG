@@ -14,6 +14,7 @@ class StatsManager {
 		int currentRubbish = 0;
 		int collectedBlocks = 0;
 		int time = 0;
+		int flashlightBattery = 5;
 
 		float maxBlockProgress = -1.0f;
 	private:

@@ -87,6 +87,24 @@ class Walle : public Character {
                 endBombEffect();
                 }, false);
             
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_charging_time"));
+            if (temp == 0.0f) {
+                temp = 1.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_charging_time", std::to_string(temp));
+            }
+
+            lightBatteryTimer = std::make_unique<Timer>(temp, [this] {
+                flashlightBattery = (int)clamp(0.0f, 10.0f, (float)flashlightBattery + (isFlashlightActive ? -1.0f : 1.0f));
+                
+                if (flashlightBattery == 0) {
+                    light_target_strength = 0.1f;
+                }
+
+                StatsManager::getInstance().flashlightBattery = flashlightBattery;
+                printf("flashlightBattery: %d\n", flashlightBattery);
+
+                }, true);
+
             maxScale = scale;
 
             processingTimer->pause();
@@ -102,6 +120,7 @@ class Walle : public Character {
             blockPool.reset();
 
             processingTimer.release();
+            lightBatteryTimer.release();
 
             magnetTimer.release();
             compressorTimer.release();
@@ -182,13 +201,19 @@ class Walle : public Character {
                 StatsManager::getInstance().currentRubbish -= picked;
             }
 
-            if (m_velocity == glm::vec2(0.0f, 0.0f)) {
+            lightBatteryTimer->resume();
+
+            if (m_velocity == glm::vec2(0.0f, 0.0f)) {                
                 if (movingSound != nullptr) {
                     movingSound->stop();
                     movingSound->drop();
                     movingSound = nullptr;
                 }
                 return;
+            }
+
+            if (!isFlashlightActive) {
+                lightBatteryTimer->pause();
             }
 
             if (movingSound == nullptr) {
@@ -210,6 +235,7 @@ class Walle : public Character {
             compressorTimer->updateTimer(deltaTime);
             fireExtTimer->updateTimer(deltaTime);
             bombTimer->updateTimer(deltaTime);
+            lightBatteryTimer->updateTimer(deltaTime);
 
             if (processing) {
                 m_scale.x = abs(sin((float)processingTimer->getElapsed() * 5.0f)) * 0.15f + maxScale.x * 0.8f;
@@ -222,7 +248,6 @@ class Walle : public Character {
             m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
             // TODO: capire cosa fare con la velocitE
-            //m_position += m_velocity * m_speed * deltaTime;
             m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
 
             m_position = clamp(glm::vec2(-0.82f, -0.82f) + camera->getPosition2D(), glm::vec2(0.82f, 0.82f) + camera->getPosition2D(), m_position);
@@ -276,6 +301,10 @@ class Walle : public Character {
         }
 
         void setFlashlight(bool state) {
+            if (isFlashlightActive == state) return;
+
+            isFlashlightActive = state;
+
             light_target_strength = state ? 0.75f : 0.0f;
             ambient_target_strength = state ? 0.06f : 0.3f;
         }
@@ -357,11 +386,15 @@ class Walle : public Character {
         const int m_max_rubbish = JUNK_TO_BLOCK;
 
         std::shared_ptr<Camera> camera;
-        std::shared_ptr<Light> light;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
-        float light_target_strength;
-        float ambient_target_strength;
+
+        std::shared_ptr<Light> light;
+        std::unique_ptr<Timer> lightBatteryTimer;
+        float light_target_strength = 0.0f;
+        float ambient_target_strength = 0.3f;
+        bool isFlashlightActive = false;
+        int flashlightBattery = 5;
 
         std::unique_ptr<Timer> processingTimer;
         bool processing = false;
