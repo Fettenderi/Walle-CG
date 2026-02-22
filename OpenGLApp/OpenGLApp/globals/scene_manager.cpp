@@ -5,6 +5,7 @@
 #include "../scenes/game_over_scene.h"
 #include "../scenes/welcome_scene.h"
 #include "../scenes/difficulty_scene.h"
+#include "../scenes/instructions_scene.h"
 
 void SceneManager::changeScene(SceneID newSceneID, GLFWwindow* windowRef) {
 	std::shared_ptr<Scene> newScene;
@@ -42,7 +43,7 @@ void SceneManager::changeSubscene(std::shared_ptr<Scene> mainScene, SceneID newS
 		newScene = std::make_shared<DifficultyScene>(windowRef);
 		break;
 	case SceneID::MMInstructionsScene:
-		newScene = std::make_shared<MainMenuScene>(windowRef);
+		newScene = std::make_shared<InstructionsScene>(windowRef);
 		break;
 	}
 

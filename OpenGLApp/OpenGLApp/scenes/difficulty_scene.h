@@ -117,7 +117,7 @@ public:
 		mediumButton->setPosition(glm::vec2(0.32f - sharpInOut, 0.29f));
 		hardButton->setPosition(glm::vec2(-0.32f + sharpInOut, -0.04f));
 
-		//customButton->setPosition(glm::vec2(0.71f + sharpInOut, 0.79f + sharpInOut));
+		customButton->setPosition(glm::vec2(0.71f - sharpInOut, 0.79f - sharpInOut));
 
 		// transitioning
 		if (isFirstLoop) {
@@ -187,11 +187,27 @@ public:
 
 		glm::vec2 mousePos = glm::vec2((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
 
+		std::function<float(float)> scaleAnim = [](float x) {
+			return 1.2f;
+			};
+
+		std::function<float(float)> rotStatic = [](float x) {
+			return 0.0f;
+			};
+
 		backButton->animate(deltaTime, mousePos, [](float x) {
-				return sin(x) * 0.05f + 0.95f;
+			return sin(x) * 0.05f + 0.95f;
 			}, [](float x) {
 				return sin(x * 2.0f) * 3.0f;
-			}, 3.0f);
+				}, 3.0f);
+
+		easyButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
+
+		mediumButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
+
+		hardButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
+
+		customButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
 	}
 
 	void transitionTimeout() {

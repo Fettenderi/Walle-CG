@@ -55,17 +55,17 @@ public:
             mousePos.y <= m_position.y + halfH;
     }
 
-    void animate(float deltaTime, glm::vec2 mousePos, std::function<float(float)> scaleAnim, std::function<float(float)> rotAnim, float animSpeed) {
+    void animate(float deltaTime, glm::vec2 mousePos, std::function<float(float)> scaleAnim, std::function<float(float)> rotAnim, float overAnimSpeed, float idleAnimSpeed = 1.0f) {
         if (isMouseOver(mousePos)) {
             elapsedOver += (float)deltaTime;
-            setScale(explerp(getScale(), scaleAnim(elapsedOver), (float)deltaTime * animSpeed));
-            setRotation(explerp(getRotation(), rotAnim(elapsedOver), (float)deltaTime * animSpeed));
+            setScale(explerp(getScale(), scaleAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
+            setRotation(explerp(getRotation(), rotAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
         }
         else {
-            setScale(explerp(getScale(), 1.0f, (float)deltaTime * 1.0f));
-            setRotation(explerp(getRotation(), 0.0f, (float)deltaTime * 1.0f));
+            setScale(explerp(getScale(), 1.0f, (float)deltaTime * idleAnimSpeed));
+            setRotation(explerp(getRotation(), 0.0f, (float)deltaTime * idleAnimSpeed));
 
-            elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * 1.0f);
+            elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * idleAnimSpeed);
         }
     }
 

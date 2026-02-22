@@ -259,34 +259,19 @@ public:
 		glfwGetCursorPos(window, &xpos, &ypos);
 		glfwGetWindowSize(window, &width, &height);
 
-		float scX = (float)xpos / (float)width * 2.0f - 1.0f;
-		float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
+		glm::vec2 mousePos = glm::vec2((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
 
+		difficultyButton->animate(deltaTime, mousePos, [](float x) {
+				return sin(x) * 0.05f + 0.95f;
+			}, [](float x) {
+				return sin(x * 2.0f) * 3.0f;
+			}, 3.0f);
 
-		// codice potrebbe essere spostato in Image
-		if (difficultyButton->isMouseOver(glm::vec2(scX, scY))) {
-			difficultyButton->elapsedOver += (float)deltaTime;
-			difficultyButton->setScale(explerp(difficultyButton->getScale(), sin(difficultyButton->elapsedOver) * 0.05f + 0.95f, (float)deltaTime * 3.0f));
-			difficultyButton->setRotation(explerp(difficultyButton->getRotation(), sin(difficultyButton->elapsedOver * 2.0f) * 3.0f, (float)deltaTime * 3.0f));
-		}
-		else {
-			difficultyButton->setScale(explerp(difficultyButton->getScale(), 1.0f, (float)deltaTime * 1.0f));
-			difficultyButton->setRotation(explerp(difficultyButton->getRotation(), 0.0f, (float)deltaTime * 1.0f));
-
-			difficultyButton->elapsedOver = explerp(difficultyButton->elapsedOver, 0.0f, (float)deltaTime * 1.0f);
-		}
-
-		if (instructionsButton->isMouseOver(glm::vec2(scX, scY))) {
-			instructionsButton->elapsedOver += (float)deltaTime;
-			instructionsButton->setScale(explerp(instructionsButton->getScale(), sin(instructionsButton->elapsedOver) * 0.05f + 0.95f, (float)deltaTime * 3.0f));
-			instructionsButton->setRotation(explerp(instructionsButton->getRotation(), sin(instructionsButton->elapsedOver * 2.0f) * 3.0f, (float)deltaTime * 3.0f));
-		}
-		else {
-			instructionsButton->setScale(explerp(instructionsButton->getScale(), 1.0f, (float)deltaTime * 1.0f));
-			instructionsButton->setRotation(explerp(instructionsButton->getRotation(), 0.0f, (float)deltaTime * 1.0f));
-
-			instructionsButton->elapsedOver = explerp(instructionsButton->elapsedOver, 0.0f, (float)deltaTime * 1.0f);
-		}
+		instructionsButton->animate(deltaTime, mousePos, [](float x) {
+				return sin(x) * 0.05f + 0.95f;
+			}, [](float x) {
+				return sin(x * 2.0f) * 3.0f;
+			}, 3.0f);
 	}
 
 	void placementUpdate() {

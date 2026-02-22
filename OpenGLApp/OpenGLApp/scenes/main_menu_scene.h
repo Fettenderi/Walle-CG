@@ -123,7 +123,7 @@ class MainMenuScene : public Scene {
 			PBRShader->setVec3("lights[0].position", sun1->position);
 			PBRShader->setVec3("lights[1].position", sun2->position);
 
-			SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMDifficultyScene, window,
+			SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMWelcomeScene, window,
 				[this](std::shared_ptr<Scene> newSubscene) {
 					std::shared_ptr<IMenuSubscene> theSubscene = std::dynamic_pointer_cast<IMenuSubscene>(newSubscene);
 					

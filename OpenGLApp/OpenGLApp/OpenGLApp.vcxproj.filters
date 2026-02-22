@@ -117,6 +117,9 @@
     <ClInclude Include="scenes\difficulty_scene.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\instructions_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
