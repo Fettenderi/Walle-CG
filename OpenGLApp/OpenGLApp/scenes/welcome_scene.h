@@ -53,14 +53,18 @@ private:
 	std::shared_ptr<Model> walle;
 	std::shared_ptr<Model> logo;
 
-	glm::vec3 bgColor = hex_color("#000000");
-
 	std::shared_ptr<Image> grabbedImage;
 	bool hasGrabbedImage = false;
 	bool isFirstFrame = true;
+	bool isFirstLoop = true;
 
 	glm::vec2 previousMousePos = glm::vec2(0.0f);
 	glm::vec2 spinVelocity = glm::vec2(0.0f);
+
+	std::unique_ptr<Timer> transitionInTimer;
+	std::unique_ptr<Timer> transitionOutTimer;
+
+	SceneManager::SceneID nextScene;
 
 	float modelOffset = 0.0f;
 	float logoOffset = 0.0f;
@@ -79,8 +83,18 @@ public:
 
 		walleGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
 		moGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
-		difficultyButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(debug, -0.7f), glm::vec2(0.4f, 0.2f));
-		instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(-debug, -0.7f), glm::vec2(0.4f, 0.2f));
+		difficultyButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
+		instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
+
+		// timer
+		transitionInTimer = make_unique<Timer>(2.0f, []() {}, false);
+
+		transitionOutTimer = make_unique<Timer>(2.0f, [this]() {
+			transitionTimeout();
+			}, false);
+
+		transitionInTimer->pause();
+		transitionOutTimer->pause();
 
 		//3d models
 		walle = std::make_shared<Model>("assets/models/walle/walle.gltf");
@@ -93,6 +107,8 @@ public:
 	}
 
 	virtual float update() {
+		if (inLimbo) return 0.0f;
+
 		// deltaTime calculation
 		elapsed = glfwGetTime() - offset;
 		deltaTime = elapsed - lastElapsed;
@@ -103,17 +119,39 @@ public:
 		placementUpdate();
 		buttonUpdate();
 
+
+		// debug
+		changeDebugParameters();
+
+		// change easing parameters
+		float easeInOut = (lerp(0.0f, 2.0f, easeInBack(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutBack(transitionInTimer->getProgress())));
+
+		difficultyButton->setPosition(
+			glm::vec2(0.0f, -0.7f + 0.127f - easeInOut));
+		instructionsButton->setPosition(
+			glm::vec2(0.0f, -0.7f - 0.127f - easeInOut));
+
+		walleGuide->setPosition(
+			glm::vec2(-easeInOut + -0.657143f, -0.490476f));
+		moGuide->setPosition(
+			glm::vec2(easeInOut + 0.691071f, -0.554762f));
+		
 		// rendering the loaded models
 		glm::mat4 walleModelMat = glm::mat4(1.0f);
-		walleModelMat = glm::translate(walleModelMat, glm::vec3(0.0f, -0.13f, -0.85f));
+		walleModelMat = glm::translate(walleModelMat,
+			glm::vec3(easeInOut, -0.13f, -0.85f));
 		walleModelMat = glm::scale(walleModelMat, glm::vec3(0.072f));
 		walleModelMat = glm::rotate(walleModelMat, glm::radians((float)elapsed * 10.0f) + modelOffset, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		glm::mat4 logoModelMat = glm::mat4(1.0f);
-		logoModelMat = glm::translate(logoModelMat, glm::vec3(0.0f, 0.19f, -0.72f));
+		logoModelMat = glm::translate(logoModelMat,
+			glm::vec3(easeInOut, 0.19f, -0.72f));
 		logoModelMat = glm::scale(logoModelMat, glm::vec3(0.085f));
 		logoModelMat = glm::rotate(logoModelMat, glm::radians((float)sin(elapsed * 2.0f) * 5.0f) + logoOffset, glm::vec3(0.0f, 0.0f, 1.0f));
 		logoModelMat = glm::rotate(logoModelMat, glm::radians((float)cos(elapsed * 2.0f) * 5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		printf("%f + %f\n", -0.5f * easeInBack(transitionOutTimer->getElapsed()), 0.5f * easeOutBack(transitionInTimer->getElapsed()));
+		//printf("%f\n", easeOutBack(transitionInTimer->getProgress()));
 
 		glEnable(GL_DEPTH_TEST);
 
@@ -126,6 +164,14 @@ public:
 		logo->Draw(*PBRShader);
 
 		glDisable(GL_DEPTH_TEST);
+
+		// transitioning
+		if (isFirstLoop) {
+			isFirstLoop = false;
+			transitionInTimer->resume();
+		}
+		transitionInTimer->updateTimer(deltaTime);
+		transitionOutTimer->updateTimer(deltaTime);
 
 		return (float)deltaTime;
 	}
@@ -170,36 +216,40 @@ public:
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
-				SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMDifficultyScene, window,
-				[this](std::shared_ptr<Scene> newSubscene) {
-					std::shared_ptr<IMenuSubscene> theSubscene = std::dynamic_pointer_cast<IMenuSubscene>(newSubscene);
-
-					if (theSubscene == nullptr) return;
-
-					theSubscene->spriteShader = spriteShader;
-					theSubscene->PBRShader = PBRShader;
-
-					theSubscene->soundPlayer = soundPlayer;
-					});
+				transitionOutTimer->resume();
+				nextScene = SceneManager::SceneID::MMDifficultyScene;
 			}
 
 			if (instructionsButton->isMouseOver(glm::vec2(scX, scY))) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
-				SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMInstructionsScene, window,
-					[this](std::shared_ptr<Scene> newSubscene) {
-						std::shared_ptr<IMenuSubscene> theSubscene = std::dynamic_pointer_cast<IMenuSubscene>(newSubscene);
-
-						if (theSubscene == nullptr) return;
-
-						theSubscene->spriteShader = spriteShader;
-						theSubscene->PBRShader = PBRShader;
-
-						theSubscene->soundPlayer = soundPlayer;
-					});
+				transitionOutTimer->resume();
+				nextScene = SceneManager::SceneID::MMInstructionsScene;
 			}
 		}
+	}
+
+	void changeDebugParameters() {
+		float velocity = 0.0f;
+
+		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+			velocity -= 1.0f;
+
+		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+			velocity += 1.0f;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+			velocity *= 2.0f;
+
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+			velocity /= 4.0f;
+
+
+		if (velocity == 0.0f) return;
+
+		debug += velocity * (float)deltaTime * 10.0f;
+		printf("debug: (%f)\n", debug);
 	}
 
 	void buttonUpdate() {
@@ -258,6 +308,8 @@ public:
 		double xpos, ypos;
 		int width, height;
 
+		if (window == nullptr) return;
+
 		glfwGetCursorPos(window, &xpos, &ypos);
 		glfwGetWindowSize(window, &width, &height);
 
@@ -300,6 +352,22 @@ public:
 		isFirstFrame = true;
 	}
 
+	void transitionTimeout() {
+		SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, nextScene, window,
+			[this](std::shared_ptr<Scene> newSubscene) {
+				std::shared_ptr<IMenuSubscene> theSubscene = std::dynamic_pointer_cast<IMenuSubscene>(newSubscene);
+
+				if (theSubscene == nullptr) return;
+
+				printf("%d", spriteShader->getID());
+
+				theSubscene->spriteShader = spriteShader;
+				theSubscene->PBRShader = PBRShader;
+
+				theSubscene->soundPlayer = soundPlayer;
+			});
+	}
+
 	virtual void end() {
 		spriteShader.reset();
 		PBRShader.reset();
@@ -315,6 +383,9 @@ public:
 		logo.reset();
 
 		grabbedImage.reset();
+
+		transitionInTimer.release();
+		transitionOutTimer.release();
 
 		SceneManager::getInstance().removeAllObjects();
 	}

@@ -123,11 +123,11 @@ class MainMenuScene : public Scene {
 			PBRShader->setVec3("lights[0].position", sun1->position);
 			PBRShader->setVec3("lights[1].position", sun2->position);
 
-			SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMWelcomeScene, window,
+			SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, SceneManager::SceneID::MMDifficultyScene, window,
 				[this](std::shared_ptr<Scene> newSubscene) {
 					std::shared_ptr<IMenuSubscene> theSubscene = std::dynamic_pointer_cast<IMenuSubscene>(newSubscene);
 					
-					if (theSubscene == nullptr) return;
+					assert(theSubscene != nullptr);
 
 					theSubscene->spriteShader = spriteShader;
 					theSubscene->PBRShader = PBRShader;
@@ -191,12 +191,12 @@ class MainMenuScene : public Scene {
 			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 				m_velocity += glm::vec3(1.0f, 0.0f, 0.0f);
 
-			if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+			/*if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
 				m_velocity += glm::vec3(0.0f, 1.0f, 0.0f);
 
 			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 				m_velocity -= glm::vec3(0.0f, 1.0f, 0.0f);
-
+			*/
 
 			if (m_velocity == glm::vec3(0.0f)) return;
 
@@ -205,6 +205,9 @@ class MainMenuScene : public Scene {
 
 			sun1->position += m_velocity * (float)deltaTime * 2.0f;
 			printf("sun1: (%f, %f, %f)\n", sun1->position.x, sun1->position.y, sun1->position.z);
+
+			spriteShader->use();
+			spriteShader->setVec3("lights[0].position", sun1->position);
 
 			PBRShader->use();
 			PBRShader->setVec3("lights[0].position", sun1->position);

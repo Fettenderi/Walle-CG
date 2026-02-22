@@ -55,6 +55,20 @@ public:
             mousePos.y <= m_position.y + halfH;
     }
 
+    void animate(float deltaTime, glm::vec2 mousePos, std::function<float(float)> scaleAnim, std::function<float(float)> rotAnim, float animSpeed) {
+        if (isMouseOver(mousePos)) {
+            elapsedOver += (float)deltaTime;
+            setScale(explerp(getScale(), scaleAnim(elapsedOver), (float)deltaTime * animSpeed));
+            setRotation(explerp(getRotation(), rotAnim(elapsedOver), (float)deltaTime * animSpeed));
+        }
+        else {
+            setScale(explerp(getScale(), 1.0f, (float)deltaTime * 1.0f));
+            setRotation(explerp(getRotation(), 0.0f, (float)deltaTime * 1.0f));
+
+            elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * 1.0f);
+        }
+    }
+
 private:
     glm::vec2 maxScale;
     float uniformScale = 1.0f;
