@@ -93,7 +93,6 @@ class Walle : public Character {
             magnetTimer->pause();
             compressorTimer->pause();
             fireExtTimer->pause();
-            bombTimer->pause();
         }
 
         virtual ~Walle() {
@@ -169,6 +168,7 @@ class Walle : public Character {
                             picked++;
                             
                             rubbishEffectActivate(rubbish->executeEffect());
+                            rubbish->setUniformScale(1.0f);
 
                             collect(rubbish->trashAmount);
 
@@ -221,7 +221,7 @@ class Walle : public Character {
 
             m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
-            // TODO: capire cosa fare con la velocit‡
+            // TODO: capire cosa fare con la velocitÅE
             //m_position += m_velocity * m_speed * deltaTime;
             m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
 

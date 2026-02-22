@@ -57,6 +57,10 @@ public:
     bool isRunning() {
         return !paused && !finished;
     }
+    float getDuration() {
+        return duration;
+    }
+
 
     //faccio ricominciare il timer
     void reset() {

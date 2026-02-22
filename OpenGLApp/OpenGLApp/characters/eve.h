@@ -251,6 +251,7 @@ class Eve : public Character {
                 tempRubbish->isPickable = false;
                 tempRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
                 tempRubbish->setUniformScale(1.0f);
+                //tempRubbish->setScale(tempRubbish->getMaxScale());
                 tempRubbish->setRubbishPool(rubbishPool);
                 tempRubbish->setStatic(true);
                 tempRubbish->setSecondGeneration(false);

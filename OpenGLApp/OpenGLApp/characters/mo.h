@@ -7,6 +7,8 @@
 
 #include "../utils.h"
 
+#include "../core/timer.h"
+
 #include "character.h"
 
 #include <queue>
@@ -25,6 +27,11 @@ class Mo : public Character {
             m_speed = maxSpeed;
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
+
+            bombTimer = std::make_unique<Timer>(3.0f, [this] {
+                endBombEffect();
+                }, false);
+            bombTimer->pause();
         }
 
         virtual ~Mo() {
@@ -60,7 +67,19 @@ class Mo : public Character {
 
         }  
 
+        void hitByBomb() {
+            bombActive = true;
+            bombTimer->resume();
+            bombTimer->reset();
+        }
+
+        void endBombEffect() {
+            bombActive = false;
+        }
+
         void update(float deltaTime) {
+            bombTimer->updateTimer(deltaTime);
+           if (bombActive) return;
            if (!hasTarget) return;
 
            m_direction = target - m_position;
@@ -89,6 +108,9 @@ class Mo : public Character {
         bool isVertical = false;
         float m_reached_distance = 0.2f;
         float m_collection_distance = 0.3f;
+
+        bool bombActive = false;
+        std::unique_ptr<Timer> bombTimer;
 
         glm::vec2 block_release_target;
         std::shared_ptr<Block> pickedBlock;

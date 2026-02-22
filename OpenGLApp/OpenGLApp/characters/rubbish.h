@@ -12,6 +12,7 @@
 #include "../globals/file_manager.h"
 
 #include "character.h"
+#include "explosion.h"
 
 class Rubbish : public Character {
 
@@ -20,11 +21,17 @@ class Rubbish : public Character {
         bool isAttracted = false;
         int trashAmount;
         int rubbishType = 0;
+        int bombState = 0;
 
         Rubbish(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale)
             : Character(spriteShader, "assets/textures/rubbish_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f)
         {
             m_is_visible = false;
+            player = SceneManager::getInstance().soundManager;
+            tickingSound = nullptr;
+
+            bombExplosion = std::make_shared<Explosion>(spriteShader, position, scale);
+            SceneManager::getInstance().addObject(bombExplosion);
 
             splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_strength"));
             if (splitStrength == 0.0f) {
@@ -93,6 +100,9 @@ class Rubbish : public Character {
         }
 
         
+        glm::vec2 getMaxScale() {
+            return maxScale;
+        }
 
         void setPosition(glm::vec2 position) {
             m_position = position;
@@ -129,6 +139,13 @@ class Rubbish : public Character {
         }
 
         void updateType(int type) {
+            if (rubbishType == 4) {
+                if (tickingSound != nullptr) {
+                    tickingSound->stop();
+                    tickingSound->drop();
+                    tickingSound = nullptr;
+                }
+            }
             rubbishType = type;
             /*std::string path = "assets/textures/rubbish" + std::to_string(type) + ".png";
             const char* cpath = path.c_str();
@@ -172,6 +189,22 @@ class Rubbish : public Character {
             for (const std::shared_ptr<Character>& obj : objects) {
                 obj->hitByBomb(); 
             }
+            if (tickingSound != nullptr) {
+                tickingSound->stop();
+                tickingSound->drop();
+                tickingSound = nullptr;
+            }
+            bombTimer->reset();
+            bombTimer->pause();
+
+            
+            
+            bombExplosion->startExplosion(m_position);
+
+            splitStrength = 0.8f;
+            split();
+            updateType(0);
+            bombState = 0;
             printf("\n\n\nBOMBA ESPLOSA");
         }
 
@@ -186,7 +219,15 @@ class Rubbish : public Character {
             case 3: //estintore
                 return fireExtState(); //controllo lo stato attuale per ritornare 0 se non attivo o 3 se attivo
             case 4: //bomba 
-                activateBomb();
+                if (tickingSound != nullptr) {
+                    tickingSound->stop();
+                    tickingSound->drop();
+                    tickingSound = nullptr;
+                }
+                bombTimer->reset();
+                bombTimer->pause();
+                
+                bombState = 0;
                 return 0;
 
             }
@@ -194,6 +235,7 @@ class Rubbish : public Character {
 
 
         virtual void update(float deltaTime) {
+            //bombExplosion->update(deltaTime);
             splittingCountdown->updateTimer(deltaTime);
 
             if (abs(m_uniform_scale - targetUniformScale) > 0.01f) {
@@ -218,9 +260,33 @@ class Rubbish : public Character {
             }
 
             if (rubbishType == 4) {
-                if (!m_is_visible)
+                if (!m_is_visible) {
                     bombTimer->pause();
+                    if (tickingSound != nullptr) {
+                        tickingSound->stop();
+                        tickingSound->drop();
+                        tickingSound = nullptr;
+                    }
+                    return;
+                }
                 bombTimer->updateTimer(deltaTime);
+
+                if (bombTimer->getElapsed() >= bombTimer->getDuration() / 3.0f && bombState < 1) {
+                    bombState = 1;
+                    setTile(4, 1);
+                }
+                if (bombTimer->getElapsed() >= bombTimer->getDuration() * 2.0f / 3.0f && bombState < 2) {
+                    bombState = 2;
+                    setTile(4, 0);
+                }
+
+                if (tickingSound == nullptr) {
+                    if (isPickable)
+                        tickingSound = player->play3D("assets/audio/bomb_ticking.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
+                }
+                else {
+                    tickingSound->setPosition(irrklang::vec3df(m_position.x, m_position.y, 0.0f));
+                }
             }
         }
 
@@ -245,6 +311,11 @@ class Rubbish : public Character {
         glm::vec2 maxScale;
         glm::vec2 currentScale;
 
+        irrklang::ISoundEngine* player;
+        irrklang::ISound* tickingSound;
+
+        std::shared_ptr<Explosion> bombExplosion;
+
         void split() {
             if (!m_is_visible) return;
             if (m_uniform_scale < 1.0f) {
@@ -260,6 +331,8 @@ class Rubbish : public Character {
                 std::shared_ptr<Rubbish> tempRubbish = rubbishPool->getInstance();
 
                 if (tempRubbish == nullptr) break;
+                if (tempRubbish->rubbishType == 4)
+                    tempRubbish->updateType(0);
 
                 tempRubbish->show();
                 tempRubbish->isPickable = false;
@@ -298,8 +371,10 @@ class Rubbish : public Character {
             isPickable = true;
             m_collider.isStatic = false;
 
+            
             splittingCountdown->reset();
             splittingCountdown->resume();
+            
 
             StatsManager::getInstance().currentRubbish++;
         }

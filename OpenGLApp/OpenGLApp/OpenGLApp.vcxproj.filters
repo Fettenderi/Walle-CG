@@ -120,6 +120,9 @@
     <ClInclude Include="globals\file_manager.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="characters\explosion.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
