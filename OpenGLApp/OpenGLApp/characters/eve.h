@@ -189,6 +189,36 @@ class Eve : public Character {
             }
         }
 
+        int normalRubbishLeft = 1;
+        int lastRubbishType = 0;
+
+        //return 0 se normale o 1-4 per spazzatura speciale
+        int updateRubbishQueue() {
+
+            //se ho ancora spazzatura normale
+            if (normalRubbishLeft > 0) {
+                //printf("spawn rubbish normale\n");
+                normalRubbishLeft--;
+                return 0;
+            }
+
+            //printf("finita la rubbish normale\n");
+
+            //reset counter
+            normalRubbishLeft = getNextRandomIntRange(1, 2);
+
+            //speciale diverso dal precedente
+            int newRubbishType;
+            do {
+                newRubbishType = getNextRandomIntRange(1, 4);
+            } while (newRubbishType == lastRubbishType);
+
+            lastRubbishType = newRubbishType;
+
+            printf("spawn rubbish speciale tipo %d\n", newRubbishType);
+            return newRubbishType;
+        }
+
         void tryGettingRubbish() {
             int actualDelivery = getNextRandomIntRange(std::max(deliveryAmount - 1, 1), deliveryAmount + 1);
             bool foundRubbish = false;
@@ -209,6 +239,11 @@ class Eve : public Character {
                 tempRubbish->setRubbishPool(rubbishPool);
                 tempRubbish->setStatic(true);
                 tempRubbish->setSecondGeneration(false);
+
+                tempRubbish->updateType(updateRubbishQueue());
+                if (lastRubbishType == 4)
+                    tempRubbish->activateBomb();
+                //printf("update rubbish finito su eve\n");
 
                 pickedRubbish.push_back(tempRubbish);
                 glm::vec2 tempPosition = getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);
