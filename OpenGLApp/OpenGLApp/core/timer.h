@@ -50,6 +50,10 @@ public:
         return elapsed;
     }
 
+    float getDuration() {
+        return duration;
+    }
+
 
     //faccio ricominciare il timer
     void reset() {
