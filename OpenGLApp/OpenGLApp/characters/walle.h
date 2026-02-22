@@ -104,6 +104,11 @@ class Walle : public Character {
 
             processingTimer.release();
 
+            magnetTimer.release();
+            compressorTimer.release();
+            fireExtTimer.release();
+            bombTimer.release();
+
             if (player != nullptr) {
                 player = nullptr;
             }
