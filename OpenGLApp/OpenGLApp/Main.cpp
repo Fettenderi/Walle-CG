@@ -11,7 +11,7 @@
 
 #include "globals/scene_manager.h"
 #include "globals/stats_manager.h"
-#include "globals/score_manager.h"
+#include "globals/file_manager.h"
 
 #include "core/quad.h"
 
@@ -69,10 +69,18 @@ int main() {
         // Mesh
         Quad::instantiatePrimitive();
 
-        // Scene initialization
-        SceneManager::getInstance().changeScene(SceneManager::SceneID::GameOverScene, window);
+        FileManager::getInstance().load(FileManager::CONFIG);
+        FileManager::getInstance().load(FileManager::SCORES);
 
-        ScoreManager::getInstance().load();
+        // Scene initialization
+        SceneManager::SceneID startScene = static_cast<SceneManager::SceneID>(to_int(FileManager::getInstance().get(FileManager::CONFIG, "start_scene")));
+
+        if (startScene == SceneManager::SceneID::UNSET) {
+            startScene = SceneManager::SceneID::GameScene;
+            FileManager::getInstance().set(FileManager::CONFIG, "start_scene", std::to_string(static_cast<int>(startScene)));
+        }
+
+        SceneManager::getInstance().changeScene(startScene, window);
 
         // render loop
         while (!glfwWindowShouldClose(window)) {
@@ -108,9 +116,8 @@ int main() {
 
         Quad::freePrimitive();
 
-        ScoreManager::getInstance().set("current_score", std::to_string(StatsManager::getInstance().collectedBlocks));
-        ScoreManager::getInstance().set("time", "00");
-        ScoreManager::getInstance().save();
+        FileManager::getInstance().save(FileManager::SCORES);
+        FileManager::getInstance().save(FileManager::CONFIG);
 
         // glfw: terminate, clearing all previously allocated GLFW resources.
         glfwTerminate();

@@ -14,6 +14,24 @@ static std::random_device rd;
 static std::mt19937 gen(rd());
 static std::uniform_real_distribution<float> distf(-1.0f, 1.0f);
 
+static float to_float(std::string x) {
+    try {
+        return std::stof(x);
+    }
+    catch (std::invalid_argument) {
+        return 0.0f;
+    }
+}
+
+static int to_int(std::string x) {
+    try {
+        return std::stoi(x);
+    }
+    catch (std::invalid_argument) {
+        return 0;
+    }
+}
+
 static float easeInElastic(float x) {
     float c4 = (2.0f * PI) / 3.0f;
 

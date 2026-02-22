@@ -1,9 +1,12 @@
 #ifndef GAME_SCENE_H
 #define GAME_SCENE_H
 
-#include "../core/scene.h"
-#include "../globals/scene_manager.h"
+#include <string>
 
+#include "../globals/scene_manager.h"
+#include "../globals/file_manager.h"
+
+#include "../core/scene.h"
 #include "../core/pool.h"
 #include "../core/timer.h"
 #include "../core/text.h"
@@ -43,8 +46,18 @@ class GameScene : public Scene {
 		int maxRubbish;
 
 		void handleDayNightCycle() {
-			float totalTime = 500.0f;
-			float nightPercentage = 0.3f;
+			float totalTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "day_night_duration"));
+			if (totalTime == 0.0f) {
+				totalTime = 500.0f;
+				FileManager::getInstance().set(FileManager::CONFIG, "day_night_duration", std::to_string(totalTime));
+			}
+
+			float nightPercentage = to_float(FileManager::getInstance().get(FileManager::CONFIG, "night_percentage"));
+			if (nightPercentage == 0.0f) {
+				nightPercentage = 0.3f;
+				FileManager::getInstance().set(FileManager::CONFIG, "night_percentage", std::to_string(nightPercentage));
+			}
+
 			float newDayNightFrequency;
 
 			float time = elapsed / totalTime - floor(elapsed / totalTime);
@@ -83,7 +96,13 @@ class GameScene : public Scene {
 			glDisable(GL_DEPTH_TEST);
 
 			// loading config
-			maxRubbish = 10;
+			FileManager::getInstance().load(FileManager::CONFIG);
+			
+			maxRubbish = to_int(FileManager::getInstance().get(FileManager::CONFIG, "max_rubbish"));
+			if (maxRubbish == 0) {
+				maxRubbish = 10;
+				FileManager::getInstance().set(FileManager::CONFIG, "max_rubbish", std::to_string(maxRubbish));
+			}
 
 			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
@@ -110,9 +129,29 @@ class GameScene : public Scene {
 			background = std::make_shared<Image>(spriteShader, "assets/textures/bg_placeholder.png", glm::vec2(0.0f, 0.0f), glm::vec2(2.0f, 2.0f));
 
 			// characters
-			eve = std::make_shared<Eve>(rubbishPool, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), 1.3f);
-			walle = std::make_shared<Walle>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, 1.0f);
-			mo = make_shared<Mo>(blockPool, spriteShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, 1.0f);
+			float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "eve_speed"));
+			if (temp == 0.0f) {
+				temp = 1.3f;
+				FileManager::getInstance().set(FileManager::CONFIG, "eve_speed", std::to_string(temp));
+			}
+
+			eve = std::make_shared<Eve>(rubbishPool, spriteShader, glm::vec2(2.0f, 2.0f), glm::vec2(0.28f, 0.4f), temp);
+			
+			temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_speed"));
+			if (temp == 0.0f) {
+				temp = 1.0f;
+				FileManager::getInstance().set(FileManager::CONFIG, "walle_speed", std::to_string(temp));
+			}
+
+			walle = std::make_shared<Walle>(rubbishPool, blockPool, spriteShader, glm::vec2(0.0f, 0.0f), glm::vec2(0.4f, 0.4f), 0.0f, temp);
+			
+			temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "mo_speed"));
+			if (temp == 0.0f) {
+				temp = 1.0f;
+				FileManager::getInstance().set(FileManager::CONFIG, "mo_speed", std::to_string(temp));
+			}
+			
+			mo = make_shared<Mo>(blockPool, spriteShader, glm::vec2(0.0f, -0.6f), glm::vec2(0.28f, 0.4f), 0.0f, temp);
 
 			SceneManager::getInstance().addObject(mo);
 			SceneManager::getInstance().addObject(walle);
@@ -148,8 +187,9 @@ class GameScene : public Scene {
 			lastElapsed = elapsed;
 
 			// global update
-			if (false){//StatsManager::getInstance().currentRubbish > maxRubbish) {
+			if (StatsManager::getInstance().currentRubbish > maxRubbish) {
 				StatsManager::getInstance().currentRubbish = 0;
+				StatsManager::getInstance().time = (int)ceil(elapsed);
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameOverScene, window);
 				return (float)deltaTime;
 			}

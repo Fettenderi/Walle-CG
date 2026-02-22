@@ -37,24 +37,56 @@ class Walle : public Character {
             spriteShader->use();
             spriteShader->setVec3("lights[1].color", light->getColor() * light->strength);
             
+            float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_compression_time"));
+            if (temp == 0.0f) {
+                temp = 2.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_compression_time", std::to_string(temp));
+            }
+
             processingTimer = std::make_unique<Timer>(2.0f, [this] {
                 expellBlock();
                 }, false);
 
-            magnetTimer = std::make_unique<Timer>(5.0f, [this] {
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_magnet_time"));
+            if (temp == 0.0f) {
+                temp = 5.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_magnet_time", std::to_string(temp));
+            }
+
+            magnetTimer = std::make_unique<Timer>(temp, [this] {
                 endMagnetEffect();
                 }, false);
-            compressorTimer = std::make_unique<Timer>(15.0f, [this] {
+
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_compressor_boost_time"));
+            if (temp == 0.0f) {
+                temp = 15.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_compressor_boost_time", std::to_string(temp));
+            }
+
+            compressorTimer = std::make_unique<Timer>(temp, [this] {
                 endCompressorEffect();
                 }, false);
-            fireExtTimer = std::make_unique<Timer>(10.0f, [this] {
+
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_confused_time"));
+            if (temp == 0.0f) {
+                temp = 10.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_confused_time", std::to_string(temp));
+            }
+
+            fireExtTimer = std::make_unique<Timer>(temp, [this] {
                 endFireExtEffect();
                 }, false);
-            bombTimer = std::make_unique<Timer>(3.0f, [this] {
+
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_stunned_time"));
+            if (temp == 0.0f) {
+                temp = 3.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_stunned_time", std::to_string(temp));
+            }
+
+            bombTimer = std::make_unique<Timer>(temp, [this] {
                 endBombEffect();
                 }, false);
             
-
             maxScale = scale;
 
             processingTimer->pause();
@@ -204,7 +236,7 @@ class Walle : public Character {
             if(magnetActive)
                 for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                     if (std::shared_ptr<Rubbish> rubbish = dynamic_pointer_cast<Rubbish>(object)) {
-                        if ( glm::distance(rubbish->getPosition(), m_position) <= 0.7) {
+                        if (glm::distance(rubbish->getPosition(), m_position) <= 0.7) {
                             rubbish->moveToWalle(this->getPosition());
                         }
                     }

@@ -145,7 +145,6 @@
   <ItemGroup>
     <ClInclude Include="characters\block.h" />
     <ClInclude Include="characters\image.h" />
-    <ClInclude Include="characters\rubbish_spawner.h" />
     <ClInclude Include="characters\wind.h" />
     <ClInclude Include="core\camera.h" />
     <ClInclude Include="characters\character.h" />
@@ -163,6 +162,7 @@
     <ClInclude Include="core\shader.h" />
     <ClInclude Include="core\text.h" />
     <ClInclude Include="core\timer.h" />
+    <ClInclude Include="globals\file_manager.h" />
     <ClInclude Include="scenes\difficulty_scene.h" />
     <ClInclude Include="scenes\game_over_scene.h" />
     <ClInclude Include="globals\scene_manager.h" />
@@ -177,7 +177,6 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="characters\rubbish_spawner.cpp" />
     <ClCompile Include="core\quad.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="globals\scene_manager.cpp" />

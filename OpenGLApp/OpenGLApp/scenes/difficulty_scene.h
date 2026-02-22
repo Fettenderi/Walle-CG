@@ -153,6 +153,33 @@ public:
 				transitionOutTimer->resume();
 				nextScene = SceneManager::SceneID::MMWelcomeScene;
 			}
+
+			if (customButton->isMouseOver(glm::vec2(scX, scY))) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+				// change subscene
+				transitionOutTimer->resume();
+				nextScene = SceneManager::SceneID::MMCustomScene;
+			}
+
+
+			if (easyButton->isMouseOver(glm::vec2(scX, scY))) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
+				return;
+			}
+
+			if (mediumButton->isMouseOver(glm::vec2(scX, scY))) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
+				return;
+			}
+
+			if (hardButton->isMouseOver(glm::vec2(scX, scY))) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
+				return;
+			}
 		}
 	}
 
@@ -175,7 +202,6 @@ public:
 		if (velocity == 0.0f) return;
 
 		debug += velocity * (float)deltaTime * 2.0f;
-		printf("debug: (%f)\n", debug);
 	}
 
 	void buttonUpdate() {

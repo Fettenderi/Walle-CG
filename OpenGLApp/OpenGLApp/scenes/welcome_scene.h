@@ -150,9 +150,6 @@ public:
 		logoModelMat = glm::rotate(logoModelMat, glm::radians((float)sin(elapsed * 2.0f) * 5.0f) + logoOffset, glm::vec3(0.0f, 0.0f, 1.0f));
 		logoModelMat = glm::rotate(logoModelMat, glm::radians((float)cos(elapsed * 2.0f) * 5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-		printf("%f + %f\n", -0.5f * easeInBack(transitionOutTimer->getElapsed()), 0.5f * easeOutBack(transitionInTimer->getElapsed()));
-		//printf("%f\n", easeOutBack(transitionInTimer->getProgress()));
-
 		glEnable(GL_DEPTH_TEST);
 
 		// models update

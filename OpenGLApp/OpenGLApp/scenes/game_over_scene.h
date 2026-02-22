@@ -9,6 +9,8 @@
 
 #include "../characters/image.h"
 
+using namespace std;
+
 class GameOverScene : public Scene {
 	private:
 		std::shared_ptr<Shader> spriteShader;
@@ -35,6 +37,9 @@ class GameOverScene : public Scene {
 
 		irrklang::ISoundEngine* soundPlayer;
 
+		int bestScore;
+		int bestScoreTime;
+
 	public:
 		GameOverScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
@@ -48,8 +53,45 @@ class GameOverScene : public Scene {
 			// sfx player
 			soundPlayer = SceneManager::getInstance().soundManager;
 
-			//bootup
-			soundPlayer->play2D("assets/audio/game_over.wav", false);
+			// results last game
+			bestScore = to_int(FileManager::getInstance().get(FileManager::SCORES, "best_score"));
+			bestScoreTime = to_int(FileManager::getInstance().get(FileManager::SCORES, "best_scoretime"));
+
+			bool newPB = false;
+
+			if (StatsManager::getInstance().collectedBlocks > bestScore || StatsManager::getInstance().time > bestScoreTime) {
+				FileManager::getInstance().set(FileManager::SCORES, "best_score", to_string(StatsManager::getInstance().collectedBlocks));
+				FileManager::getInstance().set(FileManager::SCORES, "best_scoretime", to_string(StatsManager::getInstance().time));
+
+				bestScore = StatsManager::getInstance().collectedBlocks;
+				bestScoreTime = StatsManager::getInstance().time;
+				newPB = true;
+			}
+			else {
+				FileManager::getInstance().set(FileManager::SCORES, "best_score", to_string(bestScore));
+				FileManager::getInstance().set(FileManager::SCORES, "best_scoretime", to_string(bestScoreTime));
+			}
+
+			FileManager::getInstance().save(FileManager::SCORES);
+			FileManager::getInstance().save(FileManager::CONFIG);
+
+			if (newPB) {
+				// new personal best
+				// game over sound
+				//soundPlayer->play2D("assets/audio/game_over.wav", false);
+
+				//3d models
+				walle = std::make_shared<Model>("assets/models/walle/walle-sad.gltf");
+
+			}
+			else {
+				// loser
+				// game over sound
+				soundPlayer->play2D("assets/audio/game_over.wav", false);
+
+				//3d models
+				walle = std::make_shared<Model>("assets/models/walle/walle-sad.gltf");
+			}
 
 			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
@@ -63,15 +105,9 @@ class GameOverScene : public Scene {
 			spriteShader = std::make_shared<Shader>("core/shaders/sprite_shader.vs", "core/shaders/menu_sprite_shader.fs");
 			PBRShader = std::make_shared<Shader>("core/shaders/PBR_shader.vs", "core/shaders/PBR_shader.fs");
 
-			// characters
-			mouseDetector = std::make_shared<Image>(spriteShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.227f), glm::vec2(1.134f, 1.258f));
-
 			menuButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(-0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
 			startButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
-			
-			//3d models
-			walle = std::make_shared<Model>("assets/models/walle/walle-sad.gltf");
-			
+						
 			SceneManager::getInstance().addObject(menuButton);
 			SceneManager::getInstance().addObject(startButton);
 
@@ -106,6 +142,7 @@ class GameOverScene : public Scene {
 		virtual float update() {
 			// debug
 			changeDebugParameters();
+			changeDebug1Parameters();
 
 			// reset screen
 			glClearColor(bgColor.r, bgColor.g, bgColor.b, 1.0f);
@@ -149,12 +186,22 @@ class GameOverScene : public Scene {
 		}
 
 		float debug = 0.0f;
+		float debug1 = 0.0f;
 
 		virtual void guiUpdate() {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 
-			guiText->RenderText(std::format("Game Over"), glm::vec2(width / 2.0f -202.0f, height / 2.0f + 118.0f + debug), 2.0f, "#0a1518");
+			guiText->RenderText(std::format("Game Over"), glm::vec2(width / 2.0f - 200.0f + 17.0f, height / 2.0f + 150.0f + 12.0f), 1.8f, "#ffffff");
+			
+			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, "#ffffff");
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, "#ffffff");
+			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, "#ffffff");
+			
+			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, "#ffffff");
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, "#ffffff");
+			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, "#ffffff");
+			
 			//guiText->RenderText(std::format("{:02.0f}:{:02.0f}", , ), glm::vec2(width / 2.0f - 34.0f, height / 2.0f), 3.0f, "#0a1518");
 		}
 
@@ -232,6 +279,28 @@ class GameOverScene : public Scene {
 
 			debug += velocity * (float)deltaTime * 10.0f;
 			printf("debug: (%f)\n", debug);
+		}
+
+		void changeDebug1Parameters() {
+			float velocity = 0.0f;
+
+			if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+				velocity -= 1.0f;
+
+			if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+				velocity += 1.0f;
+
+			if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+				velocity *= 2.0f;
+
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+				velocity /= 2.0f;
+
+
+			if (velocity == 0.0f) return;
+
+			debug1 += velocity * (float)deltaTime * 10.0f;
+			printf("debug1: (%f)\n", debug1);
 		}
 
 		void buttonUpdate() {

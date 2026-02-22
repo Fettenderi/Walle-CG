@@ -4,13 +4,12 @@
 #include "../core/shader.h"
 #include "../core/timer.h"
 #include "../core/pool.h"
+
 #include "../utils.h"
-#include "../core/timer.h"
 
 #include "../globals/scene_manager.h"
-
 #include "../globals/stats_manager.h"
-#include "../globals/scene_manager.h"
+#include "../globals/file_manager.h"
 
 #include "character.h"
 
@@ -27,8 +26,17 @@ class Rubbish : public Character {
         {
             m_is_visible = false;
 
-            splitStrength = 0.3f;
-            splitTime = 8.0f;
+            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_strength"));
+            if (splitStrength == 0.0f) {
+                splitStrength = 0.3f;
+                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_strength", std::to_string(splitStrength));
+            }
+
+            splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_time"));
+            if (splitTime == 0.0f) {
+                splitTime = 8.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_time", std::to_string(splitTime));
+            }
 
             splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, 1.0f), [this] {
                 split();
@@ -42,13 +50,33 @@ class Rubbish : public Character {
 
             maxScale = getScale();
 
-            bombTimer = std::make_unique<Timer>(5.0f, [this] {
+            float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "bomb_time"));
+            if (temp == 0.0f) {
+                temp = 5.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "bomb_time", std::to_string(temp));
+            }
+
+            bombTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
                 explodeBomb();
                 }, false);
-            fireExtOnTimer = std::make_unique<Timer>(2.0f, [this] {
+
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "fire_ext_on_time"));
+            if (temp == 0.0f) {
+                temp = 2.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "fire_ext_on_time", std::to_string(temp));
+            }
+
+            fireExtOnTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
                 resetOffTimer();
                 }, false);
-            fireExtOffTimer = std::make_unique<Timer>(2.0f, [this] {
+
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "fire_ext_off_time"));
+            if (temp == 0.0f) {
+                temp = 2.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "fire_ext_off_time", std::to_string(temp));
+            }
+
+            fireExtOffTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
                 resetOnTimer();
                 }, false);
 
@@ -172,15 +200,6 @@ class Rubbish : public Character {
                 m_uniform_scale = explerp(m_uniform_scale, targetUniformScale, deltaTime * 1.5f);
             }
             
-            float dist = glm::length(target - m_position);
-
-            //if (dist > 0.5) return; //viene attratta solo la spazzatura abbastanza vicina a walle, non tutta quella a schermo
-
-            if (dist < 0.1) {
-                hasTarget = false;
-                isPickable = true;
-            }
-
             if (hasTarget) {
                 handleTarget(deltaTime);
                 return;

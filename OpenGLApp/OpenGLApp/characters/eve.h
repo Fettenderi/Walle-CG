@@ -6,6 +6,7 @@
 
 #include "../globals/scene_manager.h"
 #include "../globals/stats_manager.h"
+#include "../globals/file_manager.h"
 
 #include "../utils.h"
 
@@ -27,9 +28,23 @@ class Eve : public Character {
         {
             m_direction = glm::vec2(1.0f, 0.0f);
 
-            timeBetweenDelivery = 1.0f;
-            timeBetweenDeliveryDeviation = 0.5f;
-            deliveryAmount = 3;
+            timeBetweenDelivery = to_float(FileManager::getInstance().get(FileManager::CONFIG, "eve_time_betw_delivery"));
+            if (timeBetweenDelivery == 0.0f) {
+                timeBetweenDelivery = 1.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "eve_time_betw_delivery", std::to_string(timeBetweenDelivery));
+            }
+
+            timeBetweenDeliveryDeviation = to_float(FileManager::getInstance().get(FileManager::CONFIG, "eve_time_betw_delivery_std"));
+            if (timeBetweenDeliveryDeviation == 0.0f) {
+                timeBetweenDeliveryDeviation = 0.5f;
+                FileManager::getInstance().set(FileManager::CONFIG, "eve_time_betw_delivery_std", std::to_string(timeBetweenDeliveryDeviation));
+            }
+
+            deliveryAmount = to_int(FileManager::getInstance().get(FileManager::CONFIG, "eve_delivery_amount"));
+            if (deliveryAmount == 0) {
+                deliveryAmount = 3;
+                FileManager::getInstance().set(FileManager::CONFIG, "eve_delivery_amount", std::to_string(deliveryAmount));
+            }
 
             float throwCooldownTime = 0.5f;
 

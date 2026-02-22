@@ -13,7 +13,7 @@ class StatsManager {
 
 		int currentRubbish = 0;
 		int collectedBlocks = 0;
-		int highScore = 0;
+		int time = 0;
 
 		float maxBlockProgress = -1.0f;
 	private:

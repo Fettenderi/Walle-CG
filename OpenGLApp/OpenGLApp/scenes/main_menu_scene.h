@@ -173,6 +173,8 @@ class MainMenuScene : public Scene {
 		}
 
 		virtual void mouseCallback(GLFWwindow* window, int button, int action, int mods) {
+			if (inLimbo) return;
+
 			currentSubscene->mouseCallback(window, button, action, mods);
 		}
 

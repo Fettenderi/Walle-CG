@@ -17,7 +17,7 @@
 class SceneManager {
 	public:
 		enum class SceneID {
-			MainMenuScene, GameScene, GameOverScene, MMWelcomeScene, MMDifficultyScene, MMInstructionsScene 
+			UNSET, MainMenuScene, GameScene, GameOverScene, MMWelcomeScene, MMDifficultyScene, MMInstructionsScene, MMCustomScene
 		};
 
 		using iterator = std::list<std::shared_ptr<Character>>::iterator;

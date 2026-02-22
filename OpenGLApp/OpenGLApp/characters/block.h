@@ -4,9 +4,11 @@
 #include "../core/timer.h"
 #include "../core/shader.h"
 #include "../core/pool.h"
+
 #include "../utils.h"
 
 #include "../globals/scene_manager.h"
+#include "../globals/file_manager.h"
 
 #include "character.h"
 #include "rubbish.h"
@@ -21,8 +23,17 @@ class Block : public Character {
         {
             m_is_visible = false;
 
-            splitStrength = 0.3f;
-            float splitTime = 8.0f;
+            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "block_split_strength"));
+            if (splitStrength == 0.0f) {
+                splitStrength = 0.3f;
+                FileManager::getInstance().set(FileManager::CONFIG, "block_split_strength", std::to_string(splitStrength));
+            }
+
+            float splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "block_split_time"));
+            if (splitTime == 0.0f) {
+                splitTime = 8.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "block_split_time", std::to_string(splitTime));
+            }
 
             splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, 1.0f), [this] {
                 split();
