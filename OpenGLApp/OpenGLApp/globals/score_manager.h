@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <filesystem>
+#include <map>
 
 //#include "../score_history/SimpleJson.h"
 
@@ -18,41 +19,43 @@ class ScoreManager {
 			return instance;
 		}
 
-		int bestScore = 0;
-		int currentScore = 0;
+		std::map<std::string, std::string> scores;
 		
 
-		void load()
-		{
-			if (std::filesystem::exists(filePath))
-			{
+		void load(){
+			if (std::filesystem::exists(filePath)){
 				std::ifstream file(filePath);
 				json j;
 				file >> j;
 
-				bestScore = j.value("best_score", 0);
-			}
-			else
-			{
-				bestScore = 0;
+				for (auto& [key, value] : j.items()){
+					//if (value.is_number_integer())
+						//scores[key] = value.get<int>();
+				}
 			}
 		}
-		void save()
-		{
-			if (currentScore > bestScore)
-				bestScore = currentScore;
-
+		void save(){
 			json j;
-			j["best_score"] = bestScore;
-			j["current_score"] = currentScore;
+
+			for (const auto& [key, value] : scores){
+				j[key] = value;
+			}
 
 			std::ofstream file(filePath);
-			file << j.dump(4); // 4 = indentazione
+			file << j.dump(4);
 		};
 
-		void setCurrentScore(int score) {
-			currentScore = score;
-		};
+		void set(const std::string& key, std::string value){
+			scores[key] = value;
+		}
+
+		std::string get(const std::string& key) const{
+			auto it = scores.find(key);
+			if (it == scores.end())
+				return 0;
+
+			return it->second;
+		}
 
 	private:
 		ScoreManager() = default;
@@ -63,7 +66,6 @@ class ScoreManager {
 		std::string filePath = "score_history/scores.json";
 };
 
-//int collectedBlocks = 0;
-//int highScore = 0;
+// collectedBlocks or highScore;
 
 #endif
