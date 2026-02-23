@@ -19,10 +19,13 @@ class Walle : public Character {
 
     public:
         Walle(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/walle-test.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
+            : Character(spriteShader, "assets/textures/walle_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
             m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
-            m_direction = glm::vec2(1.0f, 0.0f);
+            m_scale.x = m_scale.x * 1.2f;
+            m_scale.y = m_scale.y * 1.5f;
+
+            m_direction = glm::vec2(0.0f, -1.0f);
             camera = SceneManager::getInstance().camera;
 
             light = std::make_shared<Light>(glm::vec3(0.0f), 0.0f, "#8efcf5");
@@ -32,7 +35,7 @@ class Walle : public Character {
             movingSound = nullptr;
 
             collectionRange = 0.13f;
-            m_h_tiles = 3;
+            
 
             spriteShader->use();
             spriteShader->setVec3("lights[1].color", light->getColor() * light->strength);
@@ -54,8 +57,10 @@ class Walle : public Character {
                 endBombEffect();
                 }, false);
             
+            setAtlasGrid(4, 5);
+            setTile(0, 2);
 
-            maxScale = scale;
+            maxScale = m_scale;
 
             processingTimer->pause();
             magnetTimer->pause();
@@ -174,15 +179,58 @@ class Walle : public Character {
             fireExtTimer->updateTimer(deltaTime);
             bombTimer->updateTimer(deltaTime);
 
+            m_scale.x = -glm::abs(m_scale.x) * sign(m_direction.x);
+
             if (processing) {
-                m_scale.x = abs(sin((float)processingTimer->getElapsed() * 5.0f)) * 0.15f + maxScale.x * 0.8f;
-                m_scale.y = (abs(cos((float)processingTimer->getElapsed() * 6.0f)) * 0.15f + maxScale.y * 0.8f) * sign(m_direction.x);
+                m_scale.x = -(abs(sin((float)processingTimer->getElapsed() * 5.0f)) * 0.15f + maxScale.x * 0.8f) * sign(m_direction.x);
+                m_scale.y = (abs(cos((float)processingTimer->getElapsed() * 6.0f)) * 0.15f + maxScale.y * 0.8f);
                 return;
             }
 
-            m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
+            //m_rotation = glm::degrees(atan2(-m_direction.y, m_direction.x));
 
-            m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+            //m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+            
+
+            if (glm::length(m_velocity) > 0.1f) {
+                float angle = glm::degrees(atan2(m_velocity.y, abs(m_velocity.x)));
+
+
+                if (angle > 67.5f) {
+                    currentTile.y = 0; //nord
+                }
+                else if (angle > 22.5f) {
+                    currentTile.y = 1; //nord-ovest
+                }
+                else if (angle < -67.5f) {
+                    currentTile.y = 2; //sud
+                }
+                else if (angle < -22.5f) {
+                    currentTile.y = 3; //sud-ovest
+                }
+                else {
+                    currentTile.y = 4; //ovest
+                }
+
+            }
+
+            // Se vuoi anche un'animazione di camminata sui 4 frame della riga:
+            static float animCounter = 0.0f;
+            if (glm::length(m_velocity) > 0.1f && !lockAnimationCycle) {
+                animCounter += deltaTime/2 * 10.0f;
+                currentTile.x = (int)animCounter % 4;
+                if (currentTile.x == 3)
+                    lockAnimationCycle = true;
+            }
+            else if (glm::length(m_velocity) > 0.1f && lockAnimationCycle) {
+                animCounter += deltaTime * 10.0f;
+                currentTile.x = 2 + (int)animCounter % 2;
+            }
+            else {
+                currentTile.x = 0; // Frame idle
+                lockAnimationCycle = false;
+            }
+            setTile(currentTile.x, 4-currentTile.y);
 
             // TODO: capire cosa fare con la velocitÅE
             //m_position += m_velocity * m_speed * deltaTime;
@@ -336,6 +384,9 @@ class Walle : public Character {
         bool magnetActive = false;
         bool fireExtActive = false;
         bool bombActive = false;
+
+        glm::vec2 currentTile = glm::vec2(0,2);
+        bool lockAnimationCycle = false;
 
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;

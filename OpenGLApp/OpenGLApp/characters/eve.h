@@ -23,9 +23,13 @@ class Eve : public Character {
     public:
 
         Eve(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float speed)
-            : Character(spriteShader, "assets/textures/eve.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
+            : Character(spriteShader, "assets/textures/eve_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
+            m_scale.x = m_scale.x * 1.5f;
+
+            setAtlasGrid(1, 2);
+            setTile(0, 1);
 
             timeBetweenDelivery = 1.0f;
             timeBetweenDeliveryDeviation = 0.5f;
@@ -72,6 +76,12 @@ class Eve : public Character {
         }
 
         void update(float deltaTime) {
+            if (currentState == RETURNING) {
+                setTile(0, 0);
+            }
+            else {
+                setTile(0, 1);
+            }
             cooldownTimer->updateTimer(deltaTime);
             throwCooldownTimer->updateTimer(deltaTime);
 

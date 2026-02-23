@@ -1,54 +1,4 @@
-﻿  rubbish_spawner.cpp
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(21,30): warning C4244: 'return': conversione da 'int' a 'float'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(92,33): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(92,23): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(92,18): warning C4244: 'argomento': conversione da 'int' a 'float'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(92,17): warning C4244: 'return': conversione da 'float' a 'int'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         with
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         [
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:             T=float
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(51,44): warning C4244:         ]
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         with
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         [
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:             T=float
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(52,33): warning C4244:         ]
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         with
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         [
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:             T=float
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,51): warning C4244:         ]
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         with
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         [
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:             T=float
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\explosion.h(53,34): warning C4244:         ]
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(319,48): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(331,31): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
-  (compilazione del file di origine 'characters/rubbish_spawner.cpp')
-  
-  scene_manager.cpp
+﻿  scene_manager.cpp
 C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\utils.h(21,30): warning C4244: 'return': conversione da 'int' a 'float'. Possibile perdita di dati.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
@@ -96,11 +46,73 @@ C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
 C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(331,31): warning C4244: '=': conversione da 'double' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(221,50): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(221,50): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(221,50): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(221,50): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(221,50): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(227,35): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(227,35): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(227,35): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(227,35): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(227,35): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,37): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,37): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,37): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,37): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,37): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,32): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,32): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,32): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,32): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\walle.h(233,32): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,47): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,47): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,47): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,47): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,47): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,32): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,32): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,32): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,32): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(105,32): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(129,56): warning C4244: '=': conversione da 'int' a 'T'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(129,56): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(129,56): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(129,56): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(129,56): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,36): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,36): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,36): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,36): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,36): warning C4244:         ]
+  (compilazione del file di origine 'globals/scene_manager.cpp')
+  
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,31): warning C4244: 'argomento': conversione da 'T' a 'int'. Possibile perdita di dati.
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,31): warning C4244:         with
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,31): warning C4244:         [
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,31): warning C4244:             T=float
+C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\mo.h(136,31): warning C4244:         ]
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
 C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\scenes\game_scene.h(52,15): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
   (compilazione del file di origine 'globals/scene_manager.cpp')
   
-  Generazione del codice in corso...
 C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\OpenGLApp\characters\rubbish.h(206,1): warning C4715: 'Rubbish::executeEffect': non tutti i percorsi di controllo restituiscono un valore
   OpenGLApp.vcxproj -> C:\Users\raffa\Documents\GitHub\Walle-CG\OpenGLApp\x64\Debug\OpenGLApp.exe
