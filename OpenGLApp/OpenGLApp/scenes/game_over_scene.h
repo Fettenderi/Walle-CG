@@ -43,6 +43,31 @@ class GameOverScene : public Scene {
 		bool newPB = false;
 		std::string textColor;
 
+		void handleSadUI(int width, int height) {
+			guiText->RenderText("Game Over", glm::vec2(width / 2.0f - 200.0f + 17.0f, height / 2.0f + 150.0f + 12.0f), 1.8f, textColor);
+
+			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
+
+			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
+		}
+
+		void handleHappyUI(int width, int height) {
+			guiText->RenderText("New Highscore", glm::vec2(width / 2.0f - 200.0f + 17.0f + debug, height / 2.0f + 150.0f + 12.0f), 1.8f, textColor);
+
+			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
+
+			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, textColor);
+			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
+			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
+
+		}
+
 	public:
 		GameOverScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
@@ -92,8 +117,8 @@ class GameOverScene : public Scene {
 			// text initialization
 			guiText = std::make_unique<Text>("assets/fonts/Antonio/static/Antonio-Bold.ttf");
 
-			menuButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(-0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
-			startButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
+			menuButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/back_button.png", glm::vec2(-0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
+			startButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/play_button.png", glm::vec2(0.414f, -0.7f), glm::vec2(0.4f, 0.2f));
 
 			SceneManager::getInstance().addObject(menuButton);
 			SceneManager::getInstance().addObject(startButton);
@@ -106,8 +131,6 @@ class GameOverScene : public Scene {
 				FileManager::getInstance().set(FileManager::SCORES, "best_score", to_string(StatsManager::getInstance().collectedBlocks));
 				FileManager::getInstance().set(FileManager::SCORES, "best_scoretime", to_string(StatsManager::getInstance().time));
 
-				bestScore = StatsManager::getInstance().collectedBlocks;
-				bestScoreTime = StatsManager::getInstance().time;
 				newPB = true;
 			}
 			else {
@@ -207,17 +230,10 @@ class GameOverScene : public Scene {
 			int width, height;
 			glfwGetWindowSize(window, &width, &height);
 
-			guiText->RenderText(newPB ? "New Highscore" : "Game Over", glm::vec2(width / 2.0f - 200.0f + 17.0f, height / 2.0f + 150.0f + 12.0f), 1.8f, textColor);
-			
-			guiText->RenderText(std::format("Personal Best"), glm::vec2(width / 2.0f - 215.0f - 115.0f, 370.0f), 1.0f, textColor);
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)bestScoreTime / 60.0f), mod((float)bestScoreTime, 60.0f)), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
-			guiText->RenderText(std::format("{} punti", bestScore), glm::vec2(width / 2.0f - 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
-			
-			guiText->RenderText(std::format("Current Run"), glm::vec2(width / 2.0f + 215.0f - 115.0f, 370.0f), 1.0f, textColor);
-			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)StatsManager::getInstance().time / 60.0f), mod((float)StatsManager::getInstance().time, 60.0f)), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f, 370.0f - 42.0f), 0.7f, textColor);
-			guiText->RenderText(std::format("{} punti", StatsManager::getInstance().collectedBlocks), glm::vec2(width / 2.0f + 215.0f - 115.0f + 64.0f - 8.0f, 370.0f - 42.0f - 39.0f), 0.7f, textColor);
-			
-			//guiText->RenderText(std::format("{:02.0f}:{:02.0f}", , ), glm::vec2(width / 2.0f - 34.0f, height / 2.0f), 3.0f, "#0a1518");
+			if (newPB)
+				handleHappyUI(width, height);
+			else
+				handleSadUI(width, height);
 		}
 
 		virtual void mouseCallback(GLFWwindow* window, int button, int action, int mods) {

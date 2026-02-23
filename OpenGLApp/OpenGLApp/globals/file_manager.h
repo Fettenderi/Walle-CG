@@ -18,10 +18,9 @@ class FileManager {
 			static FileManager instance; // per singleton
 			return instance;
 		}
-
-		std::map<std::string, std::string> scores;
-		std::map<std::string, std::string> config;
 		
+		std::filesystem::path configPath;
+
 		void load(FilePath path){
 			std::filesystem::path pathString = path == FilePath::SCORES ? scoresPath : configPath;
 			std::map<std::string, std::string> *savedMap = path == FilePath::SCORES ? &scores : &config;
@@ -73,9 +72,8 @@ class FileManager {
 
 	private:
 		FileManager() {
-			saveDirectory = "C:/Wall-E";
-			scoresPath = "C:/Wall-E/scores.json";
-			configPath = "C:/Wall-E/config.json";
+			saveDirectory = "saves";
+			scoresPath = "saves/scores.json";
 		}
 
 		FileManager(const FileManager&) = delete;
@@ -84,6 +82,7 @@ class FileManager {
 		std::filesystem::path saveDirectory;
 
 		std::filesystem::path scoresPath;
-		std::filesystem::path configPath;
 
+		std::map<std::string, std::string> scores;
+		std::map<std::string, std::string> config;
 };

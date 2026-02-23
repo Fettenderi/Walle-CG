@@ -19,6 +19,8 @@
 #include "../core/shader.h"
 #include "../core/quad.h"
 
+#include "../utils.h"
+
 
 static unsigned long assignedIds;
 
@@ -126,6 +128,10 @@ class Character {
             solved = false;
         }
 
+        virtual void clampPosition(glm::vec2 min, glm::vec2 max) {
+            m_position = clamp(min, max, m_position);
+        }
+
         glm::vec2 getPosition() const {
             return m_position;
         }
@@ -151,7 +157,22 @@ class Character {
         }
 
         float getY() {
-            return m_position.y;
+            glm::mat2 R(
+                cos(m_rotation), -sin(m_rotation),
+                sin(m_rotation), cos(m_rotation)
+            );
+
+            glm::vec2 tl(-m_scale.x, m_scale.y);
+            glm::vec2 tr(m_scale.x, m_scale.y);
+            glm::vec2 bl(-m_scale.x, -m_scale.y);
+            glm::vec2 br(m_scale.x, -m_scale.y);
+
+            tl = R * tl;
+            tr = R * tr;
+            bl = R * bl;
+            br = R * br;
+
+            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y });
         }
 
         void hide() {

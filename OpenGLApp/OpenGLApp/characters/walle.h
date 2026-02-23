@@ -31,7 +31,7 @@ class Walle : public Character {
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
 
-            collectionRange = 0.13f;
+            collectionRange = 0.16f;
             m_h_tiles = 3;
 
             spriteShader->use();
@@ -47,53 +47,64 @@ class Walle : public Character {
                 expellBlock();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_magnet_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_magnet_time"));
             if (temp == 0.0f) {
                 temp = 5.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "walle_magnet_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_magnet_time", std::to_string(temp));
             }
 
             magnetTimer = std::make_unique<Timer>(temp, [this] {
                 endMagnetEffect();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_compressor_boost_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_compressor_boost_time"));
             if (temp == 0.0f) {
                 temp = 15.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "walle_compressor_boost_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_compressor_boost_time", std::to_string(temp));
             }
 
             compressorTimer = std::make_unique<Timer>(temp, [this] {
                 endCompressorEffect();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_confused_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_confused_time"));
             if (temp == 0.0f) {
                 temp = 10.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "walle_confused_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_confused_time", std::to_string(temp));
             }
 
             fireExtTimer = std::make_unique<Timer>(temp, [this] {
                 endFireExtEffect();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_stunned_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_stunned_time"));
             if (temp == 0.0f) {
                 temp = 3.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "walle_stunned_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_stunned_time", std::to_string(temp));
             }
 
             bombTimer = std::make_unique<Timer>(temp, [this] {
                 endBombEffect();
                 }, false);
             
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_charging_time"));
-            if (temp == 0.0f) {
-                temp = 1.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "walle_charging_time", std::to_string(temp));
+            speedWeightConstantA = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_weight_constant"));
+            FileManager::getInstance().set(FileManager::CONFIG, "walle_weight_constant", std::to_string(speedWeightConstantA));
+
+            speedWeightConstantB = 1.0f - speedWeightConstantA * A * SQRT_TEN;
+
+            chargingTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_charging_time"));
+            if (chargingTime == 0.0f) {
+                chargingTime = 1.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_charging_time", std::to_string(chargingTime));
             }
 
-            lightBatteryTimer = std::make_unique<Timer>(temp, [this] {
+            dischargingFactor = to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_discharging_factor"));
+            if (dischargingFactor == 0.0f) {
+                dischargingFactor = 2.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "walle_discharging_factor", std::to_string(dischargingFactor));
+            }
+
+            lightBatteryTimer = std::make_unique<Timer>(chargingTime, [this] {
                 flashlightBattery = (int)clamp(0.0f, 10.0f, (float)flashlightBattery + (isFlashlightActive ? -1.0f : 1.0f));
                 
                 if (flashlightBattery == 0) {
@@ -101,7 +112,7 @@ class Walle : public Character {
                 }
 
                 StatsManager::getInstance().flashlightBattery = flashlightBattery;
-                printf("flashlightBattery: %d\n", flashlightBattery);
+                //printf("flashlightBattery: %d\n", flashlightBattery);
 
                 }, true);
 
@@ -175,7 +186,6 @@ class Walle : public Character {
                 if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
                     m_velocity -= glm::vec2(1.0f, 0.0f);
             }
-            
 
             if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
                 int picked = 0;
@@ -190,6 +200,8 @@ class Walle : public Character {
                             rubbish->setUniformScale(1.0f);
 
                             collect(rubbish->trashAmount);
+
+                            StatsManager::getInstance().collectedRubbish = (int)floor(((float)m_collected / (float)m_max_rubbish) * 5.0f);
 
                             rubbishPool->returnToPool(rubbish);
                             SceneManager::getInstance().removeObject(rubbish);
@@ -247,8 +259,7 @@ class Walle : public Character {
 
             m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
 
-            // TODO: capire cosa fare con la velocitE
-            m_position += m_velocity * (m_speed * 0.316f * sqrt(10.0f - m_collected)) * deltaTime;
+            m_position += m_velocity * (speedWeightConstantA * m_speed * A * sqrt(10.0f - m_collected) + speedWeightConstantB) * deltaTime;
 
             m_position = clamp(glm::vec2(-0.82f, -0.82f) + camera->getPosition2D(), glm::vec2(0.82f, 0.82f) + camera->getPosition2D(), m_position);
 
@@ -263,14 +274,15 @@ class Walle : public Character {
             m_shader->setVec3("lights[1].color", light->getColor() * light->strength);
 
 
-            if(magnetActive)
+            if (magnetActive) {
                 for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                     if (std::shared_ptr<Rubbish> rubbish = dynamic_pointer_cast<Rubbish>(object)) {
                         if (glm::distance(rubbish->getPosition(), m_position) <= 0.7) {
-                            rubbish->moveToWalle(this->getPosition());
+                            rubbish->moveToWalle(m_position);
                         }
                     }
                 }
+            }
         }
 
         void collect(int trash) {
@@ -305,8 +317,19 @@ class Walle : public Character {
 
             isFlashlightActive = state;
 
-            light_target_strength = state ? 0.75f : 0.0f;
-            ambient_target_strength = state ? 0.06f : 0.3f;
+            if (isFlashlightActive) {
+                light_target_strength = 0.75f;
+                ambient_target_strength = 0.06f;
+                lightBatteryTimer->reset();
+                lightBatteryTimer->changeDuration(chargingTime * dischargingFactor);
+            }
+            else {
+                light_target_strength = 0.0f;
+                ambient_target_strength = 0.3f;
+                lightBatteryTimer->reset();
+                lightBatteryTimer->changeDuration(chargingTime);
+            }
+
         }
 
         void expellBlock() {
@@ -395,6 +418,8 @@ class Walle : public Character {
         float ambient_target_strength = 0.3f;
         bool isFlashlightActive = false;
         int flashlightBattery = 5;
+        float chargingTime = 1.0f;
+        float dischargingFactor = 3.0f;
 
         std::unique_ptr<Timer> processingTimer;
         bool processing = false;
@@ -410,6 +435,10 @@ class Walle : public Character {
         irrklang::ISoundEngine* player;
         irrklang::ISound* movingSound;
 
+        float speedWeightConstantA = 0.6f;
+        float speedWeightConstantB;
+        const float SQRT_TEN = 3.1623f;
+        const float A = 0.316f;
 
 
 };

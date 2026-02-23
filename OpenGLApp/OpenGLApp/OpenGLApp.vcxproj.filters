@@ -123,6 +123,9 @@
     <ClInclude Include="json.hpp">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\i_grab_ui.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -177,16 +180,7 @@
     <Image Include="assets\textures\eve.png">
       <Filter>File di risorse</Filter>
     </Image>
-    <Image Include="assets\textures\instructions_mo.png">
-      <Filter>File di risorse</Filter>
-    </Image>
-    <Image Include="assets\textures\instructions_walle.png">
-      <Filter>File di risorse</Filter>
-    </Image>
     <Image Include="assets\textures\mo.png">
-      <Filter>File di risorse</Filter>
-    </Image>
-    <Image Include="assets\textures\play_button.png">
       <Filter>File di risorse</Filter>
     </Image>
     <Image Include="assets\textures\rubbish.png">
@@ -214,6 +208,45 @@
       <Filter>File di risorse</Filter>
     </Image>
     <Image Include="assets\textures\explosion_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\custom.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\easy.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\gui_base.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\hard.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\instructions_mo.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\instructions_walle.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\medium.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\play_button.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\compressor_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\daytime_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\back_button.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\button.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\tutorial_button.png">
       <Filter>File di risorse</Filter>
     </Image>
   </ItemGroup>

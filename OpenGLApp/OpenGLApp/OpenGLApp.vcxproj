@@ -171,6 +171,7 @@
     <ClInclude Include="globals\stats_manager.h" />
     <ClInclude Include="scenes\game_scene.h" />
     <ClInclude Include="scenes\instructions_scene.h" />
+    <ClInclude Include="scenes\i_grab_ui.h" />
     <ClInclude Include="scenes\i_menu_subscene.h" />
     <ClInclude Include="scenes\main_menu_scene.h" />
     <ClInclude Include="scenes\welcome_scene.h" />
@@ -205,12 +206,22 @@
     <Image Include="assets\textures\block.png" />
     <Image Include="assets\textures\eve.png" />
     <Image Include="assets\textures\explosion_atlas.png" />
-    <Image Include="assets\textures\instructions_mo.png" />
-    <Image Include="assets\textures\instructions_walle.png" />
     <Image Include="assets\textures\mo.png" />
-    <Image Include="assets\textures\play_button.png" />
     <Image Include="assets\textures\rubbish.png" />
     <Image Include="assets\textures\rubbish_atlas.png" />
+    <Image Include="assets\textures\ui\back_button.png" />
+    <Image Include="assets\textures\ui\button.png" />
+    <Image Include="assets\textures\ui\compressor_atlas.png" />
+    <Image Include="assets\textures\ui\custom.png" />
+    <Image Include="assets\textures\ui\daytime_atlas.png" />
+    <Image Include="assets\textures\ui\easy.png" />
+    <Image Include="assets\textures\ui\gui_base.png" />
+    <Image Include="assets\textures\ui\hard.png" />
+    <Image Include="assets\textures\ui\instructions_mo.png" />
+    <Image Include="assets\textures\ui\instructions_walle.png" />
+    <Image Include="assets\textures\ui\medium.png" />
+    <Image Include="assets\textures\ui\play_button.png" />
+    <Image Include="assets\textures\ui\tutorial_button.png" />
     <Image Include="assets\textures\walle-test.png" />
     <Image Include="assets\textures\walle.png" />
   </ItemGroup>

@@ -38,10 +38,11 @@
 #include "../core/scene.h"
 
 #include "i_menu_subscene.h"
+#include "i_grab_ui.h"
 
 #define INSTANT_BOOT
 
-class WelcomeScene : public Scene, public IMenuSubscene {
+class WelcomeScene : public Scene, public IMenuSubscene, public IGrabUI {
 private:
 	std::shared_ptr<Image> mouseDetector;
 
@@ -53,8 +54,6 @@ private:
 	std::shared_ptr<Model> walle;
 	std::shared_ptr<Model> logo;
 
-	std::shared_ptr<Image> grabbedImage;
-	bool hasGrabbedImage = false;
 	bool isFirstFrame = true;
 	bool isFirstLoop = true;
 
@@ -81,10 +80,10 @@ public:
 		// characters
 		mouseDetector = std::make_shared<Image>(spriteShader, "assets/textures/bg_menu_placeholder.png", glm::vec2(0.0f, 0.227f), glm::vec2(1.134f, 1.258f));
 
-		walleGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
-		moGuide = std::make_shared<Image>(spriteShader, "assets/textures/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
-		difficultyButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
-		instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
+		walleGuide = std::make_shared<Image>(spriteShader, "assets/textures/ui/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
+		moGuide = std::make_shared<Image>(spriteShader, "assets/textures/ui/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
+		difficultyButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
+		instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/tutorial_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
 
 		// timer
 		transitionInTimer = make_unique<Timer>(2.0f, []() {}, false);
@@ -116,9 +115,8 @@ public:
 
 		// menu juice
 		handleMouseModelInteraction();
-		placementUpdate();
+		updateGrabUI(window, deltaTime);
 		buttonUpdate();
-
 
 		// debug
 		changeDebugParameters();
@@ -185,31 +183,23 @@ public:
 			glfwGetCursorPos(window, &xpos, &ypos);
 			glfwGetWindowSize(window, &width, &height);
 
-			float scX = (float)xpos / (float)width * 2.0f - 1.0f;
-			float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
+			glm::vec2 mousePos = glm::vec2((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
 
-			if (hasGrabbedImage) {
-				hasGrabbedImage = false;
-				grabbedImage->setPosition(glm::vec2(scX, scY));
-				grabbedImage = nullptr;
-				printf("(%f, %f)", scX, scY);
+			if (releaseImage(mousePos, [this]() {
 				soundPlayer->play2D("assets/audio/pin_image.wav", false);
-				return;
-			}
+				})) return;
 
-			if (walleGuide->isMouseOver(glm::vec2(scX, scY))) {
-				hasGrabbedImage = true;
-				grabbedImage = walleGuide;
+			if (walleGuide->isMouseOver(mousePos)) {
+				grabImage(mousePos, walleGuide);
 				soundPlayer->play2D("assets/audio/unpin_image.wav", false);
 			}
 
-			if (moGuide->isMouseOver(glm::vec2(scX, scY))) {
-				hasGrabbedImage = true;
-				grabbedImage = moGuide;
+			if (moGuide->isMouseOver(mousePos)) {
+				grabImage(mousePos, moGuide);
 				soundPlayer->play2D("assets/audio/unpin_image.wav", false);
 			}
 
-			if (difficultyButton->isMouseOver(glm::vec2(scX, scY))) {
+			if (difficultyButton->isMouseOver(mousePos)) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
@@ -217,7 +207,7 @@ public:
 				nextScene = SceneManager::SceneID::MMDifficultyScene;
 			}
 
-			if (instructionsButton->isMouseOver(glm::vec2(scX, scY))) {
+			if (instructionsButton->isMouseOver(mousePos)) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
@@ -269,21 +259,6 @@ public:
 			}, [](float x) {
 				return sin(x * 2.0f) * 3.0f;
 			}, 3.0f);
-	}
-
-	void placementUpdate() {
-		if (!hasGrabbedImage) return;
-
-		double xpos, ypos;
-		int width, height;
-
-		glfwGetCursorPos(window, &xpos, &ypos);
-		glfwGetWindowSize(window, &width, &height);
-
-		float scX = (float)xpos / (float)width * 2.0f - 1.0f;
-		float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
-
-		grabbedImage->setPosition(glm::vec2(scX, scY));
 	}
 
 	void handleMouseModelInteraction() {

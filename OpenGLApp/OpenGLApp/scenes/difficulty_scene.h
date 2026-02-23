@@ -41,7 +41,7 @@
 
 #define INSTANT_BOOT
 
-class DifficultyScene : public Scene, public IMenuSubscene {
+class DifficultyScene : public Scene, public IMenuSubscene, public IGrabUI {
 private:
 	std::shared_ptr<Image> backButton;
 	std::shared_ptr<Image> easyButton;
@@ -65,16 +65,19 @@ public:
 	DifficultyScene(GLFWwindow* windowRef) : Scene(windowRef) {};
 
 	virtual void init() {
+		scaleImage = true;
+
 		// time initialization
 		lastElapsed = glfwGetTime() - offset;
 		elapsed = glfwGetTime() - offset;
 
 		// characters
-		backButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
-		easyButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
-		mediumButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
-		hardButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
-		customButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
+		backButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/back_button.png", glm::vec2(0.0f, -0.7f), glm::vec2(0.4f, 0.2f));
+		
+		easyButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/easy.png", glm::vec2(-0.54f, 0.54f), glm::vec2(0.4f, 0.2f), 2.3f);
+		mediumButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/medium.png", glm::vec2(0.56f, 0.177f), glm::vec2(0.4f, 0.2f), 2.3f);
+		hardButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/hard.png", glm::vec2(-0.54f, -0.186f), glm::vec2(0.4f, 0.2f), 2.3f);
+		customButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/custom.png", glm::vec2(0.69f, 0.767f), glm::vec2(0.4f, 0.2f), 1.6f);
 
 		// timer
 		transitionInTimer = make_unique<Timer>(2.0f, []() {}, false);
@@ -101,23 +104,12 @@ public:
 		deltaTime = elapsed - lastElapsed;
 		lastElapsed = elapsed;
 
-		// menu juice
-		buttonUpdate();
-
 		// debug
 		changeDebugParameters();
 
-		// change easing parameters
-		float softInOut = (lerp(0.0f, 2.0f, easeInBack(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutBack(transitionInTimer->getProgress())));
-		float sharpInOut = (lerp(0.0f, 2.0f, easeInCubic(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutCubic(transitionInTimer->getProgress())));
-
-		backButton->setPosition(glm::vec2(0.0f, -softInOut -0.7f)); //-
-
-		easyButton->setPosition(glm::vec2(-0.32f + sharpInOut, 0.62f));
-		mediumButton->setPosition(glm::vec2(0.32f - sharpInOut, 0.29f));
-		hardButton->setPosition(glm::vec2(-0.32f + sharpInOut, -0.04f));
-
-		customButton->setPosition(glm::vec2(0.71f - sharpInOut, 0.79f - sharpInOut));
+		// menu juice
+		buttonUpdate();
+		updateGrabUI(window, deltaTime);
 
 		// transitioning
 		if (isFirstLoop) {
@@ -157,6 +149,9 @@ public:
 			if (customButton->isMouseOver(glm::vec2(scX, scY))) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
+				FileManager::getInstance().configPath = "saves/custom_config.json";
+				FileManager::getInstance().load(FileManager::CONFIG);
+
 				// change subscene
 				transitionOutTimer->resume();
 				nextScene = SceneManager::SceneID::MMCustomScene;
@@ -165,20 +160,71 @@ public:
 
 			if (easyButton->isMouseOver(glm::vec2(scX, scY))) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+				FileManager::getInstance().configPath = "saves/easy_config.json";
+				FileManager::getInstance().load(FileManager::CONFIG);
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
 				return;
 			}
 
 			if (mediumButton->isMouseOver(glm::vec2(scX, scY))) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+				FileManager::getInstance().configPath = "saves/medium_config.json";
+				FileManager::getInstance().load(FileManager::CONFIG);
+
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
 				return;
 			}
 
 			if (hardButton->isMouseOver(glm::vec2(scX, scY))) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+				FileManager::getInstance().configPath = "saves/hard_config.json";
+				FileManager::getInstance().load(FileManager::CONFIG);
+
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
 				return;
+			}
+		}
+	}
+
+	void stickyMouseCallback(GLFWwindow* window, int button, int action, int mods) {
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			double xpos, ypos;
+			int width, height;
+
+			glfwGetCursorPos(window, &xpos, &ypos);
+			glfwGetWindowSize(window, &width, &height);
+
+			glm::vec2 mousePos = glm::vec2((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
+
+			if (releaseImage(mousePos, [this]() {
+				soundPlayer->play2D("assets/audio/pin_image.wav", false);
+				})) return;
+
+			if (backButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+			}
+
+			if (customButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				grabImage(mousePos, customButton);
+			}
+
+			if (easyButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				grabImage(mousePos, easyButton);
+			}
+
+			if (mediumButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				grabImage(mousePos, mediumButton);
+			}
+
+			if (hardButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+				grabImage(mousePos, hardButton);
 			}
 		}
 	}
@@ -202,9 +248,12 @@ public:
 		if (velocity == 0.0f) return;
 
 		debug += velocity * (float)deltaTime * 2.0f;
+		printf("%f\n", debug);
 	}
 
 	void buttonUpdate() {
+		// over animation
+
 		double xpos, ypos;
 		int width, height;
 
@@ -234,7 +283,38 @@ public:
 		hardButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
 
 		customButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
+
+		// transition animation
+
+		float softInOut = (lerp(0.0f, 2.0f, easeInBack(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutBack(transitionInTimer->getProgress())));
+		float sharpInOut = (lerp(0.0f, 2.0f, easeInCubic(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutCubic(transitionInTimer->getProgress())));
+
+
+		backButton->setPosition(glm::vec2(0.0f, -softInOut - 0.7f));
+
+		easyButton->setPosition(glm::vec2(sharpInOut - 0.54f, 0.54f -0.090528f));
+		mediumButton->setPosition(glm::vec2(-sharpInOut + 0.56f, 0.177f -0.090528f));
+		hardButton->setPosition(glm::vec2(sharpInOut - 0.54f, -0.186f -0.090528f));
+
+		customButton->setPosition(glm::vec2(-sharpInOut + 0.69f, 0.767f));
+
 	}
+
+	void placementUpdate() {
+		if (!hasGrabbedImage) return;
+
+		double xpos, ypos;
+		int width, height;
+
+		glfwGetCursorPos(window, &xpos, &ypos);
+		glfwGetWindowSize(window, &width, &height);
+
+		float scX = (float)xpos / (float)width * 2.0f - 1.0f;
+		float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
+
+		grabbedImage->setPosition(glm::vec2(scX, scY));
+	}
+
 
 	void transitionTimeout() {
 		SceneManager::getInstance().changeSubscene(SceneManager::getInstance().currentScene, nextScene, window,

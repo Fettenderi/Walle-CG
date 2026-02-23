@@ -17,10 +17,15 @@
 class Rubbish : public Character {
 
     public:
+        enum Effect {
+            NOTHING, MAGNET, COMPRESSOR, FIRE_EXTRINGUISHER, BOMB
+        };
+
         bool isPickable = false;
         bool isAttracted = false;
         int trashAmount;
-        int rubbishType = 0;
+
+        Effect rubbishEffect = NOTHING;
         int bombState = 0;
 
         Rubbish(std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale)
@@ -33,25 +38,25 @@ class Rubbish : public Character {
             bombExplosion = std::make_shared<Explosion>(spriteShader, position, scale);
             SceneManager::getInstance().addObject(bombExplosion);
 
-            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_strength"));
+            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_rubbish_strength"));
             if (splitStrength == 0.0f) {
                 splitStrength = 0.3f;
-                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_strength", std::to_string(splitStrength));
+                FileManager::getInstance().set(FileManager::CONFIG, "split_rubbish_strength", std::to_string(splitStrength));
             }
 
-            splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_time"));
+            splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_rubbish_time"));
             if (splitTime == 0.0f) {
                 splitTime = 8.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_time", std::to_string(splitTime));
+                FileManager::getInstance().set(FileManager::CONFIG, "split_rubbish_time", std::to_string(splitTime));
             }
 
-            splitTimeDeviation = to_float(FileManager::getInstance().get(FileManager::CONFIG, "rubbish_split_time_std"));
+            splitTimeDeviation = to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_rubbish_time_std"));
             if (splitTimeDeviation == 0.0f) {
                 splitTimeDeviation = 1.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "rubbish_split_time_std", std::to_string(splitTimeDeviation));
+                FileManager::getInstance().set(FileManager::CONFIG, "split_rubbish_time_std", std::to_string(splitTimeDeviation));
             }
 
-            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, splitTimeDeviation), [this] {
+            splittingCountdown = std::make_unique<Timer>(abs(getNormalRandomClamped(splitTime, splitTimeDeviation)), [this] {
                 split();
                 }, false);
 
@@ -63,33 +68,33 @@ class Rubbish : public Character {
 
             maxScale = getScale();
 
-            float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "bomb_time"));
+            float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_bomb_time"));
             if (temp == 0.0f) {
                 temp = 5.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "bomb_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_bomb_time", std::to_string(temp));
             }
 
-            bombTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
+            bombTimer = std::make_unique<Timer>(abs(getNormalRandomClamped(temp, 1.0f)), [this] {
                 explodeBomb();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "fire_ext_on_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_fire_ext_on_time"));
             if (temp == 0.0f) {
                 temp = 2.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "fire_ext_on_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_fire_ext_on_time", std::to_string(temp));
             }
 
-            fireExtOnTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
+            fireExtOnTimer = std::make_unique<Timer>(abs(getNormalRandomClamped(temp, 1.0f)), [this] {
                 resetOffTimer();
                 }, false);
 
-            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "fire_ext_off_time"));
+            temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_fire_ext_off_time"));
             if (temp == 0.0f) {
                 temp = 2.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "fire_ext_off_time", std::to_string(temp));
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_fire_ext_off_time", std::to_string(temp));
             }
 
-            fireExtOffTimer = std::make_unique<Timer>(getNormalRandomClamped(temp, 1.0f), [this] {
+            fireExtOffTimer = std::make_unique<Timer>(abs(getNormalRandomClamped(temp, 1.0f)), [this] {
                 resetOnTimer();
                 }, false);
 
@@ -102,9 +107,23 @@ class Rubbish : public Character {
         ~Rubbish() {
             rubbishPool.reset();
 
+            if (tickingSound != nullptr) {
+                tickingSound->stop();
+                tickingSound->drop();
+                tickingSound = nullptr;
+            }
+
             splittingCountdown.release();
+            bombTimer.release();
+            fireExtOnTimer.release();
+            fireExtOffTimer.release();
         }
 
+        void clampPosition(glm::vec2 min, glm::vec2 max) {
+            if (!isPickable) return;
+
+            m_position = clamp(min, max, m_position);
+        }
         
         glm::vec2 getMaxScale() {
             return maxScale;
@@ -129,9 +148,10 @@ class Rubbish : public Character {
 
         void setSecondGeneration(bool value) {
             if (value) {
-                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime * 2.0f, splitTimeDeviation));
+                splittingCountdown->changeDuration(abs(getNormalRandomClamped(splitTime * 2.0f, splitTimeDeviation)));
             } else {
-                splittingCountdown->changeDuration(getNormalRandomClamped(splitTime, splitTimeDeviation));
+                targetUniformScale = 1.0f;
+                splittingCountdown->changeDuration(abs(getNormalRandomClamped(splitTime, splitTimeDeviation)));
             }
 
             splittingCountdown->pause();
@@ -139,8 +159,17 @@ class Rubbish : public Character {
         }
 
         void moveToWalle(glm::vec2 pos) {
-            hasTarget = true;
-            target = pos;
+            if (!m_is_visible) return;
+            if (!isPickable && !hasTarget) return;
+
+            if (glm::length(pos - m_position) < 0.15f) {
+                hasTarget = false;
+                isPickable = true;
+                return;
+            }
+
+            glm::vec2 vector = glm::normalize(pos - m_position);
+            m_position += vector * lastDeltaTime * 0.3f;
         }
 
         void stopMoving() {
@@ -148,42 +177,54 @@ class Rubbish : public Character {
         }
 
         void updateType(int type) {
-            if (rubbishType == 4) {
+            if (rubbishEffect == BOMB) {
                 if (tickingSound != nullptr) {
                     tickingSound->stop();
                     tickingSound->drop();
                     tickingSound = nullptr;
                 }
             }
-            rubbishType = type;
+
+            rubbishEffect = static_cast<Effect>(type);
+
             /*std::string path = "assets/textures/rubbish" + std::to_string(type) + ".png";
             const char* cpath = path.c_str();
 
             updateTexture(cpath);*/
             setTile(type, 2);
 
-            printf("nuovo tipo di rubbish: %i\n", rubbishType);
+            //printf("nuovo tipo di rubbish: %i\n", rubbishType);
 
-            if (type == 3) {
+            fireExtOffTimer->pause();
+            fireExtOnTimer->pause();
+
+            if (type == FIRE_EXTRINGUISHER) {
+                fireExtOffTimer->reset();
                 fireExtOffTimer->resume();
+
+                fireExtActive = true;
             }
         }
 
         void resetOnTimer() {
+            fireExtOffTimer->pause();
+
             fireExtOnTimer->resume();
             fireExtOnTimer->reset();
             fireExtActive = true;
         }
 
         void resetOffTimer() {
+            fireExtOnTimer->pause();
+
+            fireExtOffTimer->resume();
             fireExtOffTimer->reset();
             fireExtActive = false;
             setScale(maxScale);
         }
 
         int fireExtState() {
-            if (rubbishType != 3 || !fireExtActive)
-                return 0;
+            if (rubbishEffect != FIRE_EXTRINGUISHER || !fireExtActive) return 0;
             else return 3;
         }
 
@@ -206,28 +247,26 @@ class Rubbish : public Character {
             bombTimer->reset();
             bombTimer->pause();
 
-            
-            
             bombExplosion->startExplosion(m_position);
 
             splitStrength = 0.8f;
             split();
             updateType(0);
             bombState = 0;
-            printf("\n\n\nBOMBA ESPLOSA");
+            //printf("\n\n\nBOMBA ESPLOSA");
         }
 
         int executeEffect() {
-            switch (rubbishType) {
-            case 0:
+            switch (rubbishEffect) {
+            case NOTHING:
                 return 0;
-            case 1: //magnete
+            case MAGNET:
                 return 1;
-            case 2:
+            case COMPRESSOR:
                 return 2;
-            case 3: //estintore
+            case FIRE_EXTRINGUISHER:
                 return fireExtState(); //controllo lo stato attuale per ritornare 0 se non attivo o 3 se attivo
-            case 4: //bomba 
+            case BOMB:
                 if (tickingSound != nullptr) {
                     tickingSound->stop();
                     tickingSound->drop();
@@ -244,6 +283,8 @@ class Rubbish : public Character {
 
 
         virtual void update(float deltaTime) {
+            lastDeltaTime = deltaTime;
+
             //bombExplosion->update(deltaTime);
             splittingCountdown->updateTimer(deltaTime);
 
@@ -256,7 +297,7 @@ class Rubbish : public Character {
                 return;
             }
 
-            if (rubbishType == 3) {
+            if (rubbishEffect == FIRE_EXTRINGUISHER) {
                 fireExtOnTimer->updateTimer(deltaTime);
                 fireExtOffTimer->updateTimer(deltaTime);
 
@@ -268,7 +309,7 @@ class Rubbish : public Character {
 
             }
 
-            if (rubbishType == 4) {
+            if (rubbishEffect == BOMB) {
                 if (!m_is_visible) {
                     bombTimer->pause();
                     if (tickingSound != nullptr) {
@@ -299,6 +340,10 @@ class Rubbish : public Character {
             }
         }
 
+        void resetScale() {
+            m_scale = maxScale;
+        }
+
     private:
         glm::vec2 target;
         bool hasTarget = false;
@@ -309,6 +354,8 @@ class Rubbish : public Character {
         float splitTimeDeviation;
         float splitStrength;
         float targetUniformScale = 1.0f;
+
+        float lastDeltaTime = 0.0f;
 
         std::unique_ptr<Timer> bombTimer;
         bool isSecondGeneration = false;
@@ -342,11 +389,11 @@ class Rubbish : public Character {
                 std::shared_ptr<Rubbish> tempRubbish = rubbishPool->getInstance();
 
                 if (tempRubbish == nullptr) break;
-                if (tempRubbish->rubbishType == 4)
-                    tempRubbish->updateType(0);
 
+                tempRubbish->updateType(NOTHING);
                 tempRubbish->show();
                 tempRubbish->isPickable = false;
+                tempRubbish->resetScale();
                 tempRubbish->trashAmount = ceil(trashAmount / parts);
                 tempRubbish->setRubbishPool(rubbishPool);
                 tempRubbish->setPosition(m_position);
@@ -357,19 +404,20 @@ class Rubbish : public Character {
 
                 SceneManager::getInstance().addObject(tempRubbish);
             }
-            
+
             isPickable = false;
+            resetScale();
             trashAmount = ceil(trashAmount / parts);
-            targetUniformScale = m_uniform_scale - 0.1f * parts;
             setStatic(true);
             setSecondGeneration(true);
+            targetUniformScale = m_uniform_scale - 0.1f * parts;
             setLandingPosition(m_position + getRandomVector() * splitStrength);
         }
 
         void handleTarget(float deltaTime) {
             float dist = glm::length(target - m_position);
 
-            if (dist < 0.1) {
+            if (dist < 0.1f) {
                 handleArrived();
             }
             else {
@@ -382,10 +430,12 @@ class Rubbish : public Character {
             isPickable = true;
             m_collider.isStatic = false;
 
-            
             splittingCountdown->reset();
             splittingCountdown->resume();
-            
+
+            if (rubbishEffect == BOMB) {
+                activateBomb();
+            }
 
             StatsManager::getInstance().currentRubbish++;
         }

@@ -32,6 +32,16 @@ public:
     }
 
     
+    ~Explosion() {
+        explosionTimer.release();
+
+        if (explosionSound != nullptr) {
+            explosionSound->stop();
+            explosionSound->drop();
+            explosionSound = nullptr;
+        }
+    }
+    
     void update(float deltaTime) {
         explosionTimer->updateTimer(deltaTime);
         if (m_is_visible) {
@@ -68,7 +78,7 @@ public:
     }
 
     void endExplosion() {
-        printf("\n\n\nESPLOSIONE FINITA");
+        //printf("\n\n\nESPLOSIONE FINITA");
         hide();
         if (explosionSound != nullptr) {
             explosionSound->stop();

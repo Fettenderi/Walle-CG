@@ -8,6 +8,7 @@
 #include "../utils.h"
 
 #include "../globals/scene_manager.h"
+#include "../globals/stats_manager.h"
 #include "../globals/file_manager.h"
 
 #include "character.h"
@@ -23,19 +24,19 @@ class Block : public Character {
         {
             m_is_visible = false;
 
-            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "block_split_strength"));
+            splitStrength = to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_block_strength"));
             if (splitStrength == 0.0f) {
                 splitStrength = 0.3f;
-                FileManager::getInstance().set(FileManager::CONFIG, "block_split_strength", std::to_string(splitStrength));
+                FileManager::getInstance().set(FileManager::CONFIG, "split_block_strength", std::to_string(splitStrength));
             }
 
-            float splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "block_split_time"));
+            float splitTime = to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_block_time"));
             if (splitTime == 0.0f) {
                 splitTime = 8.0f;
-                FileManager::getInstance().set(FileManager::CONFIG, "block_split_time", std::to_string(splitTime));
+                FileManager::getInstance().set(FileManager::CONFIG, "split_block_time", std::to_string(splitTime));
             }
 
-            splittingCountdown = std::make_unique<Timer>(getNormalRandomClamped(splitTime, 1.0f), [this] {
+            splittingCountdown = std::make_unique<Timer>(abs(getNormalRandomClamped(splitTime, 1.0f)), [this] {
                 split();
                 }, false);
 
@@ -47,6 +48,14 @@ class Block : public Character {
             blockPool.reset();
 
             splittingCountdown.release();
+        }
+
+        void clampPosition(glm::vec2 min, glm::vec2 max) {
+            if (!m_is_visible) return;
+            if (!isPickable) return;
+            //if (isFixed) return;
+
+            m_position = clamp(min, max, m_position);
         }
 
         void setPosition(glm::vec2 position) {
@@ -70,10 +79,12 @@ class Block : public Character {
 
         void setSplittable(bool value) {
             if (value) {
+                isFixed = false;
                 splittingCountdown->reset();
                 splittingCountdown->resume();
             }
             else {
+                isFixed = true;
                 splittingCountdown->pause();
             }
         }
@@ -103,6 +114,7 @@ class Block : public Character {
     private:
         glm::vec2 target;
         bool hasTarget = false;
+        bool isFixed = false;
         std::unique_ptr<Timer> splittingCountdown;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
@@ -111,6 +123,11 @@ class Block : public Character {
         float splitStrength;
 
         void split() {
+            if (StatsManager::getInstance().isEasyMode) {
+                vanish();
+                return;
+            }
+
             if (!m_is_visible) return;
 
             int parts = 4;
@@ -120,8 +137,10 @@ class Block : public Character {
 
                 if (tempRubbish == nullptr) break;
 
+                tempRubbish->updateType(Rubbish::Effect::NOTHING);
                 tempRubbish->show();
                 tempRubbish->isPickable = false;
+                tempRubbish->resetScale();
                 tempRubbish->trashAmount = JUNK_TO_BLOCK / parts;
                 tempRubbish->setRubbishPool(rubbishPool);
                 tempRubbish->setPosition(m_position);
@@ -143,6 +162,22 @@ class Block : public Character {
             hide();
             setPosition(glm::vec2(2.0f, 2.0f));
             blockPool->returnToPool(selfPointer);
+        }
+
+        void vanish() {
+            std::shared_ptr<Block> selfPointer;
+
+            for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
+                if (object.get() == this) {
+                    selfPointer = std::static_pointer_cast<Block>(object);
+                }
+            }
+
+            hide();
+            setPosition(glm::vec2(2.0f, 2.0f));
+            blockPool->returnToPool(selfPointer);
+
+            StatsManager::getInstance().collectedBlocks++;
         }
 
         void handleArrived() {

@@ -46,12 +46,19 @@ class Eve : public Character {
                 FileManager::getInstance().set(FileManager::CONFIG, "eve_delivery_amount", std::to_string(deliveryAmount));
             }
 
+            maxNormalRubbishSequence = to_int(FileManager::getInstance().get(FileManager::CONFIG, "effects_max_normals_sequence"));
+            if (maxNormalRubbishSequence == 0) {
+                maxNormalRubbishSequence = 2;
+                FileManager::getInstance().set(FileManager::CONFIG, "effects_max_normals_sequence", std::to_string(maxNormalRubbishSequence));
+            }
+
+
             float throwCooldownTime = 0.5f;
 
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
 
-            cooldownTimer = std::make_unique<Timer>(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation), [this] {
+            cooldownTimer = std::make_unique<Timer>(abs(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation)), [this] {
                     tryGettingRubbish();
                 } , false);
 
@@ -84,6 +91,10 @@ class Eve : public Character {
                 movingSound->drop();
                 movingSound = nullptr;
             }
+        }
+
+        void clampPosition(glm::vec2 min, glm::vec2 max) {
+
         }
 
         void update(float deltaTime) {
@@ -142,6 +153,8 @@ class Eve : public Character {
 
         float timeBetweenDelivery;
         float timeBetweenDeliveryDeviation;
+
+        int maxNormalRubbishSequence = 2;
         int deliveryAmount;
 
         bool isActive = true;
@@ -156,7 +169,7 @@ class Eve : public Character {
             else if (currentState == RETURNING) {
                 currentState = IDLE;
 
-                cooldownTimer->changeDuration(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation));
+                cooldownTimer->changeDuration(abs(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation)));
 
                 cooldownTimer->resume();
                 cooldownTimer->reset();
@@ -234,7 +247,12 @@ class Eve : public Character {
             //printf("finita la rubbish normale\n");
 
             //reset counter
-            normalRubbishLeft = getNextRandomIntRange(1, 2);
+            if (maxNormalRubbishSequence < 0) {
+                normalRubbishLeft = 0;
+            }
+            else {
+                normalRubbishLeft = getNextRandomIntRange(1, maxNormalRubbishSequence);
+            }
 
             //speciale diverso dal precedente
             int newRubbishType;
@@ -244,7 +262,7 @@ class Eve : public Character {
 
             lastRubbishType = newRubbishType;
 
-            printf("spawn rubbish speciale tipo %d\n", newRubbishType);
+            //printf("spawn rubbish speciale tipo %d\n", newRubbishType);
             return newRubbishType;
         }
 
@@ -264,6 +282,7 @@ class Eve : public Character {
                 foundRubbish = true;
 
                 tempRubbish->show();
+                tempRubbish->resetScale();
                 tempRubbish->isPickable = false;
                 tempRubbish->trashAmount = getNextRandomIntRange(2, JUNK_TO_BLOCK / 3 + 1);
                 tempRubbish->setUniformScale(1.0f);
@@ -272,11 +291,9 @@ class Eve : public Character {
                 tempRubbish->setSecondGeneration(false);
 
                 tempRubbish->updateType(updateRubbishQueue());
-                if (lastRubbishType == 4)
-                    tempRubbish->activateBomb();
 
                 pickedRubbish.push_back(tempRubbish);
-                glm::vec2 tempPosition = getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);
+                glm::vec2 tempPosition = clampInCamera(getRandomPosition(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress), SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress);
                 rubbishPositions.push_back(tempPosition);
 
                 midPoint += tempPosition;

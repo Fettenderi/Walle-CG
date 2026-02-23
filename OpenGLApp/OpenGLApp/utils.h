@@ -32,6 +32,11 @@ static int to_int(std::string x) {
     }
 }
 
+static bool to_bool(std::string x) {
+    if (x == "true") return true;
+    return false;
+}
+
 static float easeInElastic(float x) {
     float c4 = (2.0f * PI) / 3.0f;
 
@@ -137,11 +142,17 @@ static float getNextRandomRange(float min, float max) {
 
 static float getNormalRandomClamped(float mean, float stdDev) {
     std::normal_distribution<float> normal(mean, stdDev);
-    return clamp(mean - 2.0f * stdDev, mean + 2.0f * stdDev, normal(gen));
+
+    float value;
+    do {
+        value = normal(gen);
+    } while (value < mean - 2.0f * stdDev || value > mean + 2.0f * stdDev);
+
+    return value;
 }
 
 static int getNextRandomIntRange(int min, int max) {
-    static std::uniform_int_distribution<int> disti(min, max);
+    std::uniform_int_distribution<int> disti(min, max);
     return clamp(min, max, disti(gen));
 }
 
@@ -156,8 +167,18 @@ static glm::vec2 getRandomVector() {
     return glm::vec2(getNextRandom(), getNextRandom());
 }
 
-static glm::vec2 clampInCamera(glm::vec2 vec, glm::vec2 camPosition, float pileHeight) {
-    return glm::vec2(clamp(-1.0f, 1.0f, vec.x), clamp(fmax(pileHeight, -1.0f + camPosition.y), 1.0f + camPosition.y, vec.y));
+static glm::vec2 getCameraMinBounds(glm::vec2 camPosition, float pileHeight) {
+    return glm::vec2(-1.0f, fmax(pileHeight, -1.0f + camPosition.y));
 }
+
+static glm::vec2 getCameraMaxBounds(glm::vec2 camPosition) {
+    return glm::vec2(1.0f, 1.0f + camPosition.y);
+}
+
+static glm::vec2 clampInCamera(glm::vec2 vec, glm::vec2 camPosition, float pileHeight) {
+    return clamp(getCameraMinBounds(camPosition, pileHeight), getCameraMaxBounds(camPosition), vec);
+    //return glm::vec2(clamp(-1.0f, 1.0f, vec.x), clamp(fmax(pileHeight, -1.0f + camPosition.y), 1.0f + camPosition.y, vec.y));
+}
+
 
 #endif

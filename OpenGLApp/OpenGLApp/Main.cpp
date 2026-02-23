@@ -69,15 +69,13 @@ int main() {
         // Mesh
         Quad::instantiatePrimitive();
 
+        FileManager::getInstance().configPath = "saves/medium_config.json";
         FileManager::getInstance().load(FileManager::CONFIG);
+
         FileManager::getInstance().load(FileManager::SCORES);
 
         // Scene initialization
-        SceneManager::SceneID startScene = SceneManager::getID(FileManager::getInstance().get(FileManager::CONFIG, "start_scene"));
-
-        FileManager::getInstance().set(FileManager::CONFIG, "start_scene", SceneManager::getStringID(startScene));
-
-        SceneManager::getInstance().changeScene(startScene, window);
+        SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
 
         // render loop
         while (!glfwWindowShouldClose(window)) {
@@ -95,6 +93,10 @@ int main() {
                 object->processInput(window);
                 object->update(delta);
                 object->collide(objectsInVec);
+                object->clampPosition(
+                    getCameraMinBounds(SceneManager::getInstance().camera->getPosition2D(), StatsManager::getInstance().maxBlockProgress),
+                    getCameraMaxBounds(SceneManager::getInstance().camera->getPosition2D())
+                );
                 object->renderSprite();
             }
 

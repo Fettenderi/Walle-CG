@@ -21,14 +21,20 @@ class Mo : public Character {
             : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, true), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
-            block_release_target = glm::vec2(-1.0f, -0.7f);
+            block_release_target = glm::vec2(-1.0f, -0.6f);
             StatsManager::getInstance().maxBlockProgress = block_release_target.y;
             camera = SceneManager::getInstance().camera;
             m_speed = maxSpeed;
             player = SceneManager::getInstance().soundManager;
             movingSound = nullptr;
 
-            bombTimer = std::make_unique<Timer>(3.0f, [this] {
+            float temp = to_float(FileManager::getInstance().get(FileManager::CONFIG, "effect_stunned_time"));
+            if (temp == 0.0f) {
+                temp = 3.0f;
+                FileManager::getInstance().set(FileManager::CONFIG, "effect_stunned_time", std::to_string(temp));
+            }
+
+            bombTimer = std::make_unique<Timer>(temp, [this] {
                 endBombEffect();
                 }, false);
             bombTimer->pause();
@@ -43,6 +49,8 @@ class Mo : public Character {
             pickedBlock.reset();
             camera.reset();
             blockPool.reset();
+
+            bombTimer.release();
 
             if (player != nullptr) {
                 player = nullptr;
@@ -226,19 +234,24 @@ class Mo : public Character {
                 StatsManager::getInstance().maxBlockProgress = fmax(StatsManager::getInstance().maxBlockProgress, block_release_target.y);
 
                 if (placedBlocks.size() >= 5 * BLOCK_COLUMNS - 1) {
-                   for (int i = 0; i < BLOCK_COLUMNS; i++) {
-                       std::shared_ptr<Block> freedBlock = placedBlocks.front();
-                       placedBlocks.pop();
-                       freedBlock->setPosition(glm::vec2(2.0f, 2.0f));
-                       freedBlock->hide();
-                       blockPool->returnToPool(freedBlock);
-                   }
+                    printf("1\n");
+                    camera->moveTarget(0.2f);
+                }
+
+                if (placedBlocks.size() >= 2 * 5 * BLOCK_COLUMNS - 1) {
+                    printf("pollo\n");
+
+                    for (int i = 0; i < BLOCK_COLUMNS; i++) {
+                        std::shared_ptr<Block> freedBlock = placedBlocks.front();
+                        placedBlocks.pop();
+                        freedBlock->hide();
+                        freedBlock->setPosition(glm::vec2(2.0f, 2.0f));
+                        blockPool->returnToPool(freedBlock);
+                    }
                 }
             }
 
             player->play3D("assets/audio/mo_pickup.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), false);
-
-            camera->moveTarget(0.18f / 9.0f);
 
             return block_release_target;
         }

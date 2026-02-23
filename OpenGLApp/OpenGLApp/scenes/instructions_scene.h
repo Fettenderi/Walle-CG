@@ -63,7 +63,7 @@ public:
 		elapsed = glfwGetTime() - offset;
 
 		// characters
-		backButton = std::make_shared<Image>(spriteShader, "assets/textures/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
+		backButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/back_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
 
 		// timer
 		transitionInTimer = make_unique<Timer>(2.0f, []() {}, false);
