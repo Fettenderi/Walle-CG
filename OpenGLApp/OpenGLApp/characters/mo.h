@@ -18,7 +18,7 @@ class Mo : public Character {
     public:
 
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
-            : Character(spriteShader, "assets/textures/mo.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, true), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
+            : Character(spriteShader, "assets/textures/mo_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, true), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
         {
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.6f);
@@ -37,6 +37,14 @@ class Mo : public Character {
             bombTimer = std::make_unique<Timer>(temp, [this] {
                 endBombEffect();
                 }, false);
+
+            setAtlasGrid(3, 3);
+            setTile(0, 1);
+            tileAnimationTimer = std::make_unique<Timer>(0.1f, [this] {
+                updateTile(startedMoving);
+                }, true);
+            startedMoving = false;
+
             bombTimer->pause();
         }
 
@@ -85,13 +93,37 @@ class Mo : public Character {
             bombActive = false;
         }
 
+        void updateTile(bool moving) {
+            //printf("timer movimento attivo");
+            if (moving) {
+                if (currentTile.x == 0) {
+                    currentTile.x = 1;
+                }
+                else if (currentTile.x == 1) {
+                    currentTile.x = 2;
+                }
+            }
+            else {
+                if (currentTile.x == 2) {
+                    currentTile.x = 1;
+                }
+                else if (currentTile.x == 1) {
+                    currentTile.x = 0;
+                }
+            }
+            setTile(currentTile.x, currentTile.y);
+        }
+
         void update(float deltaTime) {
+            
             bombTimer->updateTimer(deltaTime);
+            tileAnimationTimer->updateTimer(deltaTime);
            if (bombActive) return;
            if (!hasTarget) return;
 
            m_direction = target - m_position;
-           m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+           //m_scale.y = glm::abs(m_scale.y) * sign(m_direction.x);
+           m_scale.x = glm::abs(m_scale.x) * sign(m_direction.x);
 
            float dist = glm::length(m_direction);
 
@@ -100,6 +132,17 @@ class Mo : public Character {
            } else {
                handleArriving(deltaTime);
            }
+
+           if (glm::length(m_direction) > 0.01f) {
+               if (fabs(m_direction.y) > fabs(m_direction.x)) {
+                   currentTile.y = (m_direction.y > 0) ? 0 : 1;
+               }
+               else {
+                   currentTile.y = 2;
+               }
+           }
+
+           setTile(currentTile.x, 2-currentTile.y);
         }
 
     private:
@@ -120,6 +163,12 @@ class Mo : public Character {
         bool bombActive = false;
         std::unique_ptr<Timer> bombTimer;
 
+        glm::vec2 currentTile = glm::vec2(0,0);
+        float animationTimer = 0.0f;
+        float hiddenRotation = 0.0f;
+        std::unique_ptr<Timer> tileAnimationTimer;
+        bool startedMoving = false;
+
         glm::vec2 block_release_target;
         std::shared_ptr<Block> pickedBlock;
         std::shared_ptr<Camera> camera;
@@ -130,6 +179,7 @@ class Mo : public Character {
         irrklang::ISound* movingSound;
 
         void handleArrived() {
+            startedMoving = false;
             hasTarget = false;
 
             if (movingSound != nullptr) {
@@ -152,6 +202,7 @@ class Mo : public Character {
         }
 
         void handleArriving(float deltaTime) {
+            startedMoving = true;
             if (movingSound == nullptr) {
                 movingSound = player->play3D("assets/audio/eve_moving.wav", irrklang::vec3df(m_position.x, m_position.y, 0.0f), true, false, true);
             } else {
@@ -164,7 +215,7 @@ class Mo : public Character {
                     m_direction = glm::normalize(m_direction);  //or: float dir = (target.x > pos.x) ? 1.0f : -1.0f; m_direction = glm::vec2(dir, 0.0f);
                     m_position += m_direction * m_speed * deltaTime;
 
-                    m_direction.x > 0 ? m_rotation = 0.0f : m_rotation = 180.0f;
+                    m_direction.x > 0 ? hiddenRotation = 0.0f : hiddenRotation = 180.0f;
                 } else {
                     isVertical = true;
                 }
@@ -175,7 +226,7 @@ class Mo : public Character {
                     m_direction = glm::normalize(m_direction); // or: float dir = (target.y > pos.y) ? 1.0f : -1.0f; m_direction = glm::vec2(0.0f, dir);
                     m_position += m_direction * m_speed * deltaTime;
 
-                    m_direction.y > 0 ? m_rotation = 270.0f : m_rotation = 90.0f;
+                    m_direction.y > 0 ? hiddenRotation = 270.0f : hiddenRotation = 90.0f;
                 } else {
                     isVertical = false;
                 }
@@ -183,8 +234,9 @@ class Mo : public Character {
 
             if (hasBlock) {
                 pickedBlock->setPosition(m_position + m_direction * 0.2f);
-                pickedBlock->setRotation(m_rotation);
+                pickedBlock->setRotation(hiddenRotation);
             }
+            
         }
 
         void tryPickingBlock() {
