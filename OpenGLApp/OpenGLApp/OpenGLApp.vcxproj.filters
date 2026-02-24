@@ -267,6 +267,9 @@
     <Image Include="assets\textures\ui\stamina_atlas.png">
       <Filter>File di risorse</Filter>
     </Image>
+    <Image Include="assets\textures\ui\score_indicator.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />

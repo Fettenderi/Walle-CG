@@ -286,13 +286,10 @@ class Mo : public Character {
                 StatsManager::getInstance().maxBlockProgress = fmax(StatsManager::getInstance().maxBlockProgress, block_release_target.y);
 
                 if (placedBlocks.size() >= 5 * BLOCK_COLUMNS - 1) {
-                    printf("1\n");
                     camera->moveTarget(0.2f);
                 }
 
                 if (placedBlocks.size() >= 2 * 5 * BLOCK_COLUMNS - 1) {
-                    printf("pollo\n");
-
                     for (int i = 0; i < BLOCK_COLUMNS; i++) {
                         std::shared_ptr<Block> freedBlock = placedBlocks.front();
                         placedBlocks.pop();

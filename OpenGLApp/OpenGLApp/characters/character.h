@@ -163,9 +163,6 @@ class Character {
         }
 
         float getY() {
-            return m_position.y;
-
-            /*
             glm::mat2 R(
                 cos(m_rotation), -sin(m_rotation),
                 sin(m_rotation), cos(m_rotation)
@@ -181,8 +178,7 @@ class Character {
             bl = R * bl;
             br = R * br;
 
-
-            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y });*/
+            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y }) / (10.0f * m_uniform_scale);
         }
 
         void hide() {
@@ -284,6 +280,23 @@ class Character {
             shader.setVec2("currentTile", currentTile);
 
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+            /*
+            // draw sortedY
+            shader.use();
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture);
+
+            glBindVertexArray(Quad::getVAO());
+
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(glm::vec2(position.x, getY()), 0.0f));
+            model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 0.0f, -1.0f));
+            model = glm::scale(model, glm::vec3(scale * 0.1f, 1.0f));
+
+            shader.setMat4("model", model);
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
         }
 };
 
