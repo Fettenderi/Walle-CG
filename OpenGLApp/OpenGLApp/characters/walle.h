@@ -368,7 +368,7 @@ class Walle : public Character {
                 light_target_strength = 0.75f;
                 ambient_target_strength = 0.06f;
                 lightBatteryTimer->reset();
-                lightBatteryTimer->changeDuration(chargingTime * dischargingFactor);
+                lightBatteryTimer->changeDuration(dischargingFactor);
             }
             else {
                 light_target_strength = 0.0f;

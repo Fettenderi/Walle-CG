@@ -273,8 +273,8 @@ public:
 		backButton->animate(deltaTime, mousePos, [](float x) {
 			return sin(x) * 0.05f + 0.95f;
 			}, [](float x) {
-				return sin(x * 2.0f) * 3.0f;
-				}, 3.0f);
+			return sin(x * 2.0f) * 3.0f;
+			}, 3.0f);
 
 		easyButton->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
 
@@ -288,7 +288,6 @@ public:
 
 		float softInOut = (lerp(0.0f, 2.0f, easeInBack(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutBack(transitionInTimer->getProgress())));
 		float sharpInOut = (lerp(0.0f, 2.0f, easeInCubic(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutCubic(transitionInTimer->getProgress())));
-
 
 		backButton->setPosition(glm::vec2(0.0f, -softInOut - 0.7f));
 

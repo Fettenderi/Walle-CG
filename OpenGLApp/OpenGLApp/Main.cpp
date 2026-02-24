@@ -69,9 +69,6 @@ int main() {
         // Mesh
         Quad::instantiatePrimitive();
 
-        FileManager::getInstance().configPath = "saves/custom_config.json";
-        FileManager::getInstance().load(FileManager::CONFIG);
-
         FileManager::getInstance().load(FileManager::SCORES);
 
         // Scene initialization

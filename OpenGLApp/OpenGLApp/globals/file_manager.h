@@ -19,7 +19,7 @@ class FileManager {
 			return instance;
 		}
 		
-		std::filesystem::path configPath;
+		std::filesystem::path configPath = "saves/custom_config.json";
 
 		void load(FilePath path){
 			std::filesystem::path pathString = path == FilePath::SCORES ? scoresPath : configPath;

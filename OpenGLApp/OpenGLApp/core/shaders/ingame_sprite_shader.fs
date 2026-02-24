@@ -20,6 +20,8 @@ uniform Light lights[2];
 
 uniform vec3 viewPosition;
 
+uniform float alpha = 1.0;
+
 float specularStrength = 0.2;
 
 void main() {
@@ -64,5 +66,5 @@ void main() {
 
 	result = max(result * objectColor.rgb, 0.0);
 
-	FragColor = vec4(result, objectColor.a);
+	FragColor = vec4(result, objectColor.a * alpha);
 }

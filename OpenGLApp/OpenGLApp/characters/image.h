@@ -19,6 +19,10 @@ public:
         m_uniform_scale = uniformScale;
     };
 
+    void clampPosition(glm::vec2 min, glm::vec2 max) {
+        
+    }
+
     void setPosition(glm::vec2 position) {
         m_position = position;
     }

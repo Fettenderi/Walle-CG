@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\custom_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\game_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\game_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\selector.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\selector.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\difficulty_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\scenes\\custom_scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,34 +22,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "difficulty_scene.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\difficulty_scene.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\difficulty_scene.h",
-              "RelativeToolTip": "OpenGLApp\\scenes\\difficulty_scene.h",
-              "ViewState": "AgIAAPYAAAAAAAAAAAAAAAQBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-23T23:22:15.206Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "custom_scene.h",
-              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h",
-              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\custom_scene.h",
-              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h",
-              "RelativeToolTip": "OpenGLApp\\scenes\\custom_scene.h",
-              "ViewState": "AgIAAHgAAAAAAAAAAAAmwIEAAABfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-23T22:39:21.116Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -58,9 +32,35 @@
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\selector.h",
               "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\selector.h",
               "RelativeToolTip": "OpenGLApp\\characters\\selector.h",
-              "ViewState": "AgIAAEAAAAAAAAAAAAAEwE8AAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAEwKEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-23T22:26:56.814Z",
+              "WhenOpened": "2026-02-24T12:36:56.642Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "custom_scene.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\custom_scene.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\custom_scene.h",
+              "RelativeToolTip": "OpenGLApp\\scenes\\custom_scene.h",
+              "ViewState": "AgIAAIQAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-24T12:36:42.388Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "game_scene.h",
+              "DocumentMoniker": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\game_scene.h",
+              "RelativeDocumentMoniker": "OpenGLApp\\scenes\\game_scene.h",
+              "ToolTip": "F:\\RobaNerd\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\scenes\\game_scene.h",
+              "RelativeToolTip": "OpenGLApp\\scenes\\game_scene.h",
+              "ViewState": "AgIAANUAAAAAAAAAAAAUwOkAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-02-24T11:26:15.188Z",
               "EditorCaption": ""
             }
           ]

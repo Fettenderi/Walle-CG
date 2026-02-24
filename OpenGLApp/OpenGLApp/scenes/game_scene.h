@@ -87,9 +87,12 @@ class GameScene : public Scene {
 			guiBase = std::make_shared<Image>(GUIShader, "assets/textures/ui/gui_base.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.894f, 0.151f), 2.2f);
 			dayNightIndicator = std::make_shared<Image>(GUIShader, "assets/textures/ui/daytime_atlas.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.894f, 0.151f), 2.2f);
 			compressorIndicator = std::make_shared<Image>(GUIShader, "assets/textures/ui/compressor_atlas.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.894f, 0.151f), 2.2f);
+			batteryIndicator = std::make_shared<Image>(GUIShader, "assets/textures/ui/stamina_atlas.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.894f, 0.151f), 2.2f);
+			scoreIndicator = std::make_shared<Image>(GUIShader, "assets/textures/ui/score_indicator.png", glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 1.0f), 0.391663f);
 
 			dayNightIndicator->setAtlasGrid(1, 5);
 			compressorIndicator->setAtlasGrid(1, 5);
+			batteryIndicator->setAtlasGrid(1, 11);
 
 			guiOffset = glm::vec2(0.0f, -0.811f);
 
@@ -136,12 +139,9 @@ class GameScene : public Scene {
 
 			spriteShader->use();
 			spriteShader->setInt("mainTexture", 0);
-
 			spriteShader->setMat4("camera", camera->getViewMatrix());
 			spriteShader->setVec3("viewPosition", camera->getPosition());
-
 			spriteShader->setVec3("ambient", hex_color("#a1d8e8") * SceneManager::getInstance().ambientStrength);
-
 			spriteShader->setVec3("lights[0].color", sun->getColor() * sun->strength);
 			spriteShader->setVec3("lights[0].position", sun->position);
 		}
@@ -216,17 +216,29 @@ class GameScene : public Scene {
 			glfwGetWindowSize(window, &width, &height);
 
 			compressorIndicator->setTile(0, StatsManager::getInstance().collectedRubbish);
-
+			batteryIndicator->setTile(0, 10 - StatsManager::getInstance().flashlightBattery);
+			
 			guiBase->setPosition(camera->getPosition2D() + guiOffset);
 			dayNightIndicator->setPosition(camera->getPosition2D() + guiOffset);
 			compressorIndicator->setPosition(camera->getPosition2D() + guiOffset);
+			batteryIndicator->setPosition(camera->getPosition2D() + guiOffset);
+			scoreIndicator->setPosition(camera->getPosition2D() + glm::vec2(-0.828052f, 0.820165f));
 
 			guiBase->renderSprite();
 			dayNightIndicator->renderSprite();
 			compressorIndicator->renderSprite();
+			batteryIndicator->renderSprite();
+			scoreIndicator->renderSprite();
 
 			guiText->RenderText(std::format("{:02.0f}:{:02.0f}", floor((float)(elapsed) / 60.0f), mod((float)elapsed, 60.0f)), glm::vec2(width / 2.0f - 34.0f, height - 40.0f), 0.7f, "#0a1518");
-			guiText->RenderText(std::format("Blocks: {}", StatsManager::getInstance().collectedBlocks), glm::vec2(10.0f, height - 40.0f), 0.7f, "#0a1518");
+			guiText->RenderText(std::format(": {}", StatsManager::getInstance().collectedBlocks), toScreenSpace(glm::vec2(-0.635969f, 0.785183f), width, height), 0.7f, "#0a1518");
+		}
+
+		glm::vec2 toScreenSpace(glm::vec2 position, int width, int height) {
+			float x = (0.5f * position.x + 0.5f) * width;
+			float y = (0.5f * position.y + 0.5f) * height;
+
+			return glm::vec2(x, y);
 		}
 
 
@@ -270,6 +282,8 @@ class GameScene : public Scene {
 		std::shared_ptr<Image> guiBase;
 		std::shared_ptr<Image> dayNightIndicator;
 		std::shared_ptr<Image> compressorIndicator;
+		std::shared_ptr<Image> batteryIndicator;
+		std::shared_ptr<Image> scoreIndicator;
 
 		glm::vec2 guiOffset;
 
@@ -285,8 +299,7 @@ class GameScene : public Scene {
 
 		glm::vec3 bgColor = glm::vec3(0.6f, 0.42f, 0.33f);
 
-		float debug = 0.0f;
-		float debug1 = 0.0f;
+		glm::vec2 debug = glm::vec2(0.0f, 0.0f);
 
 		float totalTime;
 		float nightPercentage;
@@ -353,8 +366,7 @@ class GameScene : public Scene {
 
 			if (velocity == 0.0f) return;
 
-			debug += velocity * (float)deltaTime * 10.0f;
-			//printf("debug: (%f)\n", debug);
+			debug.y += velocity * (float)deltaTime * 1.0f;
 		}
 
 		void changeDebug1Parameters() {
@@ -375,8 +387,8 @@ class GameScene : public Scene {
 
 			if (velocity == 0.0f) return;
 
-			debug1 += velocity * (float)deltaTime * 10.0f;
-			printf("debug1: (%f)\n", debug1);
+			debug.x += velocity * (float)deltaTime * 1.0f;
+			printf("debug: (%f, %f)\n", debug.x, debug.y);
 		}
 
 };

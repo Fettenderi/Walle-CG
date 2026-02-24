@@ -31,6 +31,7 @@ class Character {
         float m_uniform_scale = 1.0f;
         float m_rotation;
         float m_y_offset = 0.0f;
+        float m_alpha = 1.0f;
         bool m_is_visible = true;
 
         unsigned long id;
@@ -273,7 +274,7 @@ class Character {
             model = glm::scale(model, glm::vec3(scale, 1.0f));
 
             shader.setMat4("model", model);
-
+            shader.setFloat("alpha", m_alpha);
             //calcoli per texture atlas
             glm::vec2 tilesConfig((float)m_h_tiles, (float)m_v_tiles);
             glm::vec2 currentTile((float)m_current_frame_x, (float)m_current_frame_y);

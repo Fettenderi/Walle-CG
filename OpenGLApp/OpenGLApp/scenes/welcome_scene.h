@@ -83,7 +83,7 @@ public:
 		walleGuide = std::make_shared<Image>(spriteShader, "assets/textures/ui/instructions_walle.png", glm::vec2(-0.657143f, -0.490476f), glm::vec2(0.5f, 0.8f));
 		moGuide = std::make_shared<Image>(spriteShader, "assets/textures/ui/instructions_mo.png", glm::vec2(0.691071f, -0.554762f), glm::vec2(0.5f, 0.8f));
 		difficultyButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/play_button.png", glm::vec2(0.0f, -0.7f + 0.127f), glm::vec2(0.4f, 0.2f));
-		instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/tutorial_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
+		//instructionsButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/tutorial_button.png", glm::vec2(0.0f, -0.7f - 0.127f), glm::vec2(0.4f, 0.2f));
 
 		// timer
 		transitionInTimer = make_unique<Timer>(2.0f, []() {}, false);
@@ -102,7 +102,7 @@ public:
 		SceneManager::getInstance().addObject(walleGuide);
 		SceneManager::getInstance().addObject(moGuide);
 		SceneManager::getInstance().addObject(difficultyButton);
-		SceneManager::getInstance().addObject(instructionsButton);
+		//SceneManager::getInstance().addObject(instructionsButton);
 	}
 
 	virtual float update() {
@@ -126,8 +126,9 @@ public:
 
 		difficultyButton->setPosition(
 			glm::vec2(0.0f, -0.7f + 0.127f - easeInOut));
-		instructionsButton->setPosition(
-			glm::vec2(0.0f, -0.7f - 0.127f - easeInOut));
+
+		//instructionsButton->setPosition(
+			//glm::vec2(0.0f, -0.7f - 0.127f - easeInOut));
 
 		walleGuide->setPosition(
 			glm::vec2(-easeInOut + -0.657143f, -0.490476f));
@@ -207,13 +208,14 @@ public:
 				nextScene = SceneManager::SceneID::MMDifficultyScene;
 			}
 
+			/*
 			if (instructionsButton->isMouseOver(mousePos)) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
 				transitionOutTimer->resume();
 				nextScene = SceneManager::SceneID::MMInstructionsScene;
-			}
+			}*/
 		}
 	}
 
@@ -254,11 +256,12 @@ public:
 				return sin(x * 2.0f) * 3.0f;
 			}, 3.0f);
 
+			/*
 		instructionsButton->animate(deltaTime, mousePos, [](float x) {
 				return sin(x) * 0.05f + 0.95f;
 			}, [](float x) {
 				return sin(x * 2.0f) * 3.0f;
-			}, 3.0f);
+			}, 3.0f);*/
 	}
 
 	void handleMouseModelInteraction() {
@@ -334,7 +337,7 @@ public:
 		walleGuide.reset();
 		moGuide.reset();
 		difficultyButton.reset();
-		instructionsButton.reset();
+		//instructionsButton.reset();
 
 		walle.reset();
 		logo.reset();

@@ -79,6 +79,8 @@ class Block : public Character {
         }
 
         void setSplittable(bool value) {
+            m_alpha = 1.0f;
+
             if (value) {
                 isFixed = false;
                 splittingCountdown->reset();
@@ -99,6 +101,10 @@ class Block : public Character {
 
         virtual void update(float deltaTime) {
             splittingCountdown->updateTimer(deltaTime);
+
+            if (StatsManager::getInstance().isEasyMode) {
+                m_alpha = 1.0f - splittingCountdown->getProgress();
+            }
 
             if (!hasTarget) return;
 

@@ -6,6 +6,10 @@
 #include <string>
 #include <random>
 
+#include <sstream>
+#include <iomanip>
+
+
 #define BLOCK_COLUMNS 9
 #define JUNK_TO_BLOCK 10
 #define PI 3.14159265358979323846
@@ -21,6 +25,22 @@ static float to_float(std::string x) {
     catch (std::invalid_argument) {
         return 0.0f;
     }
+}
+
+static std::string str(std::string str, int precision = 2) {
+    float value = to_float(str);
+
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(precision) << value;
+
+    return oss.str();
+}
+
+static std::string strf(float v, int precision = 2) {
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(precision) << v;
+
+    return oss.str();
 }
 
 static int to_int(std::string x) {
@@ -77,6 +97,10 @@ static float uremap(float x, float out_min, float out_max) {
 
 static float mod(float num, float m) {
     return ((int)round(num)) % ((int)round(m));
+}
+
+static int cmod(int value, int mod) {
+    return (value % mod + mod) % mod;
 }
 
 static float flerp(float a, float b, float t) {

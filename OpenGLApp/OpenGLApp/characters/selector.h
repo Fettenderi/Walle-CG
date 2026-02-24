@@ -7,6 +7,8 @@
 
 #include "../utils.h"
 
+#include "../globals/file_manager.h"
+
 #include "character.h"
 #include "image.h"
 
@@ -14,7 +16,6 @@ class Selector : public Character {
 
 public:
     std::string description;
-    std::string value;
 
 
     float elapsedOver = 0.0f;
@@ -27,7 +28,8 @@ public:
         textHandler = text;
         fontSize = size;
 
-        lButton = std::make_shared<Image>(spriteShader, texturePath, position, glm::vec2(-scale.x, scale.y), uniformScale);
+        lButton = std::make_shared<Image>(spriteShader, texturePath, position, scale, uniformScale);
+
         rButton = std::make_shared<Image>(spriteShader, texturePath, position, scale, uniformScale);
 
         selectedValuePosition = glm::vec2(0.0f, 0.0f);
@@ -39,6 +41,7 @@ public:
 
     void renderSprite() {
         if (!m_is_visible) return;
+        lButton->setRotation(180);
 
         lButton->renderSprite();
         rButton->renderSprite();
@@ -53,21 +56,10 @@ public:
         return lButton->isMouseOver(mousePos) || rButton->isMouseOver(mousePos);
     }
     
-    /*
     void animate(float deltaTime, glm::vec2 mousePos, std::function<float(float)> scaleAnim, std::function<float(float)> rotAnim, float overAnimSpeed, float idleAnimSpeed = 1.0f) {
-        if (isMouseOver(mousePos)) {
-            elapsedOver += (float)deltaTime;
-            setScale(explerp(getScale(), scaleAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
-            setRotation(explerp(getRotation(), rotAnim(elapsedOver), (float)deltaTime * overAnimSpeed));
-        }
-        else {
-            setScale(explerp(getScale(), 1.0f, (float)deltaTime * idleAnimSpeed));
-            setRotation(explerp(getRotation(), 0.0f, (float)deltaTime * idleAnimSpeed));
-
-            elapsedOver = explerp(elapsedOver, 0.0f, (float)deltaTime * idleAnimSpeed);
-        }
-    }*/
-
+        lButton->animate(deltaTime, mousePos, scaleAnim, rotAnim, overAnimSpeed, idleAnimSpeed);
+        rButton->animate(deltaTime, mousePos, scaleAnim, rotAnim, overAnimSpeed, idleAnimSpeed);
+    }
 
     void setup(float scale, float distance, float font, std::string desc, glm::vec2 descPos, glm::vec2 valuePos) {
         m_uniform_scale = scale;
@@ -118,6 +110,29 @@ public:
         screenSize = newScreenSize;
     }
 
+    void load(std::string loadedValue) {
+        value = loadedValue;
+    }
+
+    void save(std::string key, std::string secondaryKey = "") {
+        FileManager::getInstance().set(FileManager::CONFIG, key, value);
+
+        if (secondaryKey == "")
+            FileManager::getInstance().set(FileManager::CONFIG, secondaryKey, value);
+    }
+
+    void onClick(glm::vec2 mousePos, std::function<std::string(std::string)> leftClick, std::function<std::string(std::string)> rightClick) {
+        if (lButton->isMouseOver(mousePos)) {
+            value = leftClick(value);
+            return;
+        }
+
+        if (rButton->isMouseOver(mousePos)) {
+            value = rightClick(value);
+            return;
+        }
+    }
+
 
 private:
     glm::vec2 maxScale;
@@ -133,6 +148,7 @@ private:
     glm::vec2 selectedValuePosition;
     glm::vec2 descriptionPosition;
 
+    std::string value;
 
     glm::vec2 screenSize;
 

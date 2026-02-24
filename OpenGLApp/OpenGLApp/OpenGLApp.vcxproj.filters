@@ -255,6 +255,18 @@
     <Image Include="assets\textures\ui\tutorial_button.png">
       <Filter>File di risorse</Filter>
     </Image>
+    <Image Include="assets\textures\eve_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\mo_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\walle_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
+    <Image Include="assets\textures\ui\stamina_atlas.png">
+      <Filter>File di risorse</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\Antonio\static\Antonio-Bold.ttf" />

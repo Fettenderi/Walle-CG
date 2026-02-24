@@ -48,6 +48,7 @@ private:
 	std::shared_ptr<Selector> paramSelectors[6];
 	glm::vec2 selectorPositions[6];
 
+	std::shared_ptr<Image> playButton;
 	std::shared_ptr<Image> backButton;
 
 	std::shared_ptr<Text> textHandler;
@@ -77,6 +78,7 @@ public:
 
 		// characters
 		backButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/back_button.png", glm::vec2(0.0f, -0.9f), glm::vec2(0.4f, 0.2f));
+		playButton = std::make_shared<Image>(spriteShader, "assets/textures/ui/play_button.png", glm::vec2(0.0f, -0.9f), glm::vec2(0.4f, 0.2f));
 		
 		for (int i = 0; i < 6; i++) {
 			paramSelectors[i] = std::make_shared<Selector>(textHandler, 1.0f, spriteShader, "assets/textures/ui/button.png", glm::vec2(0.0f, 0.0f), glm::vec2(0.96f, 1.29f));
@@ -92,13 +94,22 @@ public:
 		selectorPositions[5] = glm::vec2(0.51f, -0.53f);
 
 		(paramSelectors[0])->setup(0.17f, 0.25f, 0.82f, "Eve Delivery Count", glm::vec2(-0.42f + 0.064f, 0.18f), glm::vec2(-0.02f, -0.065f));
-		(paramSelectors[1])->setup(0.17f, 0.25f, 0.82f, "Eve Delivery Time", glm::vec2(-0.39f + 0.064f, 0.18f), glm::vec2(-0.02f, -0.065f));
+		(paramSelectors[1])->setup(0.17f, 0.25f, 0.82f, "Eve Delivery Time", glm::vec2(-0.39f + 0.064f, 0.18f), glm::vec2(-0.02f - 0.043887f, -0.065f));
 		(paramSelectors[2])->setup(0.17f, 0.25f, 0.82f, "Splitting Time", glm::vec2(-0.335f + 0.064f, 0.18f), glm::vec2(-0.02f, -0.065f));
-		(paramSelectors[3])->setup(0.17f, 0.25f, 0.82f, "MO", glm::vec2(-0.07f, 0.18f), glm::vec2(-0.02f, -0.065f));
-		(paramSelectors[4])->setup(0.17f, 0.25f, 0.82f, "Energy Charging Time", glm::vec2(-0.4f, 0.18f), glm::vec2(-0.02f, -0.065f));
-		(paramSelectors[5])->setup(0.17f, 0.25f, 0.82f, "Energy Consumption", glm::vec2(-0.39f, 0.18f), glm::vec2(-0.02f, -0.065f));
+		(paramSelectors[3])->setup(0.17f, 0.25f, 0.82f, "MO", glm::vec2(-0.07f, 0.18f), glm::vec2(-0.02f - 0.064365f, -0.065f));
+		(paramSelectors[4])->setup(0.17f, 0.25f, 0.82f, "Wall-E Compression Time", glm::vec2(-0.4f - 0.063304f, 0.18f), glm::vec2(-0.02f, -0.065f));
+		(paramSelectors[5])->setup(0.17f, 0.25f, 0.82f, "Wall-E Speed Constant", glm::vec2(-0.39f, 0.18f), glm::vec2(-0.02f - 0.043887f, -0.065f));
 
+		(paramSelectors[0])->load(FileManager::getInstance().get(FileManager::CONFIG, "eve_delivery_amount"));
+		(paramSelectors[1])->load(str(FileManager::getInstance().get(FileManager::CONFIG, "eve_time_betw_delivery")));
+		(paramSelectors[2])->load(
+			std::to_string((int)floor((to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_block_time")) + to_float(FileManager::getInstance().get(FileManager::CONFIG, "split_rubbish_time"))) / 2.0f))
+		);
+		(paramSelectors[3])->load(FileManager::getInstance().get(FileManager::CONFIG, "glb_easy_mode"));
+		(paramSelectors[4])->load(std::to_string((int)(floor(to_float(FileManager::getInstance().get(FileManager::CONFIG, "walle_compression_time"))))));
+		(paramSelectors[5])->load(str(FileManager::getInstance().get(FileManager::CONFIG, "walle_weight_constant")));
 
+		SceneManager::getInstance().addObject(playButton);
 		SceneManager::getInstance().addObject(backButton);
 
 		// timer
@@ -129,7 +140,8 @@ public:
 		float softInOut = (lerp(0.0f, 2.0f, easeInBack(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutBack(transitionInTimer->getProgress())));
 		float sharpInOut = (lerp(0.0f, 2.0f, easeInCubic(transitionOutTimer->getProgress())) + lerp(2.0f, 0.0f, easeOutCubic(transitionInTimer->getProgress())));
 
-		backButton->setPosition(glm::vec2(0.0f, -softInOut - 0.8f)); //-
+		backButton->setPosition(glm::vec2(0.296379f, -softInOut - 0.8f + debug.y));
+		playButton->setPosition(glm::vec2(-0.296379f, -softInOut - 0.8f + debug.y));
 
 		for (int i = 0; i < 6; i++) {
 			if (i < 3)
@@ -169,16 +181,90 @@ public:
 			glfwGetCursorPos(window, &xpos, &ypos);
 			glfwGetWindowSize(window, &width, &height);
 
-			float scX = (float)xpos / (float)width * 2.0f - 1.0f;
-			float scY = -(float)ypos / (float)height * 2.0f + 1.0f;
+			glm::vec2 mousePos((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
 
-			if (backButton->isMouseOver(glm::vec2(scX, scY))) {
+			if (backButton->isMouseOver(mousePos)) {
 				soundPlayer->play2D("assets/audio/ui_click.wav", false);
 
 				// change subscene
 				transitionOutTimer->resume();
-				nextScene = SceneManager::SceneID::MMWelcomeScene;
+				nextScene = SceneManager::SceneID::MMDifficultyScene;
 			}
+
+			if (playButton->isMouseOver(mousePos)) {
+				soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+				save();
+				FileManager::getInstance().save(FileManager::CONFIG);
+
+				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
+			}
+
+			(paramSelectors[0])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) - 1, 11));
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) + 1, 11));
+					});
+
+			(paramSelectors[1])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return str(std::to_string(max(to_float(value) / 2.0f, 0.25f)));
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return str(std::to_string(min(to_float(value) * 2.0f, 2.0f)));
+					});
+
+			(paramSelectors[2])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) - 4 - 2, 10) + 4);
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) - 4 + 2, 10) + 4);
+					});
+
+			(paramSelectors[3])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return (!(to_bool(value))) ? "true" : "false";
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return (!(to_bool(value))) ? "true" : "false";
+					});
+
+			(paramSelectors[4])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) - 1 - 1, 4) + 1);
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return std::to_string(cmod(to_int(value) - 1 + 1, 4) + 1);
+					});
+
+			(paramSelectors[5])->onClick(mousePos,
+				[this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return str(std::to_string(floor(cmod((int)(to_float(value) * 10.0f) - 1 - 1, 9) + 1) / 10.0f));
+				}, [this](std::string value) {
+					soundPlayer->play2D("assets/audio/ui_click.wav", false);
+
+					return str(std::to_string(floor(cmod((int)(to_float(value) * 10.0f) - 1 + 1, 9) + 1) / 10.0f));
+					});
 		}
 	}
 
@@ -237,6 +323,18 @@ public:
 
 		glm::vec2 mousePos = glm::vec2((float)xpos / (float)width * 2.0f - 1.0f, -(float)ypos / (float)height * 2.0f + 1.0f);
 
+		backButton->animate(deltaTime, mousePos, [](float x) {
+			return sin(x) * 0.05f + 0.95f;
+			}, [](float x) {
+				return sin(x * 2.0f) * 3.0f;
+				}, 3.0f);
+
+		playButton->animate(deltaTime, mousePos, [](float x) {
+			return sin(x) * 0.05f + 0.95f;
+			}, [](float x) {
+				return sin(x * 2.0f) * 3.0f;
+				}, 3.0f);
+
 		std::function<float(float)> scaleAnim = [](float x) {
 			return 1.2f;
 			};
@@ -245,18 +343,9 @@ public:
 			return 0.0f;
 			};
 
-
-		backButton->animate(deltaTime, mousePos, [](float x) {
-			return sin(x) * 0.05f + 0.95f;
-			}, [](float x) {
-				return sin(x * 2.0f) * 3.0f;
-				}, 3.0f);
-
 		for (int i = 0; i < 6; i++) {
 			(paramSelectors[i])->animate(deltaTime, mousePos, scaleAnim, rotStatic, 50.0f, 30.0f);
 		}
-
-
 	}
 
 	void transitionTimeout() {
@@ -273,6 +362,15 @@ public:
 			});
 	}
 
+	void save() {
+		(paramSelectors[0])->save("eve_delivery_amount");
+		(paramSelectors[1])->save("eve_time_betw_delivery");
+		(paramSelectors[2])->save("split_block_time", "split_rubbish_time");
+		(paramSelectors[3])->save("glb_easy_mode");
+		(paramSelectors[4])->save("walle_compression_time");
+		(paramSelectors[5])->save("walle_weight_constant");
+	}
+
 	virtual void end() {
 		for (int i = 0; i < 6; i++) {
 			(paramSelectors[i]).reset();
@@ -282,6 +380,7 @@ public:
 		PBRShader.reset();
 
 		backButton.reset();
+		playButton.reset();
 
 		transitionInTimer.release();
 		transitionOutTimer.release();
