@@ -321,7 +321,6 @@ class Walle : public Character {
             m_shader->setVec3("lights[1].position", light->position);
             m_shader->setVec3("lights[1].color", light->getColor() * light->strength);
 
-
             if (magnetActive) {
                 for (std::shared_ptr<Character> object : SceneManager::getInstance()) {
                     if (std::shared_ptr<Rubbish> rubbish = dynamic_pointer_cast<Rubbish>(object)) {

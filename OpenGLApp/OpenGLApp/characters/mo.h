@@ -157,7 +157,7 @@ class Mo : public Character {
         bool hasBufferedTarget = false;
         bool hasBlock = false;
         bool isVertical = false;
-        float m_reached_distance = 0.2f;
+        float m_reached_distance = 0.1f;
         float m_collection_distance = 0.3f;
 
         bool bombActive = false;

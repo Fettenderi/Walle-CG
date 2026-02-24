@@ -126,6 +126,9 @@
     <ClInclude Include="scenes\i_grab_ui.h">
       <Filter>File di intestazione</Filter>
     </ClInclude>
+    <ClInclude Include="scenes\custom_scene.h">
+      <Filter>File di intestazione</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -141,6 +144,9 @@
       <Filter>File di origine\core</Filter>
     </ClCompile>
     <ClCompile Include="globals\scene_manager.cpp">
+      <Filter>File di origine</Filter>
+    </ClCompile>
+    <ClCompile Include="characters\selector.h">
       <Filter>File di origine</Filter>
     </ClCompile>
   </ItemGroup>

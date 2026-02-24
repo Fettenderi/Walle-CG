@@ -30,6 +30,7 @@ class Character {
         glm::vec2 m_scale;
         float m_uniform_scale = 1.0f;
         float m_rotation;
+        float m_y_offset = 0.0f;
         bool m_is_visible = true;
 
         unsigned long id;
@@ -94,6 +95,10 @@ class Character {
             return dist <= m_collider.radius * m_uniform_scale + other->m_collider.radius * m_uniform_scale;
         }
 
+        void displaySprite(glm::vec2 pos, glm::vec2 scale, float rot) {
+            loadSprite(*m_shader, m_textureID, pos, scale, rot);
+        }
+
     public:
 
         Character(std::shared_ptr<Shader> spriteShader, const char* texturePath, CollisionShape collider, glm::vec2 position, glm::vec2 scale, const float rotation)
@@ -107,7 +112,7 @@ class Character {
             m_shader.reset();
         }
 
-        void renderSprite() {
+        virtual void renderSprite() {
             if (!m_is_visible) return;
             loadSprite(*m_shader, m_textureID, m_position, m_scale * m_uniform_scale, m_rotation);
         }
@@ -157,6 +162,9 @@ class Character {
         }
 
         float getY() {
+            return m_position.y;
+
+            /*
             glm::mat2 R(
                 cos(m_rotation), -sin(m_rotation),
                 sin(m_rotation), cos(m_rotation)
@@ -172,7 +180,8 @@ class Character {
             bl = R * bl;
             br = R * br;
 
-            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y });
+
+            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y });*/
         }
 
         void hide() {
@@ -206,6 +215,26 @@ class Character {
             m_current_frame_y = index / m_h_tiles;
         }
 
+        void changeYOffset(GLFWwindow* window, float deltaTime) {
+            float velocity = 0.0f;
+
+            if (glfwGetKey(window, GLFW_KEY_8) == GLFW_PRESS)
+                velocity += 1.0f;
+
+            if (glfwGetKey(window, GLFW_KEY_9) == GLFW_PRESS)
+                velocity -= 1.0f;
+
+            if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+                velocity *= 2.0f;
+
+            if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+                velocity /= 2.0f;
+
+            loadSprite(*m_shader, m_textureID, m_position + glm::vec2(0.0f, m_y_offset), m_scale * m_uniform_scale * 0.01f, m_rotation);
+
+            m_y_offset += velocity * (float)deltaTime * 0.001f;
+            printf("offset: (%f)\n", m_y_offset);
+        }
 
     private:
         void loadTexture(unsigned int* texture, const char* textureSource, GLint colorEncoding) {

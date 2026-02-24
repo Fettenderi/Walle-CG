@@ -180,5 +180,4 @@ static glm::vec2 clampInCamera(glm::vec2 vec, glm::vec2 camPosition, float pileH
     //return glm::vec2(clamp(-1.0f, 1.0f, vec.x), clamp(fmax(pileHeight, -1.0f + camPosition.y), 1.0f + camPosition.y, vec.y));
 }
 
-
 #endif

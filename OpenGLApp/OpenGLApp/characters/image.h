@@ -1,6 +1,8 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <functional>
+
 #include "../core/shader.h"
 #include "../utils.h"
 
