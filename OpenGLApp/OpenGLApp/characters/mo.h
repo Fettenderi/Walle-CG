@@ -225,7 +225,7 @@ class Mo : public Character {
 
             if (hasBlock) {
                 pickedBlock->setPosition(m_position + m_direction * 0.2f);
-                pickedBlock->setRotation(hiddenRotation);
+                //pickedBlock->setRotation(hiddenRotation);
             }
             
         }

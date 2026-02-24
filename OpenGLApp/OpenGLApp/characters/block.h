@@ -20,6 +20,7 @@ class Block : public Character {
             : Character(spriteShader, "assets/textures/block.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f)
         {
             m_is_visible = false;
+            m_scale.y = m_scale.y * 1.1f;
 
             splitStrength = 0.3f;
             float splitTime = 8.0f;

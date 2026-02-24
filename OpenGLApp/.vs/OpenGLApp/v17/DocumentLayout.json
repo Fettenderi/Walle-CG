@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\mo.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\explosion.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\explosion.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -17,10 +21,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\walle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|solutionrelative:OpenGLApp\\characters\\block.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7B1E9E7B-2E89-4C1F-80BA-AA69CC53AFEA}|OpenGLApp\\OpenGLApp.vcxproj|C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\rubbish.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -46,7 +46,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "eve.h",
               "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\eve.h",
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\eve.h",
@@ -54,8 +54,7 @@
               "RelativeToolTip": "OpenGLApp\\characters\\eve.h",
               "ViewState": "AgIAABIAAAAAAAAAAAAMwBQAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:54:19.342Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-21T17:54:19.342Z"
             },
             {
               "$type": "Document",
@@ -71,7 +70,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "walle.h",
               "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\walle.h",
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\walle.h",
@@ -79,8 +78,7 @@
               "RelativeToolTip": "OpenGLApp\\characters\\walle.h",
               "ViewState": "AgIAAAwAAAAAAAAAAAAMwB8AAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-22T15:53:08.111Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T15:53:08.111Z"
             },
             {
               "$type": "Document",
@@ -90,14 +88,14 @@
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\mo.h",
               "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\mo.h",
               "RelativeToolTip": "OpenGLApp\\characters\\mo.h",
-              "ViewState": "AgIAAHYAAAAAAAAAAAAIwIYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAANgAAAAAAAAAAAAAAOMAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-21T17:37:44.528Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "explosion.h",
               "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\explosion.h",
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\explosion.h",
@@ -105,18 +103,17 @@
               "RelativeToolTip": "OpenGLApp\\characters\\explosion.h",
               "ViewState": "AgIAAAUAAAAAAAAAAIAwwBQAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-22T17:51:02.091Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-22T17:51:02.091Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "block.h",
               "DocumentMoniker": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h",
               "RelativeDocumentMoniker": "OpenGLApp\\characters\\block.h",
               "ToolTip": "C:\\Users\\raffa\\Documents\\GitHub\\Walle-CG\\OpenGLApp\\OpenGLApp\\characters\\block.h",
               "RelativeToolTip": "OpenGLApp\\characters\\block.h",
-              "ViewState": "AgIAACUAAAAAAAAAAAApwC8AAAARAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAMwBYAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-21T17:14:22.456Z",
               "EditorCaption": ""
@@ -131,8 +128,7 @@
               "RelativeToolTip": "OpenGLApp\\characters\\rubbish.h",
               "ViewState": "AgIAACkAAAAAAAAAAAAAAD0AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-21T17:14:20.097Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-21T17:14:20.097Z"
             }
           ]
         }
