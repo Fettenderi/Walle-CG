@@ -106,6 +106,7 @@ class Rubbish : public Character {
 
         ~Rubbish() {
             rubbishPool.reset();
+            bombExplosion.reset();
 
             if (tickingSound != nullptr) {
                 tickingSound->stop();

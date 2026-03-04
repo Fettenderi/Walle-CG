@@ -17,6 +17,7 @@ class StatsManager {
 		int time = 0;
 		int flashlightBattery = 5;
 
+		bool flashlightBatteryChanging = true;
 		bool isEasyMode = false;
 
 		float maxBlockProgress = -0.643f;

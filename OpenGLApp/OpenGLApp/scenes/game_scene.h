@@ -161,6 +161,9 @@ class GameScene : public Scene {
 			changeDebugParameters();
 			changeDebug1Parameters();
 
+			for (std::shared_ptr<Character> obj : SceneManager::getInstance()) {
+				obj->yDebug = 1.96f + 2.33f;
+			}
 
 			// global update
 			if (StatsManager::getInstance().currentRubbish > maxRubbish) {
@@ -216,8 +219,25 @@ class GameScene : public Scene {
 			glfwGetWindowSize(window, &width, &height);
 
 			compressorIndicator->setTile(0, StatsManager::getInstance().collectedRubbish);
-			batteryIndicator->setTile(0, 10 - StatsManager::getInstance().flashlightBattery);
-			
+
+			int chargeIndicator = 0;
+			if (StatsManager::getInstance().flashlightBatteryChanging) {
+				chargingElapsed += deltaTime;
+
+				if (previousEnergy != StatsManager::getInstance().flashlightBattery) {
+					chargingElapsed = 0.0f;
+					previousEnergy = StatsManager::getInstance().flashlightBattery;
+				}
+
+				chargeIndicator = round((sin(chargingElapsed * 3.0f - PI / 2.0f) + (isNight ? -1.0f : 1.0f)) / 2.0f);
+			}
+			else {
+				chargingElapsed = 0.0f;
+			}
+
+
+			batteryIndicator->setTile(0, 10 - (int)clamp(0.0f, 10.0f, StatsManager::getInstance().flashlightBattery + chargeIndicator));
+
 			guiBase->setPosition(camera->getPosition2D() + guiOffset);
 			dayNightIndicator->setPosition(camera->getPosition2D() + guiOffset);
 			compressorIndicator->setPosition(camera->getPosition2D() + guiOffset);
@@ -258,6 +278,8 @@ class GameScene : public Scene {
 			guiBase.reset();
 			dayNightIndicator.reset();
 			compressorIndicator.reset();
+			batteryIndicator.reset();
+			scoreIndicator.reset();
 
 			mo.reset();
 			eve.reset();
@@ -306,8 +328,11 @@ class GameScene : public Scene {
 		float currentDayNightFrequency = 0.0f;
 		float dayNightPhase = 0.0f;
 		float dayNightElapsed = 0.0f;
+		float chargingElapsed = 0.0f;
+		int previousEnergy = 5;
 
 		bool lmbPressed = false;
+		bool isNight = false;
 
 		int maxRubbish;
 
@@ -324,14 +349,17 @@ class GameScene : public Scene {
 				// day
 				newDayNightFrequency = (float)PI / (totalTime * (1.0f - nightPercentage));
 				walle->setFlashlight(false);
-				eve->setActive(true);
+				eve->setNightMode(false);
+				isNight = false;
 
 			}
 			else {
 				// night
 				newDayNightFrequency = (float)PI / (totalTime * nightPercentage);
 				walle->setFlashlight(true);
-				eve->setActive(false);
+				eve->setNightMode(true);
+
+				isNight = true;
 			}
 
 			// When changing frequency you need to add a phase in order to allign 
@@ -367,6 +395,8 @@ class GameScene : public Scene {
 			if (velocity == 0.0f) return;
 
 			debug.y += velocity * (float)deltaTime * 1.0f;
+			printf("debug: (%f, %f)\n", debug.x, debug.y);
+
 		}
 
 		void changeDebug1Parameters() {

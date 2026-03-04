@@ -22,6 +22,8 @@ class Walle : public Character {
             : Character(spriteShader, "assets/textures/walle_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.05f, false), position, scale, rotation),
             m_speed(speed), rubbishPool(rubbishPool), blockPool(blockPool)
         {
+            yDebug = 2.47f;
+
             m_scale.x = m_scale.x * 1.2f;
             m_scale.y = m_scale.y * 1.5f;
 
@@ -110,15 +112,7 @@ class Walle : public Character {
             }
 
             lightBatteryTimer = std::make_unique<Timer>(chargingTime, [this] {
-                flashlightBattery = (int)clamp(0.0f, 10.0f, (float)flashlightBattery + (isFlashlightActive ? -1.0f : 1.0f));
-                
-                if (flashlightBattery == 0) {
-                    light_target_strength = 0.1f;
-                }
-
-                StatsManager::getInstance().flashlightBattery = flashlightBattery;
-                //printf("flashlightBattery: %d\n", flashlightBattery);
-
+                updateCurrentEnergy();
                 }, true);
                 
             maxScale = m_scale;
@@ -160,7 +154,6 @@ class Walle : public Character {
                 m_velocity = glm::vec2(0.0f, 0.0f);
                 return;
             }
-
             if (processing) return;
 
             m_velocity = glm::vec2(0.0f, 0.0f);
@@ -219,6 +212,7 @@ class Walle : public Character {
             }
 
             lightBatteryTimer->resume();
+            StatsManager::getInstance().flashlightBatteryChanging = true;
 
             if (m_velocity == glm::vec2(0.0f, 0.0f)) {                
                 if (movingSound != nullptr) {
@@ -231,6 +225,7 @@ class Walle : public Character {
 
             if (!isFlashlightActive) {
                 lightBatteryTimer->pause();
+                StatsManager::getInstance().flashlightBatteryChanging = false;
             }
 
             if (movingSound == nullptr) {
@@ -393,6 +388,17 @@ class Walle : public Character {
             block->setSplittable(true);
 
             SceneManager::getInstance().addObject(block);
+        }
+
+        void updateCurrentEnergy() {
+            flashlightBattery = (int)clamp(0.0f, 10.0f, (float)flashlightBattery + (isFlashlightActive ? -1.0f : 1.0f));
+
+            if (flashlightBattery == 0) {
+                light_target_strength = 0.1f;
+            }
+
+            StatsManager::getInstance().flashlightBattery = flashlightBattery;
+            //printf("flashlightBattery: %d\n", flashlightBattery);
         }
 
 

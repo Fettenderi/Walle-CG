@@ -42,7 +42,6 @@ class Character {
         CollisionShape m_collider;
         bool solved = false;
 
-        
         int m_h_tiles = 1; //numero colonne atlas
         int m_v_tiles = 1; //numero righe atlas
 
@@ -101,6 +100,7 @@ class Character {
         }
 
     public:
+        float yDebug = 2.33f;
 
         Character(std::shared_ptr<Shader> spriteShader, const char* texturePath, CollisionShape collider, glm::vec2 position, glm::vec2 scale, const float rotation)
             : m_position(position), m_scale(scale), m_rotation(rotation), m_shader(spriteShader), m_collider(collider) {
@@ -178,7 +178,7 @@ class Character {
             bl = R * bl;
             br = R * br;
 
-            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y }) / (10.0f * m_uniform_scale);
+            return m_position.y + std::min({ tl.y, tr.y, bl.y, br.y }) / (yDebug * sqrt(m_uniform_scale));
         }
 
         void hide() {
@@ -296,7 +296,8 @@ class Character {
 
             shader.setMat4("model", model);
 
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);*/
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            //*/
         }
 };
 

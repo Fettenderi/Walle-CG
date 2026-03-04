@@ -125,7 +125,6 @@ class Block : public Character {
         std::unique_ptr<Timer> splittingCountdown;
         std::shared_ptr<ObjectPool<Rubbish>> rubbishPool;
         std::shared_ptr<ObjectPool<Block>> blockPool;
-        std::shared_ptr<Block> selfPointer;
 
         float splitStrength;
 

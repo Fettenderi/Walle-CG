@@ -26,6 +26,8 @@ class Eve : public Character {
         Eve(std::shared_ptr<ObjectPool<Rubbish>> rubbishPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float speed)
             : Character(spriteShader, "assets/textures/eve_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.1f, true), position, scale, 0.0f), m_speed(speed), rubbishPool(rubbishPool)
         {
+            yDebug = 3.28f;
+
             m_direction = glm::vec2(1.0f, 0.0f);
             m_scale.x = m_scale.x * 1.5f;
 
@@ -126,15 +128,25 @@ class Eve : public Character {
                 handleMovingToTarget(deltaTime);
         }
 
-        void setActive(bool value) {
-            isActive = value;
+        void setNightMode(bool value) {
+            if (isNightMode == value) return;
 
-            if (isActive) {
+            isNightMode = value;
+
+            updateDeliveryTime();
+        }
+
+        void updateDeliveryTime() {
+            if (isNightMode) {
+                cooldownTimer->changeDuration(abs(getNormalRandomClamped(timeBetweenDelivery * 1.5f, timeBetweenDeliveryDeviation * 1.5f)));
+                cooldownTimer->reset();
                 cooldownTimer->resume();
+
             }
             else {
-                cooldownTimer->pause();
+                cooldownTimer->changeDuration(abs(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation)));
                 cooldownTimer->reset();
+                cooldownTimer->resume();
             }
         }
 
@@ -167,7 +179,7 @@ class Eve : public Character {
         int maxNormalRubbishSequence = 2;
         int deliveryAmount;
 
-        bool isActive = true;
+        bool isNightMode = true;
 
         void handleArrived() {
             if (currentState == MOVING) {
@@ -179,10 +191,7 @@ class Eve : public Character {
             else if (currentState == RETURNING) {
                 currentState = IDLE;
 
-                cooldownTimer->changeDuration(abs(getNormalRandomClamped(timeBetweenDelivery, timeBetweenDeliveryDeviation)));
-
-                cooldownTimer->resume();
-                cooldownTimer->reset();
+                updateDeliveryTime();
             }
         }
 
@@ -277,8 +286,6 @@ class Eve : public Character {
         }
 
         void tryGettingRubbish() {
-            if (!isActive) return;
-
             int actualDelivery = getNextRandomIntRange(std::max(deliveryAmount - 1, 1), deliveryAmount + 1);
             bool foundRubbish = false;
             std::shared_ptr<Rubbish> tempRubbish;

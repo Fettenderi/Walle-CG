@@ -188,9 +188,6 @@ public:
 	}
 
 	virtual void end() {
-		spriteShader.reset();
-		PBRShader.reset();
-
 		backButton.reset();
 
 		transitionInTimer.release();

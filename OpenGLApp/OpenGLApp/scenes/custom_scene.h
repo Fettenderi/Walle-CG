@@ -198,6 +198,7 @@ public:
 				FileManager::getInstance().save(FileManager::CONFIG);
 
 				SceneManager::getInstance().changeScene(SceneManager::SceneID::GameScene, window);
+				return;
 			}
 
 			(paramSelectors[0])->onClick(mousePos,
@@ -381,6 +382,8 @@ public:
 
 		backButton.reset();
 		playButton.reset();
+
+		textHandler.reset();
 
 		transitionInTimer.release();
 		transitionOutTimer.release();

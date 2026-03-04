@@ -23,8 +23,8 @@
     "split_rubbish_strength": "0.300000",
     "split_rubbish_time": "8.000000",
     "split_rubbish_time_std": "1.000000",
-    "walle_charging_time": "35.000000",
+    "walle_charging_time": "6.000000",
     "walle_compression_time": "2.000000",
-    "walle_discharging_factor": "5.000000",
+    "walle_discharging_factor": "7.000000",
     "walle_weight_constant": "0.800000"
 }

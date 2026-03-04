@@ -39,6 +39,12 @@ public:
         description = "";
     };
 
+    ~Selector() {
+        textHandler.reset();
+        lButton.reset();
+        rButton.reset();
+    }
+
     void renderSprite() {
         if (!m_is_visible) return;
         lButton->setRotation(180);

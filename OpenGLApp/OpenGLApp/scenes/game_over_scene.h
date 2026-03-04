@@ -384,7 +384,10 @@ class GameOverScene : public Scene {
 
 			background.reset();
 
+			guiText.release();
+
 			startButton.reset();
+			menuButton.reset();
 
 			camera.reset();
 

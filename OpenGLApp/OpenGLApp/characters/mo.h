@@ -20,6 +20,8 @@ class Mo : public Character {
         Mo(std::shared_ptr<ObjectPool<Block>> blockPool, std::shared_ptr<Shader> spriteShader, glm::vec2 position, glm::vec2 scale, const float rotation, const float speed)
             : Character(spriteShader, "assets/textures/mo_atlas.png", CollisionShape(glm::vec2(0.0f, 0.0f), 0.01f, true), position, scale, rotation), maxSpeed(speed), blockPool(blockPool)
         {
+            yDebug = 2.76f;
+
             m_direction = glm::vec2(1.0f, 0.0f);
             block_release_target = glm::vec2(-1.0f, -0.6f);
             StatsManager::getInstance().maxBlockProgress = block_release_target.y;
@@ -59,6 +61,7 @@ class Mo : public Character {
             blockPool.reset();
 
             bombTimer.release();
+            tileAnimationTimer.release();
 
             if (player != nullptr) {
                 player = nullptr;
@@ -285,11 +288,11 @@ class Mo : public Character {
 
                 StatsManager::getInstance().maxBlockProgress = fmax(StatsManager::getInstance().maxBlockProgress, block_release_target.y);
 
-                if (placedBlocks.size() >= 5 * BLOCK_COLUMNS - 1) {
+                if (placedBlocks.size() >= BLOCK_COLUMNS - 1) {
                     camera->moveTarget(0.2f);
                 }
 
-                if (placedBlocks.size() >= 2 * 5 * BLOCK_COLUMNS - 1) {
+                if (placedBlocks.size() >= 2 * BLOCK_COLUMNS - 1) {
                     for (int i = 0; i < BLOCK_COLUMNS; i++) {
                         std::shared_ptr<Block> freedBlock = placedBlocks.front();
                         placedBlocks.pop();

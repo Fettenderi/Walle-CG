@@ -330,9 +330,6 @@ public:
 	}
 
 	virtual void end() {
-		spriteShader.reset();
-		PBRShader.reset();
-
 		backButton.reset();
 		easyButton.reset();
 		mediumButton.reset();
